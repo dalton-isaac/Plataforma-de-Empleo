@@ -57,8 +57,8 @@ Plataforma web universitaria y bolsa de empleo diseñada con enfoque **Mobile-Fi
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/TU_USUARIO/TU_REPOSITORIO.git
-   cd TU_REPOSITORIO
+   git clone https://github.com/dalton-isaac/Plataforma-de-Empleo.git
+   cd Plataforma-de-Empleo
    ```
 
 2. Inicia un servidor HTTP local (Python o Live Server):
