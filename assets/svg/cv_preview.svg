@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 520" width="100%" height="100%">
+  <rect width="400" height="520" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+  
+  <!-- Header with Avatar -->
+  <rect x="24" y="24" width="352" height="80" rx="12" fill="#1D4ED8"/>
+  <circle cx="68" cy="64" r="26" fill="#FFFFFF"/>
+  <circle cx="68" cy="58" r="12" fill="#1D4ED8"/>
+  <path d="M50 78 A18 18 0 0 1 86 78 Z" fill="#1D4ED8"/>
+  
+  <text x="110" y="54" font-family="'Poppins', sans-serif" font-weight="700" font-size="16" fill="#FFFFFF">Mateo Alejandro Morales</text>
+  <text x="110" y="72" font-family="'Inter', sans-serif" font-weight="500" font-size="12" fill="#FFEDD5">Estudiante de Ing. Software • Quito, EC</text>
+  <text x="110" y="88" font-family="'Inter', sans-serif" font-weight="400" font-size="10" fill="#E2E8F0">mateo.morales@estud.uce.edu.ec • +593 99 876 5432</text>
+
+  <!-- Left Sidebar -->
+  <rect x="24" y="116" width="120" height="380" rx="8" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+  
+  <!-- Skills in sidebar -->
+  <text x="36" y="140" font-family="'Poppins', sans-serif" font-weight="600" font-size="12" fill="#1D4ED8">HABILIDADES</text>
+  <rect x="36" y="152" width="96" height="18" rx="4" fill="#EFF6FF"/>
+  <text x="42" y="165" font-family="'Inter', sans-serif" font-weight="500" font-size="10" fill="#1D4ED8">HTML5 / CSS3</text>
+  
+  <rect x="36" y="176" width="96" height="18" rx="4" fill="#EFF6FF"/>
+  <text x="42" y="189" font-family="'Inter', sans-serif" font-weight="500" font-size="10" fill="#1D4ED8">JavaScript ES6</text>
+  
+  <rect x="36" y="200" width="96" height="18" rx="4" fill="#EFF6FF"/>
+  <text x="42" y="213" font-family="'Inter', sans-serif" font-weight="500" font-size="10" fill="#1D4ED8">Figma &amp; UI/UX</text>
+  
+  <rect x="36" y="224" width="96" height="18" rx="4" fill="#EFF6FF"/>
+  <text x="42" y="237" font-family="'Inter', sans-serif" font-weight="500" font-size="10" fill="#1D4ED8">Git / GitHub</text>
+  
+  <!-- Languages -->
+  <text x="36" y="275" font-family="'Poppins', sans-serif" font-weight="600" font-size="12" fill="#1D4ED8">IDIOMAS</text>
+  <text x="36" y="295" font-family="'Inter', sans-serif" font-weight="600" font-size="10" fill="#1E293B">Español:</text>
+  <text x="82" y="295" font-family="'Inter', sans-serif" font-weight="400" font-size="10" fill="#64748B">Nativo</text>
+  <text x="36" y="312" font-family="'Inter', sans-serif" font-weight="600" font-size="10" fill="#1E293B">Inglés:</text>
+  <text x="75" y="312" font-family="'Inter', sans-serif" font-weight="400" font-size="10" fill="#64748B">B2 Intermedio</text>
+
+  <!-- Right Main Body -->
+  <rect x="156" y="116" width="220" height="380" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  
+  <!-- Education -->
+  <text x="170" y="140" font-family="'Poppins', sans-serif" font-weight="600" font-size="12" fill="#1D4ED8">EDUCACIÓN</text>
+  <text x="170" y="158" font-family="'Inter', sans-serif" font-weight="600" font-size="11" fill="#1E293B">Ingeniería en Software</text>
+  <text x="170" y="172" font-family="'Inter', sans-serif" font-weight="400" font-size="10" fill="#64748B">Universidad Central del Ecuador (5to Semestre)</text>
+  <text x="170" y="185" font-family="'Inter', sans-serif" font-weight="500" font-size="9" fill="#F97316">2023 - Presente • Quito</text>
+  
+  <!-- Academic Projects -->
+  <text x="170" y="220" font-family="'Poppins', sans-serif" font-weight="600" font-size="12" fill="#1D4ED8">PROYECTOS ACADÉMICOS</text>
+  <text x="170" y="238" font-family="'Inter', sans-serif" font-weight="600" font-size="11" fill="#1E293B">Plataforma Web Universitaria</text>
+  <text x="170" y="252" font-family="'Inter', sans-serif" font-weight="400" font-size="9.5" fill="#64748B">Desarrollo de interfaz responsiva con HTML/CSS y JS para gestión estudiantil.</text>
+  
+  <text x="170" y="280" font-family="'Inter', sans-serif" font-weight="600" font-size="11" fill="#1E293B">App Móvil de Tutorías</text>
+  <text x="170" y="294" font-family="'Inter', sans-serif" font-weight="400" font-size="9.5" fill="#64748B">Prototipado en Figma y pruebas de usuario con estudiantes de primer año.</text>
+
+  <!-- Extracurricular -->
+  <text x="170" y="330" font-family="'Poppins', sans-serif" font-weight="600" font-size="12" fill="#1D4ED8">EXPERIENCIA VOLUNTARIA</text>
+  <text x="170" y="348" font-family="'Inter', sans-serif" font-weight="600" font-size="11" fill="#1E293B">Club de Programación UCE</text>
+  <text x="170" y="362" font-family="'Inter', sans-serif" font-weight="400" font-size="9.5" fill="#64748B">Organizador de talleres básicos de desarrollo web y lógica para novatos.</text>
+</svg>

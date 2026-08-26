@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgHeroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1D4ED8" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="blueSuitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1D4ED8"/>
+      <stop offset="100%" stop-color="#1E40AF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base & Grid -->
+  <rect width="700" height="380" rx="20" fill="url(#bgHeroGrad)" stroke="#E2E8F0" stroke-width="1.5"/>
+  <circle cx="580" cy="80" r="60" fill="#F97316" opacity="0.15"/>
+  <circle cx="100" cy="300" r="90" fill="#1D4ED8" opacity="0.08"/>
+
+  <!-- Modern Office Desk -->
+  <rect x="120" y="240" width="460" height="16" rx="8" fill="#1E293B"/>
+  <rect x="160" y="256" width="16" height="80" rx="4" fill="#64748B"/>
+  <rect x="520" y="256" width="16" height="80" rx="4" fill="#64748B"/>
+
+  <!-- Laptop on Desk -->
+  <polygon points="260,240 340,240 350,225 250,225" fill="#94A3B8"/>
+  <rect x="265" y="165" width="70" height="60" rx="4" fill="#1E293B"/>
+  <rect x="270" y="170" width="60" height="50" rx="2" fill="#3B82F6"/>
+  <circle cx="300" cy="195" r="12" fill="#FFFFFF" opacity="0.9"/>
+  <polyline points="295,195 299,199 306,192" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Floating Stats Card (Quito Universidades) -->
+  <rect x="390" y="50" width="220" height="74" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <circle cx="420" cy="87" r="18" fill="#EFF6FF"/>
+  <path d="M414 87 L418 91 L426 83" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="448" y="76" font-family="'Poppins', sans-serif" font-weight="700" font-size="13" fill="#1E293B">+4,500 Estudiantes</text>
+  <text x="448" y="94" font-family="'Inter', sans-serif" font-weight="500" font-size="10" fill="#64748B">UCE, EPN, USFQ, PUCE (Quito)</text>
+
+  <!-- Floating Fast Hire Pill -->
+  <rect x="90" y="70" width="180" height="50" rx="25" fill="#FFF7ED" stroke="#FDBA74" stroke-width="1.5"/>
+  <circle cx="115" cy="95" r="14" fill="#F97316"/>
+  <polygon points="115,88 117,93 122,94 118,97 119,102 115,99 111,102 112,97 108,94 113,93" fill="#FFFFFF"/>
+  <text x="138" y="93" font-family="'Poppins', sans-serif" font-weight="700" font-size="11" fill="#EA580C">Postulación Rápida</text>
+  <text x="138" y="106" font-family="'Inter', sans-serif" font-weight="500" font-size="9" fill="#9A3412">Filtro Sin Experiencia</text>
+
+  <!-- Person 1 (Recruiter Left) -->
+  <circle cx="210" cy="140" r="26" fill="#FDBA74"/>
+  <path d="M190 135 C190 115, 230 115, 230 135 Z" fill="#1E293B"/>
+  <rect x="180" y="170" width="60" height="70" rx="10" fill="url(#blueSuitGrad)"/>
+  <polygon points="210,170 202,195 218,195" fill="#FFFFFF"/>
+  <polygon points="210,195 206,220 214,220" fill="#F97316"/>
+
+  <!-- Person 2 (Candidate Right) -->
+  <circle cx="470" cy="140" r="26" fill="#FED7AA"/>
+  <path d="M448 135 C448 110, 492 110, 492 135 C486 125, 454 125, 448 135 Z" fill="#475569"/>
+  <!-- Glasses -->
+  <rect x="456" y="136" width="12" height="8" rx="2" fill="none" stroke="#1E293B" stroke-width="2"/>
+  <rect x="472" y="136" width="12" height="8" rx="2" fill="none" stroke="#1E293B" stroke-width="2"/>
+  <line x1="468" y1="140" x2="472" y2="140" stroke="#1E293B" stroke-width="2"/>
+  <path d="M440 170 C440 160, 500 160, 500 170 L500 240 L440 240 Z" fill="#0D9488"/>
+  <rect x="450" y="190" width="40" height="50" rx="4" fill="#FFFFFF"/>
+  <line x1="456" y1="200" x2="484" y2="200" stroke="#1D4ED8" stroke-width="2"/>
+  <line x1="456" y1="210" x2="480" y2="210" stroke="#94A3B8" stroke-width="2"/>
+  <line x1="456" y1="220" x2="474" y2="220" stroke="#94A3B8" stroke-width="2"/>
+</svg>

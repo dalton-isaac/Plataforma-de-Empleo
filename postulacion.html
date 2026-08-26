@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Búsqueda y Postulación de Empleos - TalentoEC Quito</title>
+  <meta name="description" content="Explora ofertas de empleo y pasantías en Quito para jóvenes y estudiantes sin experiencia. Aplica de forma rápida en un solo clic.">
+  
+  <!-- Google Fonts: Poppins (Títulos) & Inter (Cuerpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-postulacion">
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="index.html" id="logo-link">Talento<span>EC</span></a>
+      </div>
+      
+      <!-- Botón Menú Hamburguesa para Móviles -->
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú de navegación">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Enlaces de navegación desktop (colapsables en móvil) -->
+      <nav class="nav-menu" id="nav-menu">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link">Inicio</a></li>
+          <li><a href="postulacion.html" class="nav-link active">Buscar Empleos</a></li>
+          <li><a href="desarrollo.html" class="nav-link">Desarrollo Personal</a></li>
+          <li><a href="reclutadores.html" class="nav-link">Reclutadores</a></li>
+          <li><a href="index.html#soporte" class="nav-link">Soporte Técnico</a></li>
+        </ul>
+        <div class="nav-auth">
+          <a href="#" class="btn-secondary-nav">Crear Cuenta</a>
+          <a href="#" class="btn-primary-nav">Iniciar sesión</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL DE BÚSQUEDA Y POSTULACIÓN -->
+  <main class="postulacion-main">
+    
+    <!-- BARRA SUPERIOR DE BÚSQUEDA Y FILTROS RÁPIDOS -->
+    <section class="search-filters-section">
+      <div class="search-filters-container">
+        
+        <!-- Buscador integrado -->
+        <div class="search-bar-wrapper">
+          <div class="search-input-field">
+            <span class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </span>
+            <input type="text" id="job-search-input" placeholder="Buscar empleo, pasantía o tecnología (ej. Java, React, Marketing)..." aria-label="Buscar empleo">
+          </div>
+          
+          <div class="location-input-field">
+            <span class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </span>
+            <input type="text" id="location-search-input" value="Quito, Ecuador" placeholder="Ubicación" aria-label="Ubicación">
+          </div>
+
+          <button class="btn-search-trigger" id="btn-search-trigger" aria-label="Ejecutar búsqueda">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Buscar</span>
+          </button>
+        </div>
+
+        <!-- Píldoras de Filtro Deslizables (Scroll horizontal táctil) -->
+        <div class="filter-pills-wrapper">
+          <div class="filter-pills-track" id="filter-pills-track">
+            <button class="filter-pill active" data-filter="all">Todos los empleos</button>
+            <button class="filter-pill highlight" data-filter="sin-experiencia">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              Sin Experiencia
+            </button>
+            <button class="filter-pill" data-filter="ti">TI & Software</button>
+            <button class="filter-pill" data-filter="diseno">Diseño UX/UI</button>
+            <button class="filter-pill" data-filter="marketing">Marketing Digital</button>
+            <button class="filter-pill" data-filter="soporte">Soporte Técnico</button>
+            <button class="filter-pill" data-filter="remoto">Remoto / Híbrido</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- GRID PRINCIPAL DE OFERTAS Y DETALLE -->
+    <div class="postulacion-layout-container">
+      
+      <!-- COLUMNA IZQUIERDA: LISTA DE OFERTAS -->
+      <section class="jobs-list-column">
+        <div class="jobs-list-header">
+          <h2 class="jobs-count-text">Ofertas Disponibles en <span class="location-tag">Quito</span></h2>
+          <span class="jobs-badge-count" id="jobs-count-badge">4 ofertas</span>
+        </div>
+
+        <div class="jobs-cards-stack" id="jobs-cards-stack">
+          
+          <!-- OFERTA 1: Front-End Junior (TI) -->
+          <article class="search-job-card active" data-job-id="1" data-category="ti" data-experience="sin-experiencia" data-mode="remoto">
+            <div class="card-top-row">
+              <span class="card-badge no-exp">Sin Experiencia</span>
+              <span class="card-salary">$650 - $750 USD</span>
+            </div>
+            <h3 class="card-job-title">Desarrollador Front-End Junior</h3>
+            <p class="card-company-name">Software Solutions EC</p>
+            <div class="card-meta-row">
+              <span class="meta-tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Quito (Remoto)
+              </span>
+              <span class="meta-tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Tiempo Completo
+              </span>
+              <span class="meta-tag date">Hace 2 días</span>
+            </div>
+            <p class="card-snippet">Buscamos talento joven apasionado por el desarrollo web con HTML5, CSS3 y JavaScript moderno para integrarse a proyectos ágiles.</p>
+            <div class="card-footer-action">
+              <button class="btn-card-apply" onclick="handleCardApplyClick(event, 1)">Postulación Rápida</button>
+            </div>
+          </article>
+
+          <!-- OFERTA 2: Pasantía Diseño UX/UI -->
+          <article class="search-job-card" data-job-id="2" data-category="diseno" data-experience="sin-experiencia" data-mode="hibrido">
+            <div class="card-top-row">
+              <span class="card-badge no-exp">Sin Experiencia</span>
+              <span class="card-salary">$460 USD (Pasantía)</span>
+            </div>
+            <h3 class="card-job-title">Pasantía de Diseño UX/UI</h3>
+            <p class="card-company-name">Corporación Multimedios</p>
+            <div class="card-meta-row">
+              <span class="meta-tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Quito Norte (La Carolina)
+              </span>
+              <span class="meta-tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Híbrido (Horario Flexible)
+              </span>
+              <span class="meta-tag date">Hace 1 día</span>
+            </div>
+            <p class="card-snippet">Colabora en el diseño de interfaces limpias y prototipos en Figma para productos digitales universitarios de alto impacto.</p>
+            <div class="card-footer-action">
+              <button class="btn-card-apply" onclick="handleCardApplyClick(event, 2)">Postulación Rápida</button>
+            </div>
+          </article>
+
+          <!-- OFERTA 3: Asistente Marketing Digital -->
+          <article class="search-job-card" data-job-id="3" data-category="marketing" data-experience="sin-experiencia" data-mode="presencial">
+            <div class="card-top-row">
+              <span class="card-badge no-exp">Sin Experiencia</span>
+              <span class="card-salary">$500 - $580 USD</span>
+            </div>
+            <h3 class="card-job-title">Asistente de Marketing Digital</h3>
+            <p class="card-company-name">Agencia Click Vértice</p>
+            <div class="card-meta-row">
+              <span class="meta-tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Quito (Cumbayá)
+              </span>
+              <span class="meta-tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Presencial / Medio Tiempo
+              </span>
+              <span class="meta-tag date">Hace 3 días</span>
+            </div>
+            <p class="card-snippet">Gestión de publicaciones en redes sociales, apoyo en redacción de copys creativos y monitoreo básico de campañas publicitarias.</p>
+            <div class="card-footer-action">
+              <button class="btn-card-apply" onclick="handleCardApplyClick(event, 3)">Postulación Rápida</button>
+            </div>
+          </article>
+
+          <!-- OFERTA 4: Soporte Técnico Junior -->
+          <article class="search-job-card" data-job-id="4" data-category="soporte" data-experience="sin-experiencia" data-mode="presencial">
+            <div class="card-top-row">
+              <span class="card-badge no-exp">Sin Experiencia</span>
+              <span class="card-salary">$480 - $520 USD</span>
+            </div>
+            <h3 class="card-job-title">Soporte Técnico Junior</h3>
+            <p class="card-company-name">Redes y Sistemas Cía. Ltda.</p>
+            <div class="card-meta-row">
+              <span class="meta-tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Quito Centro Histórico
+              </span>
+              <span class="meta-tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Presencial
+              </span>
+              <span class="meta-tag date">Hace 4 días</span>
+            </div>
+            <p class="card-snippet">Mantenimiento preventivo de computadores, asistencia en instalación de software y configuración básica de impresoras y redes de oficina.</p>
+            <div class="card-footer-action">
+              <button class="btn-card-apply" onclick="handleCardApplyClick(event, 4)">Postulación Rápida</button>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- COLUMNA DERECHA: DETALLE DE LA VACANTE (PANEL DETALLADO) -->
+      <aside class="job-detail-column" id="job-detail-column">
+        
+        <div class="job-detail-card" id="job-detail-card">
+          
+          <!-- Botón de regreso para móviles -->
+          <button class="btn-back-to-list" id="btn-back-to-list" aria-label="Volver a la lista de ofertas">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Volver a la lista</span>
+          </button>
+
+          <!-- Cabecera del Detalle -->
+          <div class="detail-header">
+            <div class="detail-badge-row">
+              <span class="detail-badge" id="detail-badge">Sin Experiencia</span>
+              <span class="detail-salary-tag" id="detail-salary">$650 - $750 USD / mes</span>
+            </div>
+            <h1 class="detail-job-title" id="detail-title">Desarrollador Front-End Junior</h1>
+            <p class="detail-company-text" id="detail-company">Software Solutions EC &bull; Quito, Ecuador</p>
+            
+            <div class="detail-tags-row" id="detail-tags">
+              <span class="tag-pill">Remoto</span>
+              <span class="tag-pill">Jornada Completa</span>
+              <span class="tag-pill">Postulación Inmediata</span>
+            </div>
+          </div>
+
+          <!-- BOTÓN PRINCIPAL DE POSTULACIÓN RÁPIDA (CTA NARANJA #F97316) -->
+          <div class="detail-cta-box">
+            <button class="btn-primary-apply-large" id="btn-detail-apply" onclick="openApplyModalFromDetail()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>Postulación Rápida con 1 Clic</span>
+            </button>
+            <p class="cta-microcopy">No necesitas carta de presentación ni experiencia laboral previa.</p>
+          </div>
+
+          <!-- CONTENIDO INFORMATIVO DEL EMPLEO -->
+          <div class="detail-body-content">
+            
+            <div class="detail-section">
+              <h3 class="detail-section-title">Descripción del Puesto</h3>
+              <p class="detail-paragraph" id="detail-description">
+                Estamos en la búsqueda de un estudiante o recién graduado con entusiasmo por la tecnología para unirse a nuestro equipo de desarrollo en Quito. Tendrás la oportunidad de participar en el diseño y maquetación de aplicaciones web reales, recibiendo acompañamiento constante de ingenieros senior.
+              </p>
+            </div>
+
+            <div class="detail-section">
+              <h3 class="detail-section-title">Responsabilidades Clave</h3>
+              <ul class="detail-checklist" id="detail-responsibilities">
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Maquetar componentes web responsivos utilizando HTML5, CSS3 y JavaScript moderno.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Implementar diseños de interfaz trasladados desde Figma con precisión de píxeles.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Colaborar en la resolución de incidencias y optimización del rendimiento en navegadores.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Participar en reuniones diarias de equipo (Scrum) y sesiones de aprendizaje técnico.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="detail-section">
+              <h3 class="detail-section-title">Requisitos (Enfocados en Estudiantes)</h3>
+              <ul class="detail-checklist" id="detail-requirements">
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Estudiante universitario (a partir de 3er semestre) o recién graduado en Sistemas, Computación o afines.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Conocimientos básicos demostrables en HTML, CSS y fundamentos de programación.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Ganas de aprender y capacidad de trabajo en equipo.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Residencia en Quito o disponibilidad para trabajo remoto en horario ecuatoriano.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="detail-section">
+              <h3 class="detail-section-title">Beneficios que Ofrecemos</h3>
+              <ul class="detail-checklist benefits" id="detail-benefits">
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <span>Flexibilidad de horarios para exámenes y asistencia a clases universitarias.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <span>Mentoría directa 1 a 1 con un desarrollador experimentado.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <span>Certificado oficial de prácticas preprofesionales válido para tu universidad.</span>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <span>Posibilidad real de contratación fija según desempeño al finalizar el periodo.</span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER CONSOLIDADO -->
+  <footer class="main-footer" id="soporte">
+    <div class="footer-grid">
+      <!-- Info Marca -->
+      <div class="footer-info">
+        <div class="logo">
+          <a href="index.html">Talento<span>EC</span></a>
+        </div>
+        <p class="footer-description">La plataforma universitaria líder en Quito para encontrar tu primera experiencia laboral con confianza y sin frustraciones.</p>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+          </a>
+          <a href="#" aria-label="Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Links Rápidos -->
+      <div class="footer-links">
+        <h4 class="footer-heading">Navegación</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="index.html#desarrollo">Desarrollo Personal</a></li>
+          <li><a href="postulacion.html">Ofertas de Empleo</a></li>
+          <li><a href="#">Ayuda y Soporte</a></li>
+        </ul>
+      </div>
+
+      <!-- Links Administrativos -->
+      <div class="footer-links">
+        <h4 class="footer-heading">Legal y Comunidad</h4>
+        <ul>
+          <li><a href="#">Sobre Nosotros</a></li>
+          <li><a href="#">Términos y Condiciones</a></li>
+          <li><a href="#">Política de Privacidad</a></li>
+          <li><a href="#">Para Reclutadores</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2026 TalentoEC. Todos los derechos reservados. Proyecto Universitario - Quito, Ecuador.</p>
+    </div>
+  </footer>
+
+  <!-- MODAL DE POSTULACIÓN RÁPIDA (SIMULADOR INTERACTIVO) -->
+  <div class="modal-backdrop" id="apply-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="modal-close" aria-label="Cerrar modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      
+      <div class="modal-header">
+        <div class="success-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h3 class="modal-title">¡Postulación Exitosa!</h3>
+        <p class="modal-subtitle">Has aplicado a <strong id="modal-job-title">Puesto</strong> en <strong id="modal-company-name">Empresa</strong></p>
+      </div>
+
+      <div class="modal-body">
+        <div class="resume-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>Tu perfil universitario y CV han sido enviados con éxito.</span>
+        </div>
+        <p class="modal-note">El equipo de reclutamiento de la empresa revisará tu postulación y te contactará a tu correo o teléfono registrado.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-close" id="btn-modal-confirm">Listo, seguir explorando</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

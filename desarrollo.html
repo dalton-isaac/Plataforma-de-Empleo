@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desarrollo Personal & CV Builder - TalentoEC Quito</title>
+  <meta name="description" content="Crea tu currículum universitario con plantillas profesionales, resalta tus habilidades con IA y obtén insignias de competencias verificadas sin experiencia previa.">
+  
+  <!-- Google Fonts: Poppins (Títulos) & Inter (Cuerpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-desarrollo">
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="index.html" id="logo-link">Talento<span>EC</span></a>
+      </div>
+      
+      <!-- Botón Menú Hamburguesa para Móviles -->
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú de navegación">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Enlaces de navegación desktop (colapsables en móvil) -->
+      <nav class="nav-menu" id="nav-menu">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link">Inicio</a></li>
+          <li><a href="postulacion.html" class="nav-link">Buscar Empleos</a></li>
+          <li><a href="desarrollo.html" class="nav-link active">Desarrollo Personal</a></li>
+          <li><a href="reclutadores.html" class="nav-link">Reclutadores</a></li>
+          <li><a href="index.html#soporte" class="nav-link">Soporte Técnico</a></li>
+        </ul>
+        <div class="nav-auth">
+          <a href="#" class="btn-secondary-nav">Crear Cuenta</a>
+          <a href="#" class="btn-primary-nav">Iniciar sesión</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL DE DESARROLLO PERSONAL -->
+  <main class="desarrollo-main">
+    
+    <!-- BARRA DE PESTAÑAS PRINCIPALES (FLEXBOX AUTO LAYOUT) -->
+    <section class="desarrollo-tabs-section">
+      <div class="desarrollo-tabs-container">
+        <div class="desarrollo-tabs-track" id="desarrollo-tabs-track">
+          <button class="desarrollo-tab-btn active" data-tab="tab-plantillas">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Plantillas de CV</span>
+          </button>
+          
+          <button class="desarrollo-tab-btn" data-tab="tab-resaltador">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+            <span>Resaltador de Habilidades con IA</span>
+          </button>
+          
+          <button class="desarrollo-tab-btn" data-tab="tab-verificacion">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span>Verificación de Competencias</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECCIÓN 1: SELECTOR DE PLANTILLAS DE CV (FLEXBOX)
+         ========================================================================== -->
+    <section class="desarrollo-content-tab active" id="tab-plantillas">
+      <div class="content-wrapper">
+        
+        <div class="section-intro">
+          <h1 class="page-title">Elige una plantilla para tu CV universitario</h1>
+          <p class="page-subtitle">Plantillas profesionales diseñadas para destacar tus proyectos de aula, habilidades técnicas y voluntariados, reduciendo la frustración al buscar tu primera oportunidad en Quito.</p>
+        </div>
+
+        <div class="templates-flex-container">
+          
+          <!-- Plantilla 1 -->
+          <article class="template-card">
+            <div class="template-preview-wrapper">
+              <img src="assets/svg/template_1.svg" alt="Plantilla Moderna Estudiantil" class="template-svg-img" loading="lazy">
+              <span class="template-popular-badge">Recomendada Estudiantes</span>
+            </div>
+            <div class="template-info">
+              <h3 class="template-name">Moderna Estudiantil</h3>
+              <p class="template-tagline">Ideal para carreras de Sistemas, Software y Computación.</p>
+              <button class="btn-template-edit" onclick="openTemplateEditor('Moderna Estudiantil', 'assets/svg/template_1.svg')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Editar Plantilla</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Plantilla 2 -->
+          <article class="template-card">
+            <div class="template-preview-wrapper">
+              <img src="assets/svg/template_2.svg" alt="Plantilla Minimalista Tech" class="template-svg-img" loading="lazy">
+            </div>
+            <div class="template-info">
+              <h3 class="template-name">Minimalista Tech</h3>
+              <p class="template-tagline">Enfoque limpio en repositorio de GitHub, stack técnico y lógica.</p>
+              <button class="btn-template-edit" onclick="openTemplateEditor('Minimalista Tech', 'assets/svg/template_2.svg')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Editar Plantilla</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Plantilla 3 -->
+          <article class="template-card">
+            <div class="template-preview-wrapper">
+              <img src="assets/svg/template_3.svg" alt="Plantilla Creativa UX/UI" class="template-svg-img" loading="lazy">
+              <span class="template-popular-badge">Diseño & Multimedia</span>
+            </div>
+            <div class="template-info">
+              <h3 class="template-name">Creativa UX/UI</h3>
+              <p class="template-tagline">Resalta enlaces a prototipos de Figma, Behance y procesos visuales.</p>
+              <button class="btn-template-edit" onclick="openTemplateEditor('Creativa UX/UI', 'assets/svg/template_3.svg')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Editar Plantilla</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Plantilla 4 -->
+          <article class="template-card">
+            <div class="template-preview-wrapper">
+              <img src="assets/svg/template_4.svg" alt="Plantilla Ejecutiva Junior" class="template-svg-img" loading="lazy">
+            </div>
+            <div class="template-info">
+              <h3 class="template-name">Ejecutiva Junior</h3>
+              <p class="template-tagline">Excelente para áreas de Administración, Finanzas y Ventas.</p>
+              <button class="btn-template-edit" onclick="openTemplateEditor('Ejecutiva Junior', 'assets/svg/template_4.svg')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Editar Plantilla</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Plantilla 5 -->
+          <article class="template-card">
+            <div class="template-preview-wrapper">
+              <img src="assets/svg/template_5.svg" alt="Plantilla Pasantías & Prácticas" class="template-svg-img" loading="lazy">
+              <span class="template-popular-badge">Pasantías Oficiales</span>
+            </div>
+            <div class="template-info">
+              <h3 class="template-name">Pasantías & Prácticas</h3>
+              <p class="template-tagline">Estructurada para validar horas de prácticas preprofesionales.</p>
+              <button class="btn-template-edit" onclick="openTemplateEditor('Pasantías & Prácticas', 'assets/svg/template_5.svg')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Editar Plantilla</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Plantilla 6 -->
+          <article class="template-card">
+            <div class="template-preview-wrapper">
+              <img src="assets/svg/template_6.svg" alt="Plantilla Académica Universitaria" class="template-svg-img" loading="lazy">
+            </div>
+            <div class="template-info">
+              <h3 class="template-name">Académica Universitaria</h3>
+              <p class="template-tagline">Destaca menciones de honor, cursos extracurriculares e idiomas.</p>
+              <button class="btn-template-edit" onclick="openTemplateEditor('Académica Universitaria', 'assets/svg/template_6.svg')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Editar Plantilla</span>
+              </button>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECCIÓN 2: RESALTADOR DE HABILIDADES CON IA (FLEXBOX)
+         ========================================================================== -->
+    <section class="desarrollo-content-tab" id="tab-resaltador">
+      <div class="content-wrapper">
+        
+        <div class="section-intro">
+          <h2 class="page-title">Resaltador de Habilidades con IA</h2>
+          <p class="page-subtitle">Nuestro motor de inteligencia artificial analiza tu currículum, extrae tus competencias clave y te brinda recomendaciones para aplicar con éxito a ofertas en Quito.</p>
+        </div>
+
+        <div class="ai-highlight-flex-container">
+          
+          <!-- Columna Izquierda: CV Actual y Botón de Subida -->
+          <div class="cv-preview-column">
+            <div class="cv-preview-card">
+              <div class="cv-card-header">
+                <h3 class="cv-card-title">Tu CV Actual</h3>
+                <span class="cv-status-tag">Actualizado hace 2 días</span>
+              </div>
+              <div class="cv-svg-frame">
+                <img src="assets/svg/cv_preview.svg" alt="Previsualización de CV Actual" class="cv-document-img">
+              </div>
+              <div class="cv-actions">
+                <button class="btn-upload-new-cv" onclick="openCvUploadModal()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <span>Subir o Escanear nuevo CV</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Panel de Diagnóstico IA -->
+          <div class="ai-analysis-column">
+            
+            <!-- Habilidades detectadas -->
+            <div class="ai-analysis-block">
+              <div class="block-header">
+                <div class="header-icon-pill">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+                <h3 class="block-title">Habilidades Clave Detectadas</h3>
+              </div>
+              <div class="skills-chips-flex">
+                <span class="skill-chip active">HTML5 &amp; CSS3 Moderno</span>
+                <span class="skill-chip active">JavaScript ES6+</span>
+                <span class="skill-chip active">Figma UI / Auto Layout</span>
+                <span class="skill-chip active">Git &amp; GitHub</span>
+                <span class="skill-chip">Comunicación Asertiva</span>
+                <span class="skill-chip">Resolución de Problemas</span>
+                <span class="skill-chip">Trabajo en Equipo Ágil</span>
+              </div>
+            </div>
+
+            <!-- Certificaciones detectadas -->
+            <div class="ai-analysis-block">
+              <div class="block-header">
+                <div class="header-icon-pill">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <h3 class="block-title">Certificaciones Validadas</h3>
+              </div>
+              <ul class="clean-check-list">
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <div>
+                    <strong>Desarrollo Web Frontend Completo (Udemy - 48 hrs)</strong>
+                    <p class="list-sub">Verificado • Emisión: Junio 2026</p>
+                  </div>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <div>
+                    <strong>Fundamentos de Diseño UX/UI (Google Career Certificate)</strong>
+                    <p class="list-sub">Verificado • Emisión: Abril 2026</p>
+                  </div>
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <div>
+                    <strong>Certificado de Inglés B2 Intermedio Alto (EF SET Score: 58/100)</strong>
+                    <p class="list-sub">Verificado • Emisión: Febrero 2026</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Sugerencias de mejora personalizadas -->
+            <div class="ai-analysis-block suggestion-highlight">
+              <div class="block-header">
+                <div class="header-icon-pill orange">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <h3 class="block-title">Sugerencias de Optimización para Ofertas en Quito</h3>
+              </div>
+              <ul class="clean-check-list suggestions">
+                <li>
+                  <span class="bullet-num">1</span>
+                  <p><strong>Añade enlaces directos a tus repositorios:</strong> Los reclutadores de TI en Quito valoran ver código real en GitHub, incluso si son proyectos semestrales.</p>
+                </li>
+                <li>
+                  <span class="bullet-num">2</span>
+                  <p><strong>Detalla tus materias aprobadas clave:</strong> Especifica que aprobaste <em>Programación Web</em> o <em>Bases de Datos</em> para compensar la falta de experiencia laboral formal.</p>
+                </li>
+                <li>
+                  <span class="bullet-num">3</span>
+                  <p><strong>Indica tu disponibilidad de horarios:</strong> Si estudias en la mañana o noche, menciónalo claramente para aplicar a pasantías de jornada parcial.</p>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECCIÓN 3: VERIFICACIÓN DE HABILIDADES & INSIGNIAS (FLEXBOX)
+         ========================================================================== -->
+    <section class="desarrollo-content-tab" id="tab-verificacion">
+      <div class="content-wrapper">
+        
+        <div class="section-intro">
+          <h2 class="page-title">Verificación de Habilidades y Destrezas</h2>
+          <p class="page-subtitle">Realiza pruebas prácticas de 10 minutos para validar tus conocimientos. Las empresas en Quito dan prioridad en sus postulaciones a perfiles con insignias verificadas.</p>
+        </div>
+
+        <div class="verification-flex-container">
+          
+          <!-- Perfil Universitario del Estudiante -->
+          <div class="profile-card-column">
+            <div class="student-profile-card">
+              <div class="profile-avatar-wrapper">
+                <img src="assets/svg/profile_avatar.svg" alt="Avatar de Mateo Morales" class="profile-avatar-img">
+              </div>
+              <h3 class="student-name">Mateo Alejandro Morales</h3>
+              <p class="student-role">Estudiante de Ingeniería en Software</p>
+              <p class="student-uni">Universidad Central del Ecuador (5to Semestre)</p>
+              
+              <div class="profile-stats-badge">
+                <span class="stat-score">Nivel 3</span>
+                <span class="stat-label">4 Insignias Verificadas</span>
+              </div>
+
+              <div class="profile-verified-tags">
+                <span class="mini-tag">Frontend</span>
+                <span class="mini-tag">Figma</span>
+                <span class="mini-tag">Marketing</span>
+                <span class="mini-tag">Inglés B2</span>
+              </div>
+
+              <button class="btn-profile-edit" onclick="alert('Tu perfil público universitario está activo y visible para reclutadores de Quito.')">
+                <span>Ver Perfil Público</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cuadrícula Flexbox de Insignias -->
+          <div class="badges-showcase-column">
+            <div class="badges-header-row">
+              <h3 class="badges-title">Insignias de Competencias Digitales</h3>
+              <span class="badges-counter-tag">4 Obtenidas de 6</span>
+            </div>
+
+            <div class="badges-flex-grid">
+              
+              <!-- Insignia 1: Frontend -->
+              <div class="badge-item-card verified">
+                <div class="badge-svg-container">
+                  <img src="assets/svg/badge_frontend.svg" alt="Insignia Frontend" class="badge-img">
+                </div>
+                <h4 class="badge-name">Desarrollo Web Frontend</h4>
+                <p class="badge-desc">HTML5 semántico, CSS3 responsivo y fundamentos de JS.</p>
+                <span class="badge-status-pill verified">Completado (95/100)</span>
+              </div>
+
+              <!-- Insignia 2: UX/UI -->
+              <div class="badge-item-card verified">
+                <div class="badge-svg-container">
+                  <img src="assets/svg/badge_uxui.svg" alt="Insignia UX/UI" class="badge-img">
+                </div>
+                <h4 class="badge-name">Diseño UI/UX con Figma</h4>
+                <p class="badge-desc">Auto Layout, sistemas de diseño y prototipado interactivo.</p>
+                <span class="badge-status-pill verified">Completado (90/100)</span>
+              </div>
+
+              <!-- Insignia 3: Marketing -->
+              <div class="badge-item-card verified">
+                <div class="badge-svg-container">
+                  <img src="assets/svg/badge_marketing.svg" alt="Insignia Marketing" class="badge-img">
+                </div>
+                <h4 class="badge-name">Marketing Digital &amp; RRSS</h4>
+                <p class="badge-desc">Gestión de contenidos, métricas y copywriting persuasivo.</p>
+                <span class="badge-status-pill verified">Completado (88/100)</span>
+              </div>
+
+              <!-- Insignia 4: Python (Por Validar) -->
+              <div class="badge-item-card available">
+                <div class="badge-svg-container">
+                  <img src="assets/svg/badge_python.svg" alt="Insignia Python" class="badge-img grayscale">
+                </div>
+                <h4 class="badge-name">Python &amp; Análisis de Datos</h4>
+                <p class="badge-desc">Lógica algorítmica, estructuras y librerías básicas.</p>
+                <button class="btn-take-quiz" onclick="alert('Iniciando evaluación rápida de Python (10 preguntas de selección múltiple)...')">Tomar Test (10 min)</button>
+              </div>
+
+              <!-- Insignia 5: Inglés -->
+              <div class="badge-item-card verified">
+                <div class="badge-svg-container">
+                  <img src="assets/svg/badge_english.svg" alt="Insignia Inglés" class="badge-img">
+                </div>
+                <h4 class="badge-name">Inglés Profesional B2</h4>
+                <p class="badge-desc">Comprensión lectora y comunicación técnica en inglés.</p>
+                <span class="badge-status-pill verified">Completado (85/100)</span>
+              </div>
+
+              <!-- Insignia 6: Soporte TI (Por Validar) -->
+              <div class="badge-item-card available">
+                <div class="badge-svg-container">
+                  <img src="assets/svg/badge_support.svg" alt="Insignia Soporte TI" class="badge-img grayscale">
+                </div>
+                <h4 class="badge-name">Soporte Técnico &amp; Redes</h4>
+                <p class="badge-desc">Diagnóstico de hardware, sistemas operativos y redes LAN.</p>
+                <button class="btn-take-quiz" onclick="alert('Iniciando evaluación práctica de Soporte Técnico TI...')">Tomar Test (10 min)</button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER CONSOLIDADO -->
+  <footer class="main-footer" id="soporte">
+    <div class="footer-grid">
+      <!-- Info Marca -->
+      <div class="footer-info">
+        <div class="logo">
+          <a href="index.html">Talento<span>EC</span></a>
+        </div>
+        <p class="footer-description">La plataforma universitaria líder en Quito para encontrar tu primera experiencia laboral con confianza y sin frustraciones.</p>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+          </a>
+          <a href="#" aria-label="Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Links Rápidos -->
+      <div class="footer-links">
+        <h4 class="footer-heading">Navegación</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="postulacion.html">Ofertas de Empleo</a></li>
+          <li><a href="desarrollo.html">Desarrollo Personal</a></li>
+          <li><a href="#">Ayuda y Soporte</a></li>
+        </ul>
+      </div>
+
+      <!-- Links Administrativos -->
+      <div class="footer-links">
+        <h4 class="footer-heading">Legal y Comunidad</h4>
+        <ul>
+          <li><a href="#">Sobre Nosotros</a></li>
+          <li><a href="#">Términos y Condiciones</a></li>
+          <li><a href="#">Política de Privacidad</a></li>
+          <li><a href="#">Para Reclutadores</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2026 TalentoEC. Todos los derechos reservados. Proyecto Universitario - Quito, Ecuador.</p>
+    </div>
+  </footer>
+
+  <!-- MODAL: EDITOR DE PLANTILLA DE CV -->
+  <div class="modal-backdrop" id="template-modal">
+    <div class="modal-card modal-large">
+      <button class="modal-close-btn" id="modal-template-close" aria-label="Cerrar modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      
+      <div class="modal-header">
+        <h3 class="modal-title">Personalizar Plantilla: <span id="modal-template-name">Moderna Estudiantil</span></h3>
+        <p class="modal-subtitle">Tus datos académicos de la UCE se sincronizan automáticamente con este formato.</p>
+      </div>
+
+      <div class="modal-body template-modal-layout">
+        <div class="template-preview-frame">
+          <img id="modal-template-preview-img" src="assets/svg/template_1.svg" alt="Previsualización de plantilla" class="modal-svg-preview">
+        </div>
+        <div class="template-edit-form">
+          <label class="form-field-label">Nombre Completo
+            <input type="text" value="Mateo Alejandro Morales" class="form-field-input">
+          </label>
+          <label class="form-field-label">Carrera Universitaria
+            <input type="text" value="Ingeniería en Software (5to Semestre)" class="form-field-input">
+          </label>
+          <label class="form-field-label">Enlace a Portafolio / GitHub
+            <input type="text" value="https://github.com/mateomorales-ec" class="form-field-input">
+          </label>
+          <div class="ai-sync-pill">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Habilidades sincronizadas con tus insignias verificadas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-close" id="btn-save-template" onclick="saveTemplateAndNotify()">Guardar y Descargar en PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SUBIDA Y ESCANEO DE CV CON IA -->
+  <div class="modal-backdrop" id="cv-upload-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="modal-cv-close" aria-label="Cerrar modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      
+      <div class="modal-header">
+        <div class="success-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        </div>
+        <h3 class="modal-title">Subir y Escanear CV con IA</h3>
+        <p class="modal-subtitle">Sube tu archivo PDF o Word para extraer automáticamente tus competencias y optimizar tu postulación.</p>
+      </div>
+
+      <div class="modal-body">
+        <div class="upload-dropzone" id="upload-dropzone">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <p><strong>Arrastra tu CV aquí</strong> o haz clic para examinar</p>
+          <span class="dropzone-hint">Formatos soportados: PDF, DOCX (Máx. 10MB)</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-close" onclick="simulateAiScan()">Analizar con Inteligencia Artificial</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

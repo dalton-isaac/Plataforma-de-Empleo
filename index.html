@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentoEC - Tu Primer Empleo y Pasantías en Quito Sin Experiencia</title>
+  <meta name="description" content="Encuentra pasantías y ofertas de empleo en Quito sin experiencia previa. Postulación Rápida en un clic para estudiantes y jóvenes profesionales de 18 a 30 años.">
+  
+  <!-- Google Fonts: Poppins (Títulos) & Inter (Cuerpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="#" id="logo-link">Talento<span>EC</span></a>
+      </div>
+      
+      <!-- Botón Menú Hamburguesa para Móviles -->
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú de navegación">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Enlaces de navegación desktop (colapsables en móvil) -->
+      <nav class="nav-menu" id="nav-menu">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link active">Inicio</a></li>
+          <li><a href="postulacion.html" class="nav-link">Buscar Empleos</a></li>
+          <li><a href="desarrollo.html" class="nav-link">Desarrollo Personal</a></li>
+          <li><a href="reclutadores.html" class="nav-link">Reclutadores</a></li>
+          <li><a href="#soporte" class="nav-link">Soporte Técnico</a></li>
+        </ul>
+        <div class="nav-auth">
+          <a href="#" class="btn-secondary-nav">Crear Cuenta</a>
+          <a href="#" class="btn-primary-nav">Iniciar sesión</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="hero-bg" style="background-image: url('assets/header_hero_students.png');">
+      <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="hero-content">
+      <h1 class="hero-title">Encuentra tu primer empleo o pasantía en Quito</h1>
+      <p class="hero-subtitle">Conectamos a estudiantes y jóvenes con ofertas reales que no requieren experiencia previa. ¡Aplica hoy mismo!</p>
+      
+      <!-- BARRA DE BÚSQUEDA AUTO LAYOUT -->
+      <div class="search-container">
+        <form class="search-form" id="search-form" onsubmit="event.preventDefault();">
+          <div class="search-input-group">
+            <span class="input-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input type="text" placeholder="Buscar Empleo (ej. Desarrollador, Diseño, Ventas)" aria-label="Buscar Empleo" id="search-job">
+          </div>
+          
+          <div class="search-input-group">
+            <span class="input-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </span>
+            <input type="text" value="Quito, Ecuador" placeholder="Ciudad o país" aria-label="Ciudad o país" id="search-location">
+          </div>
+          
+          <button type="submit" class="btn-search" aria-label="Buscar">
+            <span>Buscar</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <div class="hero-actions">
+        <a href="postulacion.html" class="btn-hero-primary">Postúlate aquí</a>
+        <a href="reclutadores.html" class="btn-hero-secondary">Recluta aquí</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DESARROLLO (PROMO) -->
+  <section class="promo-section" id="desarrollo">
+    <div class="promo-container">
+      <div class="promo-image-container">
+        <img src="assets/career_growth_stairs.png" alt="Crecimiento Profesional" class="promo-image" loading="lazy">
+      </div>
+      
+      <div class="promo-text-container">
+        <h2 class="promo-title">¡Potencia tu Desarrollo Profesional!</h2>
+        <p class="promo-description">Verifica tus habilidades, personaliza tu CV con inteligencia artificial o recibe mentorías personalizadas de profesionales de tu área para destacar en las postulaciones.</p>
+        <a href="desarrollo.html" class="btn-promo-cta">
+          <span>Inicia tu camino</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 8 16 12 12 16"></polyline>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN CARRUSEL DE EMPLEOS (OFERTAS) -->
+  <section class="jobs-section" id="ofertas">
+    <div class="section-header">
+      <h2 class="section-title">Postulación Rápida</h2>
+      <p class="section-subtitle">Aplica con un solo clic a ofertas seleccionadas de empresas que buscan talento joven y no exigen experiencia previa.</p>
+    </div>
+
+    <!-- CARROUSEL INTERACTIVO -->
+    <div class="carousel-outer-wrapper">
+      <button class="carousel-control prev" id="carousel-prev" aria-label="Ver oferta anterior">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      
+      <div class="carousel-container" id="carousel-container">
+        <!-- Tarjeta 1 (UX/UI Pasantía) -->
+        <div class="job-card" data-job-id="1">
+          <div class="job-card-header">
+            <span class="badge-no-experience">Sin Experiencia</span>
+            <span class="job-salary">$460 USD / mes</span>
+          </div>
+          <div class="job-card-body">
+            <h3 class="job-title">Pasantía de Diseño UX/UI</h3>
+            <p class="job-company">Corporación Multimedios</p>
+            <div class="job-meta">
+              <span class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Quito Norte (La Carolina)
+              </span>
+              <span class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Híbrido (Flexible clases)
+              </span>
+            </div>
+            <p class="job-description">Colabora en el rediseño de nuestras plataformas educativas digitales. Ideal para estudiantes de Diseño, Sistemas o afines.</p>
+          </div>
+          <div class="job-card-footer">
+            <button class="btn-quick-apply" onclick="openApplyModal(1, 'Pasantía de Diseño UX/UI', 'Corporación Multimedios')">Postulación Rápida</button>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2 (Web Dev Jr) - Destacada -->
+        <div class="job-card featured" data-job-id="2">
+          <div class="job-card-header">
+            <span class="badge-no-experience highlight">Sin Experiencia</span>
+            <span class="job-salary">$650 USD / mes</span>
+          </div>
+          <div class="job-card-body">
+            <h3 class="job-title">Desarrollador Front-End Junior</h3>
+            <p class="job-company">Software Solutions EC</p>
+            <div class="job-meta">
+              <span class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Remoto (Base Quito)
+              </span>
+              <span class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Remoto Completo
+              </span>
+            </div>
+            <p class="job-description">Buscamos talento junior entusiasta de HTML, CSS y JS. Ofrecemos capacitación técnica intensiva pagada e incorporación inmediata.</p>
+          </div>
+          <div class="job-card-footer">
+            <button class="btn-quick-apply" onclick="openApplyModal(2, 'Desarrollador Front-End Junior', 'Software Solutions EC')">Postulación Rápida</button>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3 (Asistente Marketing) -->
+        <div class="job-card" data-job-id="3">
+          <div class="job-card-header">
+            <span class="badge-no-experience">Sin Experiencia</span>
+            <span class="job-salary">$500 USD / mes</span>
+          </div>
+          <div class="job-card-body">
+            <h3 class="job-title">Asistente de Marketing Digital</h3>
+            <p class="job-company">Agencia Click Vértice</p>
+            <div class="job-meta">
+              <span class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Quito (Cumbayá)
+              </span>
+              <span class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Presencial (Part-time disp.)
+              </span>
+            </div>
+            <p class="job-description">Administración de redes sociales, creación de contenido multimedia básico e informes de métricas mensuales. Indispensable proactividad.</p>
+          </div>
+          <div class="job-card-footer">
+            <button class="btn-quick-apply" onclick="openApplyModal(3, 'Asistente de Marketing Digital', 'Agencia Click Vértice')">Postulación Rápida</button>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4 (Soporte TI Jr) -->
+        <div class="job-card" data-job-id="4">
+          <div class="job-card-header">
+            <span class="badge-no-experience">Sin Experiencia</span>
+            <span class="job-salary">$480 USD / mes</span>
+          </div>
+          <div class="job-card-body">
+            <h3 class="job-title">Soporte Técnico Junior</h3>
+            <p class="job-company">Redes y Sistemas Cía. Ltda.</p>
+            <div class="job-meta">
+              <span class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Quito Centro Histórico
+              </span>
+              <span class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Presencial
+              </span>
+            </div>
+            <p class="job-description">Apoyo en mantenimiento preventivo de equipos de cómputo, instalación de software y configuración de redes internas de oficinas.</p>
+          </div>
+          <div class="job-card-footer">
+            <button class="btn-quick-apply" onclick="openApplyModal(4, 'Soporte Técnico Junior', 'Redes y Sistemas Cía. Ltda.')">Postulación Rápida</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-control next" id="carousel-next" aria-label="Ver siguiente oferta">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- SECCIÓN EMPRESAS AFILIADAS -->
+  <section class="brands-section">
+    <div class="brands-container">
+      <h3 class="brands-title">Empresas Afiliadas</h3>
+      <div class="brands-slider-wrapper">
+        <button class="brands-control prev" id="brands-prev" aria-label="Ver marcas anteriores">&lt;</button>
+        <div class="brands-track-container">
+          <div class="brands-track" id="brands-track">
+            <!-- Logos de empresas en formato de texto estilizado o SVG -->
+            <div class="brand-item"><span>Intel</span></div>
+            <div class="brand-item"><span>Cisco</span></div>
+            <div class="brand-item"><span>Nvidia</span></div>
+            <div class="brand-item"><span>Amazon</span></div>
+            <div class="brand-item"><span>Google</span></div>
+            <div class="brand-item"><span>Microsoft</span></div>
+          </div>
+        </div>
+        <button class="brands-control next" id="brands-next" aria-label="Ver siguientes marcas">&gt;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER CONSOLIDADO -->
+  <footer class="main-footer" id="soporte">
+    <div class="footer-grid">
+      <!-- Info Marca -->
+      <div class="footer-info">
+        <div class="logo">
+          <a href="#">Talento<span>EC</span></a>
+        </div>
+        <p class="footer-description">La plataforma universitaria líder en Quito para encontrar tu primera experiencia laboral con confianza.</p>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+          </a>
+          <a href="#" aria-label="Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Links Rápidos -->
+      <div class="footer-links">
+        <h4 class="footer-heading">Navegación</h4>
+        <ul>
+          <li><a href="#">Inicio</a></li>
+          <li><a href="#desarrollo">Desarrollo Personal</a></li>
+          <li><a href="#ofertas">Ofertas de Empleo</a></li>
+          <li><a href="#">Ayuda y Soporte</a></li>
+        </ul>
+      </div>
+
+      <!-- Links Administrativos -->
+      <div class="footer-links">
+        <h4 class="footer-heading">Legal y Comunidad</h4>
+        <ul>
+          <li><a href="#">Sobre Nosotros</a></li>
+          <li><a href="#">Términos y Condiciones</a></li>
+          <li><a href="#">Política de Privacidad</a></li>
+          <li><a href="#">Para Reclutadores</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2026 TalentoEC. Todos los derechos reservados. Proyecto Universitario - Quito, Ecuador.</p>
+    </div>
+  </footer>
+
+  <!-- MODAL DE POSTULACIÓN RÁPIDA (SIMULADOR INTERACTIVO) -->
+  <div class="modal-backdrop" id="apply-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="modal-close" aria-label="Cerrar modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      
+      <div class="modal-header">
+        <div class="success-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h3 class="modal-title">¡Postulación Exitosa!</h3>
+        <p class="modal-subtitle">Has aplicado a <strong id="modal-job-title">Puesto</strong> en <strong id="modal-company-name">Empresa</strong></p>
+      </div>
+
+      <div class="modal-body">
+        <div class="resume-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>Tu perfil universitario y CV han sido enviados.</span>
+        </div>
+        <p class="modal-note">La empresa se contactará directamente a tu correo registrado o WhatsApp si tu perfil cumple con los requerimientos de la oferta.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-close" id="btn-modal-confirm">Listo, seguir buscando</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
