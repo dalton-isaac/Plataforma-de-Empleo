@@ -88,13 +88,30 @@ class OfertaEmpleo(db.Model):
     ubicacion_exacta = db.Column(db.String(255), nullable=True)
     funciones = db.Column(db.Text, nullable=True)
     requisitos_tecnicos = db.Column(db.Text, nullable=True)
+    activo = db.Column(db.Boolean, default=True, nullable=False)
 
     # Relaciones
     postulaciones = db.relationship("Postulacion", backref="oferta", lazy=True)
     favoritos = db.relationship("Favorito", backref="oferta", lazy=True)
 
+    def to_dict(self):
+        """Retorna los datos de la oferta en formato diccionario."""
+        return {
+            "id_oferta": self.id_oferta,
+            "id_empresa": self.id_empresa,
+            "empresa": self.empresa.nombre_empresa if self.empresa else "Empresa",
+            "titulo": self.titulo,
+            "salario": float(self.salario) if self.salario else None,
+            "modalidad": self.modalidad,
+            "anos_experiencia": self.anos_experiencia,
+            "ubicacion_exacta": self.ubicacion_exacta,
+            "funciones": self.funciones,
+            "requisitos_tecnicos": self.requisitos_tecnicos,
+            "activo": self.activo,
+        }
+
     def __repr__(self):
-        return f"<OfertaEmpleo {self.titulo}>"
+        return f"<OfertaEmpleo {self.titulo} (Activo: {self.activo})>"
 
 
 class ResenaEmpresa(db.Model):

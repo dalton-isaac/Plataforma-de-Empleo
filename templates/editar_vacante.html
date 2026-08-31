@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Editar vacante de empleo en TalentoEC.">
+  <title>Editar Vacante | TalentoEC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Header / Barra de Navegación -->
+  <header class="header">
+    <div class="header__container">
+      <a class="header__logo" href="{{ url_for('inicio') }}" aria-label="TalentoEC, inicio">
+        <span>Talento</span><b>EC</b>
+      </a>
+      <nav class="nav" aria-label="Navegación principal">
+        <a class="nav__link" href="{{ url_for('inicio') }}">Inicio</a>
+        <a class="nav__link" href="{{ url_for('postulacion') }}">Bolsa de Empleo</a>
+        <a class="nav__link" href="{{ url_for('desarrollo') }}">Desarrollo Personal</a>
+        <a class="nav__link nav__link--active" href="{{ url_for('reclutadores') }}">Reclutadores</a>
+      </nav>
+      <div class="header__actions">
+        <a class="btn btn--outline" href="{{ url_for('reclutadores') }}">← Volver al Portal</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
+    <!-- Mensajes Flash -->
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% if mensajes %}
+        <div class="flash-messages" style="margin-bottom: 24px;">
+          {% for categoria, texto in mensajes %}
+            <div class="alert alert-{{ categoria }}" style="padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; font-family: var(--font-family-body); font-weight: 500;">
+              {{ texto }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="card" style="background: #ffffff; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-lg); padding: 32px; box-shadow: var(--shadow-md);">
+      <div style="margin-bottom: 24px; border-bottom: 1px solid var(--color-neutral-light); padding-bottom: 16px;">
+        <span class="badge" style="background-color: var(--color-primary-light); color: var(--color-primary); font-size: 0.85rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px;">
+          {{ oferta.empresa.nombre_empresa if oferta.empresa else 'Empresa' }}
+        </span>
+        <h1 style="font-family: var(--font-family-title); font-size: 1.75rem; color: var(--color-neutral-dark); font-weight: 600;">
+          ✏️ Editar Vacante
+        </h1>
+        <p style="color: var(--color-neutral-muted); font-size: 0.95rem; margin-top: 4px;">
+          ID Oferta: #{{ oferta.id_oferta }} · Estado actual: <strong>{{ 'Activa' if oferta.activo else 'Pausada / Inactiva' }}</strong>
+        </p>
+      </div>
+
+      <form method="POST" action="{{ url_for('editar_vacante', oferta_id=oferta.id_oferta) }}" style="display: flex; flex-direction: column; gap: 20px;">
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--color-neutral-dark);">
+            Título del Puesto / Cargo *
+          </label>
+          <input type="text" name="titulo" value="{{ oferta.titulo }}" required
+                 style="width: 100%; padding: 12px 16px; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-sm); font-family: var(--font-family-body); font-size: 1rem;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--color-neutral-dark);">
+              Salario Ofrecido ($ USD)
+            </label>
+            <input type="number" step="0.01" name="salario" value="{{ oferta.salario if oferta.salario is not none else '' }}"
+                   style="width: 100%; padding: 12px 16px; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-sm); font-family: var(--font-family-body); font-size: 1rem;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--color-neutral-dark);">
+              Años de Experiencia Mínima
+            </label>
+            <input type="number" name="anos_experiencia" value="{{ oferta.anos_experiencia if oferta.anos_experiencia is not none else 0 }}" min="0" max="10"
+                   style="width: 100%; padding: 12px 16px; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-sm); font-family: var(--font-family-body); font-size: 1rem;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--color-neutral-dark);">
+              Modalidad de Trabajo
+            </label>
+            <select name="modalidad" style="width: 100%; padding: 12px 16px; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-sm); font-family: var(--font-family-body); font-size: 1rem;">
+              <option value="Híbrido (Flexible clases)" {% if 'Híbrido' in oferta.modalidad %}selected{% endif %}>Híbrido (Flexible)</option>
+              <option value="Remoto Completo" {% if 'Remoto' in oferta.modalidad %}selected{% endif %}>Remoto Completo</option>
+              <option value="Presencial" {% if 'Presencial' in oferta.modalidad %}selected{% endif %}>Presencial</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--color-neutral-dark);">
+              Ubicación en Quito
+            </label>
+            <input type="text" name="ubicacion_exacta" value="{{ oferta.ubicacion_exacta if oferta.ubicacion_exacta else '' }}"
+                   style="width: 100%; padding: 12px 16px; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-sm); font-family: var(--font-family-body); font-size: 1rem;">
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--color-neutral-dark);">
+            Funciones y Responsabilidades
+          </label>
+          <textarea name="funciones" rows="3"
+                    style="width: 100%; padding: 12px 16px; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-sm); font-family: var(--font-family-body); font-size: 0.95rem;">{{ oferta.funciones if oferta.funciones else '' }}</textarea>
+        </div>
+
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--color-neutral-dark);">
+            Requisitos Técnicos
+          </label>
+          <textarea name="requisitos_tecnicos" rows="3"
+                    style="width: 100%; padding: 12px 16px; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-sm); font-family: var(--font-family-body); font-size: 0.95rem;">{{ oferta.requisitos_tecnicos if oferta.requisitos_tecnicos else '' }}</textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 10px;">
+          <button type="submit" class="btn btn--primary" style="flex: 1; padding: 14px; font-size: 1rem; font-weight: 600; background-color: var(--color-primary); color: #ffffff; border-radius: var(--border-radius-sm); cursor: pointer;">
+            💾 Guardar Cambios
+          </button>
+          <a href="{{ url_for('reclutadores') }}" class="btn btn--outline" style="padding: 14px 20px; font-size: 1rem; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-sm); color: var(--color-neutral-dark); text-align: center;">
+            Cancelar
+          </a>
+        </div>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

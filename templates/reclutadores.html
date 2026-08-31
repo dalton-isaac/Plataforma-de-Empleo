@@ -52,6 +52,22 @@
   <!-- CONTENEDOR PRINCIPAL RECLUTADORES -->
   <main class="reclutadores-main">
 
+    <!-- Mensajes Flash de Notificación (Semana 2) -->
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% if mensajes %}
+        <div class="content-wrapper" style="margin-top: 20px;">
+          <div class="flash-messages">
+            {% for categoria, texto in mensajes %}
+              <div class="alert alert-{{ categoria }}" style="padding: 14px 20px; border-radius: var(--border-radius-md); margin-bottom: 16px; font-family: var(--font-family-body); font-weight: 500; display: flex; align-items: center; justify-content: space-between; {% if categoria == 'success' %}background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0;{% elif categoria == 'warning' %}background-color: #fef9c3; color: #854d0e; border: 1px solid #fef08a;{% else %}background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca;{% endif %}">
+                <span>{{ texto }}</span>
+                <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit; line-height: 1;">&times;</button>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <!-- ==========================================================================
          SECCIÓN 1: HERO / BANNER DE EMPRESAS (FLEXBOX)
          ========================================================================== -->
@@ -67,9 +83,9 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               <span>Publica tu Vacante aquí</span>
             </a>
-            <a href="#kanban-section" class="btn-hero-kanban">
+            <a href="#gestion-vacantes" class="btn-hero-kanban">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
-              <span>Ver Candidatos</span>
+              <span>Gestionar Vacantes</span>
             </a>
           </div>
         </div>
@@ -102,25 +118,34 @@
                 <span class="required-notice">* Campos requeridos</span>
               </div>
 
-              <form id="job-publish-form" class="recruiter-form" onsubmit="event.preventDefault(); handleJobPublish();">
+              <form id="job-publish-form" class="recruiter-form" method="POST" action="/vacantes/nueva">
                 
                 <!-- Título del Cargo -->
                 <div class="form-group">
                   <label for="input-job-title" class="form-label">Título del Cargo *</label>
-                  <input type="text" id="input-job-title" class="form-input" value="Desarrollador Front-End Junior" placeholder="Ej. Pasantía en Diseño UX/UI, Asistente de Marketing" required>
+                  <input type="text" id="input-job-title" name="titulo" class="form-input" value="Desarrollador Front-End Junior" placeholder="Ej. Pasantía en Diseño UX/UI, Asistente de Marketing" required>
                 </div>
 
                 <!-- Empresa, Modalidad y Ubicación -->
                 <div class="form-row-two">
                   <div class="form-group">
-                    <label for="input-company-name" class="form-label">Nombre de la Empresa *</label>
-                    <input type="text" id="input-company-name" class="form-input" value="Software Solutions EC" placeholder="Nombre de tu empresa" required>
+                    <label for="input-company-name" class="form-label">Empresa / Reclutador *</label>
+                    <select id="select-company" name="id_empresa" class="form-select" style="width:100%; padding:10px; border-radius:6px; border:1px solid #cbd5e1;">
+                      {% if empresas %}
+                        {% for emp in empresas %}
+                          <option value="{{ emp.id_empresa }}">{{ emp.nombre_empresa }}</option>
+                        {% endfor %}
+                      {% else %}
+                        <option value="1">Software Solutions EC</option>
+                        <option value="2">Corporación Multimedios</option>
+                      {% endif %}
+                    </select>
                   </div>
                   <div class="form-group">
                     <label for="select-modality" class="form-label">Modalidad de Trabajo *</label>
-                    <select id="select-modality" class="form-select">
-                      <option value="Remoto" selected>Remoto Completo</option>
-                      <option value="Híbrido">Híbrido (2-3 días presencial)</option>
+                    <select id="select-modality" name="modalidad" class="form-select">
+                      <option value="Remoto Completo" selected>Remoto Completo</option>
+                      <option value="Híbrido (Flexible clases)">Híbrido (Flexible clases)</option>
                       <option value="Presencial">Presencial (Oficina Quito)</option>
                     </select>
                   </div>
@@ -128,51 +153,36 @@
 
                 <div class="form-group">
                   <label for="input-location" class="form-label">Ubicación en Quito *</label>
-                  <input type="text" id="input-location" class="form-input" value="Quito Norte (Sector La Carolina)" placeholder="Sector de Quito (ej. Cumbayá, Centro, Sur)">
+                  <input type="text" id="input-location" name="ubicacion_exacta" class="form-input" value="Quito Norte (Sector La Carolina)" placeholder="Sector de Quito (ej. Cumbayá, Centro, Sur)">
                 </div>
 
                 <!-- Rango Salarial (USD) -->
                 <div class="form-row-two">
                   <div class="form-group">
-                    <label for="input-salary-min" class="form-label">Salario Mínimo ($ USD/mes) *</label>
-                    <input type="number" id="input-salary-min" class="form-input" value="650" min="460" max="2000" required>
+                    <label for="input-salary-min" class="form-label">Salario Ofrecido ($ USD/mes) *</label>
+                    <input type="number" id="input-salary-min" name="salario" class="form-input" value="650" min="460" max="3000" step="10" required>
                   </div>
                   <div class="form-group">
-                    <label for="input-salary-max" class="form-label">Salario Máximo ($ USD/mes) *</label>
-                    <input type="number" id="input-salary-max" class="form-input" value="750" min="460" max="3000" required>
+                    <label for="input-experience" class="form-label">Experiencia Requerida (Años)</label>
+                    <input type="number" id="input-experience" name="anos_experiencia" class="form-input" value="0" min="0" max="10" required>
                   </div>
                 </div>
 
                 <!-- Descripción del Puesto -->
                 <div class="form-group">
-                  <label for="input-description" class="form-label">Descripción del Puesto *</label>
-                  <textarea id="input-description" class="form-textarea" rows="4" placeholder="Describe las actividades principales y el ambiente de aprendizaje...">Buscamos un estudiante o recién graduado con entusiasmo por la tecnología para unirse a nuestro equipo de desarrollo en Quito. Tendrás mentoría directa y flexibilidad de horarios para tus clases universitarias.</textarea>
+                  <label for="input-description" class="form-label">Funciones y Descripción *</label>
+                  <textarea id="input-description" name="funciones" class="form-textarea" rows="4" placeholder="Describe las actividades principales y el ambiente de aprendizaje...">Buscamos un estudiante o recién graduado con entusiasmo por la tecnología para unirse a nuestro equipo de desarrollo en Quito. Tendrás mentoría directa y flexibilidad de horarios para tus clases universitarias.</textarea>
                 </div>
 
                 <!-- Requisitos y Flexibilidad -->
                 <div class="form-group">
-                  <label for="input-requirements" class="form-label">Requisitos (Enfoque Universitario) *</label>
-                  <textarea id="input-requirements" class="form-textarea" rows="3" placeholder="Requisitos académicos...">Estudiante activo de Ingeniería en Sistemas/Software (3er semestre en adelante) o egresado técnico. Conocimientos básicos en HTML/CSS y ganas de aprender.</textarea>
-                </div>
-
-                <!-- Habilidades Clave -->
-                <div class="form-group">
-                  <label class="form-label">Habilidades Clave Solicitadas</label>
-                  <div class="skills-selector-chips" id="skills-selector">
-                    <button type="button" class="skill-toggle-chip active">HTML5 / CSS3</button>
-                    <button type="button" class="skill-toggle-chip active">JavaScript</button>
-                    <button type="button" class="skill-toggle-chip active">Figma</button>
-                    <button type="button" class="skill-toggle-chip">Git / GitHub</button>
-                    <button type="button" class="skill-toggle-chip">Trabajo en Equipo</button>
-                  </div>
+                  <label for="input-requirements" class="form-label">Requisitos Técnicos (Enfoque Universitario) *</label>
+                  <textarea id="input-requirements" name="requisitos_tecnicos" class="form-textarea" rows="3" placeholder="Requisitos académicos...">Estudiante activo de Ingeniería en Sistemas/Software (3er semestre en adelante) o egresado técnico. Conocimientos básicos en HTML/CSS y ganas de aprender.</textarea>
                 </div>
 
                 <!-- Botones de Acción -->
                 <div class="form-action-buttons">
-                  <button type="button" class="btn-save-draft" onclick="alert('Borrador guardado exitosamente en tu panel de empresa.')">
-                    <span>Guardar Borrador</span>
-                  </button>
-                  <button type="submit" class="btn-submit-job">
+                  <button type="submit" class="btn-submit-job" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     <span>Publicar Vacante</span>
                   </button>
@@ -265,7 +275,97 @@
     </section>
 
     <!-- ==========================================================================
-         SECCIÓN 3: TABLERO KANBAN DE CANDIDATOS (FLEXBOX)
+         SECCIÓN 3: GESTIÓN DE VACANTES PUBLICADAS (CRUD - SEMANA 2)
+         ========================================================================== -->
+    <section class="recruiter-management-section" id="gestion-vacantes" style="padding: 40px 0; background-color: var(--color-secondary);">
+      <div class="content-wrapper">
+        <div class="section-intro" style="margin-bottom: 24px;">
+          <h2 class="page-title">Gestión de Vacantes de tu Empresa</h2>
+          <p class="page-subtitle">Administra el estado de tus ofertas publicadas en PostgreSQL: edita requisitos, salarios o pausa/reactiva vacantes en tiempo real.</p>
+        </div>
+
+        <div class="vacancies-table-card" style="background: #ffffff; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-lg); overflow: hidden; box-shadow: var(--shadow-sm);">
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: var(--font-family-body);">
+              <thead>
+                <tr style="background-color: #f1f5f9; border-bottom: 2px solid var(--color-neutral-light); color: var(--color-neutral-dark); font-weight: 600; font-size: 0.9rem;">
+                  <th style="padding: 14px 18px;">ID</th>
+                  <th style="padding: 14px 18px;">Cargo / Vacante</th>
+                  <th style="padding: 14px 18px;">Empresa</th>
+                  <th style="padding: 14px 18px;">Salario ($ USD)</th>
+                  <th style="padding: 14px 18px;">Modalidad</th>
+                  <th style="padding: 14px 18px;">Estado</th>
+                  <th style="padding: 14px 18px; text-align: right;">Acciones CRUD</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if ofertas %}
+                  {% for o in ofertas %}
+                    <tr style="border-bottom: 1px solid #e2e8f0; font-size: 0.95rem; {% if not o.activo %}background-color: #f8fafc; opacity: 0.75;{% endif %}">
+                      <td style="padding: 14px 18px; font-weight: 600; color: var(--color-neutral-muted);">#{{ o.id_oferta }}</td>
+                      <td style="padding: 14px 18px; font-weight: 600; color: var(--color-neutral-dark);">
+                        {{ o.titulo }}
+                        {% if o.anos_experiencia == 0 %}
+                          <span style="display: inline-block; font-size: 0.75rem; background-color: #ffedd5; color: #c2410c; padding: 2px 6px; border-radius: 12px; margin-left: 6px; font-weight: 600;">Sin Exp</span>
+                        {% endif %}
+                      </td>
+                      <td style="padding: 14px 18px; color: var(--color-neutral-dark);">{{ o.empresa.nombre_empresa if o.empresa else 'Empresa' }}</td>
+                      <td style="padding: 14px 18px; font-weight: 600; color: var(--color-primary);">${{ "%.2f"|format(o.salario) if o.salario else '460.00' }}</td>
+                      <td style="padding: 14px 18px; color: var(--color-neutral-muted);">{{ o.modalidad }}</td>
+                      <td style="padding: 14px 18px;">
+                        {% if o.activo %}
+                          <span style="display: inline-block; font-size: 0.8rem; background-color: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-weight: 600;">● Activa</span>
+                        {% else %}
+                          <span style="display: inline-block; font-size: 0.8rem; background-color: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 12px; font-weight: 600;">⏸️ Pausada</span>
+                        {% endif %}
+                      </td>
+                      <td style="padding: 14px 18px; text-align: right;">
+                        <div style="display: inline-flex; gap: 8px; justify-content: flex-end;">
+                          <!-- Botón Editar -->
+                          <a href="{{ url_for('editar_vacante', oferta_id=o.id_oferta) }}"
+                             style="padding: 6px 12px; font-size: 0.85rem; border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-block; transition: all 0.2s;"
+                             title="Editar Vacante">
+                            ✏️ Editar
+                          </a>
+
+                          <!-- Botón Desactivar / Reactivar (Soft Delete) -->
+                          {% if o.activo %}
+                            <form method="POST" action="{{ url_for('desactivar_vacante', oferta_id=o.id_oferta) }}" style="display: inline;" onsubmit="return confirm('¿Seguro que deseas pausar/desactivar esta vacante del catálogo público?');">
+                              <button type="submit"
+                                      style="padding: 6px 12px; font-size: 0.85rem; border: 1px solid #ef4444; color: #ef4444; background: none; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;"
+                                      title="Pausar / Desactivar del catálogo">
+                                ⏸️ Desactivar
+                              </button>
+                            </form>
+                          {% else %}
+                            <form method="POST" action="{{ url_for('reactivar_vacante', oferta_id=o.id_oferta) }}" style="display: inline;">
+                              <button type="submit"
+                                      style="padding: 6px 12px; font-size: 0.85rem; border: 1px solid #16a34a; color: #16a34a; background: none; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;"
+                                      title="Reactivar en catálogo">
+                                ▶️ Reactivar
+                              </button>
+                            </form>
+                          {% endif %}
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="7" style="padding: 24px; text-align: center; color: var(--color-neutral-muted);">
+                      No hay vacantes registradas todavía. ¡Publica tu primera vacante en el formulario superior!
+                    </td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECCIÓN 4: TABLERO KANBAN DE CANDIDATOS (FLEXBOX)
          ========================================================================== -->
     <section class="kanban-section" id="kanban-section">
       <div class="content-wrapper">

@@ -7,7 +7,17 @@ y define las rutas para las vistas HTML y las APIs REST.
 """
 
 from datetime import date
-from flask import Flask, render_template, send_from_directory, jsonify, request, session
+from flask import (
+    Flask,
+    render_template,
+    send_from_directory,
+    jsonify,
+    request,
+    session,
+    redirect,
+    url_for,
+    flash,
+)
 from config import Config
 from models import (
     db,
@@ -36,16 +46,16 @@ db.init_app(app)
 @app.route("/")
 @app.route("/index.html")
 def inicio():
-    """Página principal: Landing page con ofertas destacadas."""
-    ofertas = OfertaEmpleo.query.all()
+    """Página principal: Landing page con ofertas destacadas activas."""
+    ofertas = OfertaEmpleo.query.filter_by(activo=True).all()
     return render_template("index.html", ofertas=ofertas)
 
 
 @app.route("/postulacion")
 @app.route("/postulacion.html")
 def postulacion():
-    """Página de búsqueda de empleos y postulación rápida."""
-    ofertas = OfertaEmpleo.query.all()
+    """Página de búsqueda de empleos y postulación rápida (solo activas)."""
+    ofertas = OfertaEmpleo.query.filter_by(activo=True).all()
     return render_template("postulacion.html", ofertas=ofertas)
 
 
@@ -59,82 +69,135 @@ def desarrollo():
 @app.route("/reclutadores")
 @app.route("/reclutadores.html")
 def reclutadores():
-    """Página de portal de empresas y tablero de reclutadores."""
-    return render_template("reclutadores.html")
+    """Página de portal de empresas y tablero de reclutadores con listado de vacantes."""
+    ofertas = OfertaEmpleo.query.all()
+    empresas = Empresa.query.all()
+    return render_template("reclutadores.html", ofertas=ofertas, empresas=empresas)
 
 
 # ══════════════════════════════════════════════════════════════
 # RUTAS DE AUTENTICACIÓN (LOGIN, REGISTRO, SESIÓN)
 # ══════════════════════════════════════════════════════════════
 
+@app.route("/registro", methods=["GET", "POST"])
 @app.route("/api/registro", methods=["POST"])
 def registro():
     """Registra una nueva cuenta de candidato y crea la sesión automáticamente."""
-    data = request.get_json() or {}
-    nombre = data.get("nombre", "").strip()
-    correo = data.get("correo", "").strip().lower()
-    contrasena = data.get("contrasena", "").strip()
-    edad = data.get("edad")
-    salario_pretendido = data.get("salario_pretendido")
+    is_json = request.is_json
 
-    if not nombre or not correo or not contrasena:
-        return jsonify({"error": "Nombre, correo y contraseña son obligatorios."}), 400
+    if request.method == "POST":
+        if is_json:
+            data = request.get_json() or {}
+            nombre = data.get("nombre", "").strip()
+            correo = data.get("correo", "").strip().lower()
+            contrasena = data.get("contrasena", "").strip()
+            edad = data.get("edad")
+            salario_pretendido = data.get("salario_pretendido")
+        else:
+            nombre = request.form.get("nombre", "").strip()
+            correo = request.form.get("correo", request.form.get("email", "")).strip().lower()
+            contrasena = request.form.get("contrasena", request.form.get("password", "")).strip()
+            edad = request.form.get("edad")
+            salario_pretendido = request.form.get("salario_pretendido")
 
-    if len(contrasena) < 6:
-        return jsonify({"error": "La contraseña debe tener al menos 6 caracteres."}), 400
+        if not nombre or not correo or not contrasena:
+            mensaje_err = "Nombre, correo y contraseña son obligatorios."
+            if is_json:
+                return jsonify({"error": mensaje_err}), 400
+            flash(mensaje_err, "danger")
+            return redirect(url_for("inicio"))
 
-    # Verificar si el correo ya está registrado
-    if Candidato.query.filter_by(correo=correo).first():
-        return jsonify({"error": "Este correo electrónico ya se encuentra registrado."}), 409
+        if len(contrasena) < 6:
+            mensaje_err = "La contraseña debe tener al menos 6 caracteres."
+            if is_json:
+                return jsonify({"error": mensaje_err}), 400
+            flash(mensaje_err, "danger")
+            return redirect(url_for("inicio"))
 
-    nuevo_candidato = Candidato(
-        nombre=nombre,
-        correo=correo,
-        edad=int(edad) if edad else None,
-        salario_pretendido=float(salario_pretendido) if salario_pretendido else None,
-    )
-    nuevo_candidato.set_password(contrasena)
+        # Verificar si el correo ya está registrado
+        if Candidato.query.filter_by(correo=correo).first():
+            mensaje_err = "Este correo electrónico ya se encuentra registrado."
+            if is_json:
+                return jsonify({"error": mensaje_err}), 409
+            flash(mensaje_err, "danger")
+            return redirect(url_for("inicio"))
 
-    db.session.add(nuevo_candidato)
-    db.session.commit()
+        nuevo_candidato = Candidato(
+            nombre=nombre,
+            correo=correo,
+            edad=int(edad) if edad else None,
+            salario_pretendido=float(salario_pretendido) if salario_pretendido else None,
+        )
+        nuevo_candidato.set_password(contrasena)
 
-    # Iniciar sesión automáticamente
-    session["usuario_id"] = nuevo_candidato.id_candidato
-    session["usuario_nombre"] = nuevo_candidato.nombre
-    session["usuario_correo"] = nuevo_candidato.correo
-    session["usuario_rol"] = "candidato"
+        db.session.add(nuevo_candidato)
+        db.session.commit()
 
-    return jsonify({
-        "mensaje": "¡Cuenta creada exitosamente!",
-        "usuario": nuevo_candidato.to_dict()
-    }), 201
+        # Iniciar sesión automáticamente
+        session["usuario_id"] = nuevo_candidato.id_candidato
+        session["usuario_nombre"] = nuevo_candidato.nombre
+        session["usuario_correo"] = nuevo_candidato.correo
+        session["usuario_rol"] = "candidato"
+
+        if is_json:
+            return jsonify({
+                "mensaje": "¡Cuenta creada exitosamente!",
+                "usuario": nuevo_candidato.to_dict()
+            }), 201
+
+        flash(f"¡Bienvenido a TalentoEC, {nuevo_candidato.nombre}! Cuenta creada con éxito.", "success")
+        return redirect(url_for("inicio"))
+
+    return redirect(url_for("inicio"))
 
 
+@app.route("/login", methods=["GET", "POST"])
 @app.route("/api/login", methods=["POST"])
 def login():
     """Valida credenciales e inicia sesión para un candidato."""
-    data = request.get_json() or {}
-    correo = data.get("correo", "").strip().lower()
-    contrasena = data.get("contrasena", "").strip()
+    is_json = request.is_json
 
-    if not correo or not contrasena:
-        return jsonify({"error": "Por favor ingresa tu correo y contraseña."}), 400
+    if request.method == "POST":
+        if is_json:
+            data = request.get_json() or {}
+            correo = data.get("correo", data.get("email", "")).strip().lower()
+            contrasena = data.get("contrasena", data.get("password", "")).strip()
+        else:
+            correo = request.form.get("correo", request.form.get("email", "")).strip().lower()
+            contrasena = request.form.get("contrasena", request.form.get("password", "")).strip()
 
-    candidato = Candidato.query.filter_by(correo=correo).first()
+        if not correo or not contrasena:
+            mensaje_err = "Por favor ingresa tu correo y contraseña."
+            if is_json:
+                return jsonify({"error": mensaje_err}), 400
+            flash(mensaje_err, "danger")
+            return redirect(url_for("inicio"))
 
-    if not candidato or not candidato.check_password(contrasena):
-        return jsonify({"error": "Correo o contraseña incorrectos."}), 401
+        candidato = Candidato.query.filter_by(correo=correo).first()
 
-    # Establecer variables de sesión
-    session["usuario_id"] = candidato.id_candidato
-    session["usuario_nombre"] = candidato.nombre
-    session["usuario_correo"] = candidato.correo
-    session["usuario_rol"] = "candidato"
+        if not candidato or not candidato.check_password(contrasena):
+            mensaje_err = "Correo o contraseña incorrectos."
+            if is_json:
+                return jsonify({"error": mensaje_err}), 401
+            flash(mensaje_err, "danger")
+            return redirect(url_for("inicio"))
 
-    return jsonify({
-        "mensaje": f"¡Bienvenido de nuevo, {candidato.nombre}!",
-        "usuario": candidato.to_dict()
-    }), 200
+        # Establecer variables de sesión
+        session["usuario_id"] = candidato.id_candidato
+        session["usuario_nombre"] = candidato.nombre
+        session["usuario_correo"] = candidato.correo
+        session["usuario_rol"] = "candidato"
+
+        if is_json:
+            return jsonify({
+                "mensaje": f"¡Bienvenido de nuevo, {candidato.nombre}!",
+                "usuario": candidato.to_dict()
+            }), 200
+
+        flash(f"¡Bienvenido de nuevo, {candidato.nombre}!", "success")
+        return redirect(url_for("inicio"))
+
+    return redirect(url_for("inicio"))
 
 
 @app.route("/api/usuario-actual", methods=["GET"])
@@ -155,52 +218,198 @@ def usuario_actual():
     })
 
 
+@app.route("/logout", methods=["GET", "POST"])
 @app.route("/api/logout", methods=["POST", "GET"])
 def logout():
     """Cierra la sesión del usuario actual."""
     session.clear()
-    return jsonify({"mensaje": "Sesión cerrada correctamente.", "autenticado": False}), 200
+    if request.is_json or request.path.startswith("/api/"):
+        return jsonify({"mensaje": "Sesión cerrada correctamente.", "autenticado": False}), 200
+    flash("Sesión cerrada correctamente.", "success")
+    return redirect(url_for("inicio"))
 
 
 # ══════════════════════════════════════════════════════════════
-# RUTAS DE API REST (OFERTAS, POSTULACIONES, EMPRESAS)
+# CRUD DE OFERTAS DE EMPLEO / VACANTES (SEMANA 2)
 # ══════════════════════════════════════════════════════════════
 
-@app.route("/api/ofertas", methods=["GET"])
-def get_ofertas():
-    """Retorna el listado de todas las ofertas de empleo en formato JSON."""
-    ofertas = OfertaEmpleo.query.all()
-    resultado = []
-    for oferta in ofertas:
-        resultado.append({
-            "id_oferta": oferta.id_oferta,
-            "titulo": oferta.titulo,
-            "empresa": oferta.empresa.nombre_empresa if oferta.empresa else "Empresa",
-            "salario": float(oferta.salario) if oferta.salario else None,
-            "modalidad": oferta.modalidad,
-            "anos_experiencia": oferta.anos_experiencia,
-            "ubicacion_exacta": oferta.ubicacion_exacta,
-            "funciones": oferta.funciones,
-            "requisitos_tecnicos": oferta.requisitos_tecnicos,
-        })
-    return jsonify(resultado)
+@app.route("/vacantes/nueva", methods=["GET", "POST"])
+@app.route("/api/ofertas", methods=["GET", "POST"])
+def vacantes_nueva():
+    """CRUD - Crear nueva vacante (soporte HTML form y JSON API) o listar."""
+    if request.method == "GET":
+        # Listado de ofertas activas para búsqueda pública
+        ofertas = OfertaEmpleo.query.filter_by(activo=True).all()
+        return jsonify([o.to_dict() for o in ofertas])
+
+    # POST: Crear nueva vacante
+    is_json = request.is_json
+    if is_json:
+        data = request.get_json() or {}
+        titulo = data.get("titulo", "").strip()
+        id_empresa = data.get("id_empresa")
+        salario = data.get("salario")
+        modalidad = data.get("modalidad", "Híbrido")
+        anos_experiencia = data.get("anos_experiencia", 0)
+        ubicacion_exacta = data.get("ubicacion_exacta", "Quito")
+        funciones = data.get("funciones", "")
+        requisitos_tecnicos = data.get("requisitos_tecnicos", "")
+    else:
+        titulo = request.form.get("titulo", "").strip()
+        id_empresa = request.form.get("id_empresa")
+        salario = request.form.get("salario")
+        modalidad = request.form.get("modalidad", "Híbrido")
+        anos_experiencia = request.form.get("anos_experiencia", 0)
+        ubicacion_exacta = request.form.get("ubicacion_exacta", "Quito")
+        funciones = request.form.get("funciones", "")
+        requisitos_tecnicos = request.form.get("requisitos_tecnicos", "")
+
+    if not titulo:
+        msg = "El título de la vacante es obligatorio."
+        if is_json:
+            return jsonify({"error": msg}), 400
+        flash(msg, "danger")
+        return redirect(url_for("reclutadores"))
+
+    # Si no se especifica empresa, asignar la primera disponible o 1
+    if not id_empresa:
+        primera_empresa = Empresa.query.first()
+        id_empresa = primera_empresa.id_empresa if primera_empresa else 1
+
+    try:
+        salario_val = float(salario) if salario else None
+        experiencia_val = int(anos_experiencia) if anos_experiencia else 0
+
+        nueva_oferta = OfertaEmpleo(
+            id_empresa=int(id_empresa),
+            titulo=titulo,
+            salario=salario_val,
+            modalidad=modalidad,
+            anos_experiencia=experiencia_val,
+            ubicacion_exacta=ubicacion_exacta,
+            funciones=funciones,
+            requisitos_tecnicos=requisitos_tecnicos,
+            activo=True,
+        )
+        db.session.add(nueva_oferta)
+        db.session.commit()
+
+        if is_json:
+            return jsonify({
+                "mensaje": f"Vacante '{nueva_oferta.titulo}' publicada con éxito.",
+                "oferta": nueva_oferta.to_dict()
+            }), 201
+
+        flash(f"¡Vacante '{nueva_oferta.titulo}' publicada correctamente!", "success")
+        return redirect(url_for("reclutadores"))
+
+    except ValueError:
+        msg = "Revisa que el salario y los años de experiencia sean números válidos."
+        if is_json:
+            return jsonify({"error": msg}), 400
+        flash(msg, "danger")
+        return redirect(url_for("reclutadores"))
+    except Exception as e:
+        db.session.rollback()
+        msg = f"Ocurrió un error al guardar la vacante: {str(e)}"
+        if is_json:
+            return jsonify({"error": msg}), 500
+        flash(msg, "danger")
+        return redirect(url_for("reclutadores"))
+
+
+@app.route("/vacantes/<int:oferta_id>/editar", methods=["GET", "POST"])
+def editar_vacante(oferta_id):
+    """CRUD - Editar una vacante existente."""
+    oferta = db.get_or_404(OfertaEmpleo, oferta_id)
+
+    if request.method == "POST":
+        is_json = request.is_json
+        if is_json:
+            data = request.get_json() or {}
+            titulo = data.get("titulo", oferta.titulo).strip()
+            salario = data.get("salario")
+            modalidad = data.get("modalidad", oferta.modalidad)
+            anos_experiencia = data.get("anos_experiencia")
+            ubicacion_exacta = data.get("ubicacion_exacta", oferta.ubicacion_exacta)
+            funciones = data.get("funciones", oferta.funciones)
+            requisitos_tecnicos = data.get("requisitos_tecnicos", oferta.requisitos_tecnicos)
+        else:
+            titulo = request.form.get("titulo", oferta.titulo).strip()
+            salario = request.form.get("salario")
+            modalidad = request.form.get("modalidad", oferta.modalidad)
+            anos_experiencia = request.form.get("anos_experiencia")
+            ubicacion_exacta = request.form.get("ubicacion_exacta", oferta.ubicacion_exacta)
+            funciones = request.form.get("funciones", oferta.funciones)
+            requisitos_tecnicos = request.form.get("requisitos_tecnicos", oferta.requisitos_tecnicos)
+
+        try:
+            oferta.titulo = titulo
+            oferta.modalidad = modalidad
+            oferta.ubicacion_exacta = ubicacion_exacta
+            oferta.funciones = funciones
+            oferta.requisitos_tecnicos = requisitos_tecnicos
+
+            if salario is not None and salario != "":
+                oferta.salario = float(salario)
+            if anos_experiencia is not None and anos_experiencia != "":
+                oferta.anos_experiencia = int(anos_experiencia)
+
+            db.session.commit()
+
+            if is_json:
+                return jsonify({
+                    "mensaje": f"Vacante '{oferta.titulo}' actualizada exitosamente.",
+                    "oferta": oferta.to_dict()
+                }), 200
+
+            flash(f"Vacante '{oferta.titulo}' actualizada correctamente.", "success")
+            return redirect(url_for("reclutadores"))
+
+        except ValueError:
+            msg = "Revisa que los valores numéricos ingresados sean válidos."
+            if is_json:
+                return jsonify({"error": msg}), 400
+            flash(msg, "danger")
+            return redirect(url_for("editar_vacante", oferta_id=oferta.id_oferta))
+
+    # GET: renderizar plantilla de edición
+    return render_template("editar_vacante.html", oferta=oferta)
+
+
+@app.route("/vacantes/<int:oferta_id>/desactivar", methods=["POST"])
+def desactivar_vacante(oferta_id):
+    """CRUD - Desactivar vacante (Soft Delete)."""
+    oferta = db.get_or_404(OfertaEmpleo, oferta_id)
+    oferta.activo = False
+    db.session.commit()
+
+    if request.is_json:
+        return jsonify({"mensaje": f"Vacante '{oferta.titulo}' desactivada.", "activo": False}), 200
+
+    flash(f"Vacante '{oferta.titulo}' pausada/desactivada del catálogo público.", "warning")
+    return redirect(url_for("reclutadores"))
+
+
+@app.route("/vacantes/<int:oferta_id>/reactivar", methods=["POST"])
+def reactivar_vacante(oferta_id):
+    """CRUD - Reactivar vacante pausada."""
+    oferta = db.get_or_404(OfertaEmpleo, oferta_id)
+    oferta.activo = True
+    db.session.commit()
+
+    if request.is_json:
+        return jsonify({"mensaje": f"Vacante '{oferta.titulo}' reactivada.", "activo": True}), 200
+
+    flash(f"Vacante '{oferta.titulo}' reactivada en el catálogo público.", "success")
+    return redirect(url_for("reclutadores"))
 
 
 @app.route("/api/ofertas/<int:oferta_id>", methods=["GET"])
 def get_oferta_detalle(oferta_id):
     """Retorna el detalle de una oferta específica."""
     oferta = db.get_or_404(OfertaEmpleo, oferta_id)
-    return jsonify({
-        "id_oferta": oferta.id_oferta,
-        "titulo": oferta.titulo,
-        "empresa": oferta.empresa.nombre_empresa if oferta.empresa else "Empresa",
-        "salario": float(oferta.salario) if oferta.salario else None,
-        "modalidad": oferta.modalidad,
-        "anos_experiencia": oferta.anos_experiencia,
-        "ubicacion_exacta": oferta.ubicacion_exacta,
-        "funciones": oferta.funciones,
-        "requisitos_tecnicos": oferta.requisitos_tecnicos,
-    })
+    return jsonify(oferta.to_dict())
 
 
 @app.route("/api/postular", methods=["POST"])
