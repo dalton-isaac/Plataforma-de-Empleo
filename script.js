@@ -645,4 +645,251 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  // ==========================================================================
+  // SISTEMA DE AUTENTICACIÓN (LOGIN, REGISTRO Y GESTIÓN DE SESIÓN)
+  // ==========================================================================
+
+  const authModal = document.getElementById('auth-modal');
+  const authModalClose = document.getElementById('auth-modal-close');
+  const tabLoginBtn = document.getElementById('tab-login-btn');
+  const tabRegisterBtn = document.getElementById('tab-register-btn');
+  const formLogin = document.getElementById('auth-form-login');
+  const formRegister = document.getElementById('auth-form-register');
+  const loginAlert = document.getElementById('login-alert');
+  const registerAlert = document.getElementById('register-alert');
+
+  // Abrir Modal de Autenticación
+  window.openAuthModal = (tab = 'login') => {
+    if (authModal) {
+      window.switchAuthTab(tab);
+      authModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      // Limpiar alertas
+      if (loginAlert) { loginAlert.className = 'auth-alert'; loginAlert.textContent = ''; }
+      if (registerAlert) { registerAlert.className = 'auth-alert'; registerAlert.textContent = ''; }
+    }
+  };
+
+  // Cerrar Modal
+  window.closeAuthModal = () => {
+    if (authModal) {
+      authModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  // Alternar entre Login y Registro
+  window.switchAuthTab = (tab) => {
+    if (tab === 'register') {
+      tabRegisterBtn?.classList.add('active');
+      tabLoginBtn?.classList.remove('active');
+      formRegister?.classList.add('active');
+      formLogin?.classList.remove('active');
+    } else {
+      tabLoginBtn?.classList.add('active');
+      tabRegisterBtn?.classList.remove('active');
+      formLogin?.classList.add('active');
+      formRegister?.classList.remove('active');
+    }
+  };
+
+  if (authModalClose) authModalClose.addEventListener('click', window.closeAuthModal);
+  if (tabLoginBtn) tabLoginBtn.addEventListener('click', () => window.switchAuthTab('login'));
+  if (tabRegisterBtn) tabRegisterBtn.addEventListener('click', () => window.switchAuthTab('register'));
+
+  // Cerrar modal al hacer clic en el fondo
+  if (authModal) {
+    authModal.addEventListener('click', (e) => {
+      if (e.target === authModal) window.closeAuthModal();
+    });
+  }
+
+  // Vincular botones de Login y Registro del Navbar
+  document.querySelectorAll('.btn-open-login, .btn-primary-nav, .button--orange-outline').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.openAuthModal('login');
+    });
+  });
+
+  document.querySelectorAll('.btn-open-register, .btn-secondary-nav, .button--outline').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.openAuthModal('register');
+    });
+  });
+
+  // Envío Formulario de Login
+  if (formLogin) {
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const correo = document.getElementById('login-email')?.value.trim();
+      const contrasena = document.getElementById('login-password')?.value.trim();
+      const submitBtn = formLogin.querySelector('.auth-submit-btn');
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Iniciando sesión...';
+      }
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ correo, contrasena })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          if (loginAlert) {
+            loginAlert.className = 'auth-alert success';
+            loginAlert.textContent = data.mensaje || '¡Inicio de sesión exitoso!';
+          }
+          setTimeout(() => {
+            window.closeAuthModal();
+            formLogin.reset();
+            checkAuthStatus();
+          }, 800);
+        } else {
+          if (loginAlert) {
+            loginAlert.className = 'auth-alert error';
+            loginAlert.textContent = data.error || 'Credenciales inválidas.';
+          }
+        }
+      } catch (err) {
+        if (loginAlert) {
+          loginAlert.className = 'auth-alert error';
+          loginAlert.textContent = 'Error de conexión con el servidor.';
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Iniciar Sesión';
+        }
+      }
+    });
+  }
+
+  // Envío Formulario de Registro
+  if (formRegister) {
+    formRegister.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('register-name')?.value.trim();
+      const correo = document.getElementById('register-email')?.value.trim();
+      const contrasena = document.getElementById('register-password')?.value.trim();
+      const edad = document.getElementById('register-age')?.value;
+      const salario_pretendido = document.getElementById('register-salary')?.value;
+      const submitBtn = formRegister.querySelector('.auth-submit-btn');
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creando cuenta...';
+      }
+
+      try {
+        const response = await fetch('/api/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, correo, contrasena, edad, salario_pretendido })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          if (registerAlert) {
+            registerAlert.className = 'auth-alert success';
+            registerAlert.textContent = data.mensaje || '¡Cuenta creada con éxito!';
+          }
+          setTimeout(() => {
+            window.closeAuthModal();
+            formRegister.reset();
+            checkAuthStatus();
+          }, 900);
+        } else {
+          if (registerAlert) {
+            registerAlert.className = 'auth-alert error';
+            registerAlert.textContent = data.error || 'No se pudo crear la cuenta.';
+          }
+        }
+      } catch (err) {
+        if (registerAlert) {
+          registerAlert.className = 'auth-alert error';
+          registerAlert.textContent = 'Error de conexión con el servidor.';
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Crear Cuenta Gratuita';
+        }
+      }
+    });
+  }
+
+  // Cerrar Sesión
+  window.logoutUser = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+      checkAuthStatus();
+    } catch (err) {
+      console.error('Error al cerrar sesión', err);
+    }
+  };
+
+  // Verificar Estado de Autenticación y actualizar Navbars
+  async function checkAuthStatus() {
+    try {
+      const response = await fetch('/api/usuario-actual');
+      const data = await response.json();
+
+      const authContainers = document.querySelectorAll('.site-nav__actions, .nav-auth');
+
+      authContainers.forEach(container => {
+        if (data.autenticado && data.usuario) {
+          const inicial = data.usuario.nombre ? data.usuario.nombre.charAt(0).toUpperCase() : 'U';
+          const primerNombre = data.usuario.nombre ? data.usuario.nombre.split(' ')[0] : 'Usuario';
+
+          container.innerHTML = `
+            <div class="nav-user-logged">
+              <div class="nav-user-badge">
+                <span class="nav-user-avatar">${inicial}</span>
+                <span>Hola, ${primerNombre}</span>
+              </div>
+              <button class="nav-btn-logout" onclick="window.logoutUser()">Cerrar sesión</button>
+            </div>
+          `;
+        } else {
+          // Restaurar botones según estilo del contenedor
+          if (container.classList.contains('site-nav__actions')) {
+            container.innerHTML = `
+              <a class="button button--outline btn-open-register" href="#">Crear Cuenta</a>
+              <a class="button button--orange-outline btn-open-login" href="#">Iniciar sesión</a>
+            `;
+          } else {
+            container.innerHTML = `
+              <a href="#" class="btn-secondary-nav btn-open-register">Crear Cuenta</a>
+              <a href="#" class="btn-primary-nav btn-open-login">Iniciar sesión</a>
+            `;
+          }
+
+          // Re-vincular eventos
+          container.querySelector('.btn-open-login')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.openAuthModal('login');
+          });
+          container.querySelector('.btn-open-register')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.openAuthModal('register');
+          });
+        }
+      });
+    } catch (err) {
+      console.error('Error al verificar sesión:', err);
+    }
+  }
+
+  // Ejecutar verificación de sesión al cargar
+  checkAuthStatus();
+
 });
+

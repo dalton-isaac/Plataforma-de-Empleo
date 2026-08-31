@@ -63,29 +63,31 @@ with app.app_context():
         nombre="Mateo Morales",
         edad=21,
         correo="mateo.morales@estudiantes.ec",
-        contrasena="candidato123",
         cv_pdf_url="assets/cv_mateo_morales.pdf",
         perfil_linkedin="https://linkedin.com/in/mateomorales-demo",
         salario_pretendido=500.00,
     )
+    candidato1.set_password("candidato123")
+
     candidato2 = Candidato(
         nombre="Valeria Torres",
         edad=22,
         correo="valeria.torres@estudiantes.ec",
-        contrasena="candidato123",
         cv_pdf_url="assets/cv_valeria_torres.pdf",
         perfil_linkedin="https://linkedin.com/in/valeriatorres-dev",
         salario_pretendido=650.00,
     )
+    candidato2.set_password("candidato123")
+
     candidato3 = Candidato(
         nombre="Andrés Cevallos",
         edad=20,
         correo="andres.cevallos@estudiantes.ec",
-        contrasena="candidato123",
         cv_pdf_url="assets/cv_andres_cevallos.pdf",
         perfil_linkedin="https://linkedin.com/in/andrescevallos-demo",
         salario_pretendido=460.00,
     )
+    candidato3.set_password("candidato123")
 
     db.session.add_all([candidato1, candidato2, candidato3])
     db.session.flush()

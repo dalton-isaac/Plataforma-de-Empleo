@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -49,6 +50,27 @@ class Candidato(db.Model):
     habilidades = db.relationship("HabilidadCertificacion", backref="candidato", lazy=True)
     postulaciones = db.relationship("Postulacion", backref="candidato", lazy=True)
     favoritos = db.relationship("Favorito", backref="candidato", lazy=True)
+
+    def set_password(self, password_plano):
+        """Genera y almacena el hash seguro de la contraseña."""
+        self.contrasena = generate_password_hash(password_plano)
+
+    def check_password(self, password_plano):
+        """Verifica si la contraseña ingresada coincide con el hash almacenado."""
+        return check_password_hash(self.contrasena, password_plano)
+
+    def to_dict(self):
+        """Retorna los datos del candidato en formato diccionario seguro (sin contraseña)."""
+        return {
+            "id_candidato": self.id_candidato,
+            "nombre": self.nombre,
+            "edad": self.edad,
+            "correo": self.correo,
+            "cv_pdf_url": self.cv_pdf_url,
+            "perfil_linkedin": self.perfil_linkedin,
+            "salario_pretendido": float(self.salario_pretendido) if self.salario_pretendido else None,
+            "habilidades": [h.descripcion for h in self.habilidades] if self.habilidades else []
+        }
 
     def __repr__(self):
         return f"<Candidato {self.nombre}>"
