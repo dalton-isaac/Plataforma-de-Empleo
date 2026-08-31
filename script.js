@@ -522,6 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // A. Live Preview Binding en Tiempo Real
   const inputTitle = document.getElementById('input-job-title');
   const inputCompany = document.getElementById('input-company-name');
+  const selectCompany = document.getElementById('select-company');
   const selectModality = document.getElementById('select-modality');
   const inputLocation = document.getElementById('input-location');
   const inputSalaryMin = document.getElementById('input-salary-min');
@@ -539,8 +540,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (previewTitle && inputTitle) {
       previewTitle.textContent = inputTitle.value.trim() || 'Título de la Posición';
     }
-    if (previewCompany && inputCompany) {
-      previewCompany.textContent = inputCompany.value.trim() || 'Tu Empresa';
+    if (previewCompany) {
+      if (selectCompany && selectCompany.options[selectCompany.selectedIndex]) {
+        previewCompany.textContent = selectCompany.options[selectCompany.selectedIndex].text;
+      } else if (inputCompany) {
+        previewCompany.textContent = inputCompany.value.trim() || 'Tu Empresa';
+      }
     }
     if (previewModality && selectModality) {
       previewModality.textContent = `💼 ${selectModality.value}`;
@@ -548,10 +553,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (previewLocation && inputLocation) {
       previewLocation.textContent = `📍 ${inputLocation.value.trim() || 'Quito'}`;
     }
-    if (previewSalary && inputSalaryMin && inputSalaryMax) {
-      const min = inputSalaryMin.value || '460';
-      const max = inputSalaryMax.value || '750';
-      previewSalary.textContent = `$${min} - $${max} USD / mes`;
+    if (previewSalary) {
+      if (inputSalaryMin && inputSalaryMax) {
+        const min = inputSalaryMin.value || '460';
+        const max = inputSalaryMax.value || '750';
+        previewSalary.textContent = `$${min} - $${max} USD / mes`;
+      } else if (inputSalaryMin) {
+        previewSalary.textContent = `$${inputSalaryMin.value || '650'} USD / mes`;
+      }
     }
     if (previewSnippet && inputDesc) {
       const text = inputDesc.value.trim() || 'Descripción de la vacante...';
@@ -561,11 +570,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (inputTitle) inputTitle.addEventListener('input', updateLivePreviewCard);
   if (inputCompany) inputCompany.addEventListener('input', updateLivePreviewCard);
+  if (selectCompany) selectCompany.addEventListener('change', updateLivePreviewCard);
   if (selectModality) selectModality.addEventListener('change', updateLivePreviewCard);
   if (inputLocation) inputLocation.addEventListener('input', updateLivePreviewCard);
   if (inputSalaryMin) inputSalaryMin.addEventListener('input', updateLivePreviewCard);
   if (inputSalaryMax) inputSalaryMax.addEventListener('input', updateLivePreviewCard);
   if (inputDesc) inputDesc.addEventListener('input', updateLivePreviewCard);
+
+  // Ejecutar una vez al inicio si estamos en reclutadores.html
+  if (previewTitle) updateLivePreviewCard();
 
   // B. Toggle Chips de Habilidades
   const skillChips = document.querySelectorAll('.skill-toggle-chip');
