@@ -19,6 +19,7 @@ from flask import (
     flash,
 )
 from config import Config
+from auth import login_requerido, rol_requerido
 from models import (
     db,
     PlanContratacion,
@@ -137,7 +138,7 @@ def registro():
         session["usuario_id"] = nuevo_candidato.id_candidato
         session["usuario_nombre"] = nuevo_candidato.nombre
         session["usuario_correo"] = nuevo_candidato.correo
-        session["usuario_rol"] = "candidato"
+        session["usuario_rol"] = nuevo_candidato.rol or "candidato"
 
         if is_json:
             return jsonify({
@@ -154,7 +155,7 @@ def registro():
 @app.route("/login", methods=["GET", "POST"])
 @app.route("/api/login", methods=["POST"])
 def login():
-    """Valida credenciales e inicia sesión para un candidato."""
+    """Valida credenciales e inicia sesión para un candidato o reclutador."""
     is_json = request.is_json
 
     if request.method == "POST":
@@ -186,7 +187,7 @@ def login():
         session["usuario_id"] = candidato.id_candidato
         session["usuario_nombre"] = candidato.nombre
         session["usuario_correo"] = candidato.correo
-        session["usuario_rol"] = "candidato"
+        session["usuario_rol"] = candidato.rol or "candidato"
 
         if is_json:
             return jsonify({
@@ -230,17 +231,23 @@ def logout():
 
 
 # ══════════════════════════════════════════════════════════════
-# CRUD DE OFERTAS DE EMPLEO / VACANTES (SEMANA 2)
+# CRUD DE OFERTAS DE EMPLEO / VACANTES (PROTEGIDO POR ROLES)
 # ══════════════════════════════════════════════════════════════
 
+@app.route("/api/ofertas", methods=["GET"])
+def get_ofertas():
+    """Listado público de todas las ofertas de empleo activas."""
+    ofertas = OfertaEmpleo.query.filter_by(activo=True).all()
+    return jsonify([o.to_dict() for o in ofertas])
+
+
 @app.route("/vacantes/nueva", methods=["GET", "POST"])
-@app.route("/api/ofertas", methods=["GET", "POST"])
+@app.route("/api/ofertas", methods=["POST"])
+@rol_requerido(["reclutador", "admin"])
 def vacantes_nueva():
-    """CRUD - Crear nueva vacante (soporte HTML form y JSON API) o listar."""
+    """CRUD - Crear nueva vacante (Exclusivo para Reclutadores / Administradores)."""
     if request.method == "GET":
-        # Listado de ofertas activas para búsqueda pública
-        ofertas = OfertaEmpleo.query.filter_by(activo=True).all()
-        return jsonify([o.to_dict() for o in ofertas])
+        return redirect(url_for("reclutadores"))
 
     # POST: Crear nueva vacante
     is_json = request.is_json
@@ -319,8 +326,9 @@ def vacantes_nueva():
 
 
 @app.route("/vacantes/<int:oferta_id>/editar", methods=["GET", "POST"])
+@rol_requerido(["reclutador", "admin"])
 def editar_vacante(oferta_id):
-    """CRUD - Editar una vacante existente."""
+    """CRUD - Editar una vacante existente (Exclusivo Reclutadores)."""
     oferta = db.get_or_404(OfertaEmpleo, oferta_id)
 
     if request.method == "POST":
@@ -378,8 +386,9 @@ def editar_vacante(oferta_id):
 
 
 @app.route("/vacantes/<int:oferta_id>/desactivar", methods=["POST"])
+@rol_requerido(["reclutador", "admin"])
 def desactivar_vacante(oferta_id):
-    """CRUD - Desactivar vacante (Soft Delete)."""
+    """CRUD - Desactivar vacante (Soft Delete - Exclusivo Reclutadores)."""
     oferta = db.get_or_404(OfertaEmpleo, oferta_id)
     oferta.activo = False
     db.session.commit()
@@ -392,8 +401,9 @@ def desactivar_vacante(oferta_id):
 
 
 @app.route("/vacantes/<int:oferta_id>/reactivar", methods=["POST"])
+@rol_requerido(["reclutador", "admin"])
 def reactivar_vacante(oferta_id):
-    """CRUD - Reactivar vacante pausada."""
+    """CRUD - Reactivar vacante pausada (Exclusivo Reclutadores)."""
     oferta = db.get_or_404(OfertaEmpleo, oferta_id)
     oferta.activo = True
     db.session.commit()
@@ -413,10 +423,11 @@ def get_oferta_detalle(oferta_id):
 
 
 @app.route("/api/postular", methods=["POST"])
+@login_requerido
 def crear_postulacion():
-    """Crea una nueva postulación para el usuario en sesión o candidato enviado."""
+    """Crea una nueva postulación para el usuario en sesión (Requiere Login)."""
     data = request.get_json() or {}
-    id_candidato = session.get("usuario_id") or data.get("id_candidato", 1)
+    id_candidato = session.get("usuario_id")
     id_oferta = data.get("id_oferta")
 
     if not id_oferta:
@@ -435,6 +446,65 @@ def crear_postulacion():
         "mensaje": "Postulación registrada correctamente",
         "id_postulacion": nueva_postulacion.id_postulacion,
     }), 201
+
+
+# ══════════════════════════════════════════════════════════════
+# MÓDULO DE CARRITO / VACANTES GUARDADAS (FAVORITOS - SEMANA 3)
+# ══════════════════════════════════════════════════════════════
+
+@app.route("/favoritos/agregar/<int:oferta_id>", methods=["POST"])
+@login_requerido
+def agregar_favorito(oferta_id):
+    """Agrega una vacante a la bolsa de favoritos del usuario en sesión."""
+    oferta = db.get_or_404(OfertaEmpleo, oferta_id)
+    favoritos = session.get("favoritos", {})
+    clave = str(oferta_id)
+    favoritos[clave] = True
+    session["favoritos"] = favoritos
+
+    if request.is_json or request.path.startswith("/api/"):
+        return jsonify({
+            "mensaje": f"Vacante '{oferta.titulo}' guardada en tus favoritos.",
+            "favoritos": list(favoritos.keys())
+        }), 200
+
+    flash(f"'{oferta.titulo}' guardada en tus vacantes favoritas.", "success")
+    return redirect(request.referrer or url_for("inicio"))
+
+
+@app.route("/favoritos", methods=["GET"])
+@login_requerido
+def ver_favoritos():
+    """Visualiza la lista de vacantes guardadas por el usuario."""
+    favoritos = session.get("favoritos", {})
+    items = []
+    for clave in favoritos.keys():
+        try:
+            oferta = db.session.get(OfertaEmpleo, int(clave))
+            if oferta and oferta.activo:
+                items.append(oferta)
+        except (ValueError, TypeError):
+            continue
+
+    if request.is_json:
+        return jsonify([o.to_dict() for o in items])
+
+    return render_template("favoritos.html", items=items)
+
+
+@app.route("/favoritos/eliminar/<int:oferta_id>", methods=["POST"])
+@login_requerido
+def eliminar_favorito(oferta_id):
+    """Elimina una vacante de la bolsa de favoritos del usuario."""
+    favoritos = session.get("favoritos", {})
+    clave = str(oferta_id)
+    if clave in favoritos:
+        del favoritos[clave]
+        session["favoritos"] = favoritos
+        if request.is_json or request.path.startswith("/api/"):
+            return jsonify({"mensaje": "Vacante quitada de favoritos."}), 200
+        flash("Vacante quitada de tus favoritos.", "success")
+    return redirect(url_for("ver_favoritos"))
 
 
 @app.route("/api/candidatos", methods=["GET"])

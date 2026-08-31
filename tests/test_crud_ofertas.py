@@ -5,26 +5,28 @@ from models import db, Empresa, PlanContratacion, OfertaEmpleo, Candidato
 
 class CrudOfertasTestCase(unittest.TestCase):
     def setUp(self):
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         app.config['TESTING'] = True
         app.config['SECRET_KEY'] = 'test-secret-key'
         self.client = app.test_client()
 
         with app.app_context():
             db.create_all()
-            # Crear plan y empresa de prueba
-            plan = PlanContratacion(nombre_plan="Plan Pro")
+            plan = PlanContratacion(nombre_plan="Plan Pro CRUD")
             db.session.add(plan)
             db.session.flush()
 
-            empresa = Empresa(id_plan=plan.id_plan, nombre_empresa="Tech Solutions Quito", ranking=4.8)
+            empresa = Empresa(id_plan=plan.id_plan, nombre_empresa="Tech Solutions Quito Test", ranking=4.8)
             db.session.add(empresa)
             db.session.flush()
 
-            # Crear una oferta inicial activa
+            reclutador = Candidato(nombre="Reclutador CRUD", correo="reclutador_crud@empresa.ec", rol="reclutador")
+            reclutador.set_password("reclutador123")
+            db.session.add(reclutador)
+            db.session.flush()
+
             oferta = OfertaEmpleo(
                 id_empresa=empresa.id_empresa,
-                titulo="Desarrollador Junior",
+                titulo="Desarrollador Junior CRUD",
                 salario=550.0,
                 modalidad="Híbrido",
                 anos_experiencia=0,
@@ -39,6 +41,12 @@ class CrudOfertasTestCase(unittest.TestCase):
             self.empresa_id = empresa.id_empresa
             self.oferta_id = oferta.id_oferta
 
+        # Login reclutador
+        self.client.post('/api/login', data=json.dumps({
+            "correo": "reclutador_crud@empresa.ec",
+            "contrasena": "reclutador123"
+        }), content_type='application/json')
+
     def tearDown(self):
         with app.app_context():
             db.session.remove()
@@ -46,7 +54,7 @@ class CrudOfertasTestCase(unittest.TestCase):
 
     def test_crear_oferta_via_form(self):
         form_data = {
-            "titulo": "Diseñador UI/UX Junior",
+            "titulo": "Diseñador UI/UX Junior CRUD",
             "id_empresa": self.empresa_id,
             "salario": "480.00",
             "modalidad": "Remoto",
@@ -59,14 +67,14 @@ class CrudOfertasTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
 
         with app.app_context():
-            nueva = OfertaEmpleo.query.filter_by(titulo="Diseñador UI/UX Junior").first()
+            nueva = OfertaEmpleo.query.filter_by(titulo="Diseñador UI/UX Junior CRUD").first()
             self.assertIsNotNone(nueva)
             self.assertEqual(float(nueva.salario), 480.00)
             self.assertTrue(nueva.activo)
 
     def test_crear_oferta_via_json(self):
         json_data = {
-            "titulo": "Soporte TI Junior",
+            "titulo": "Soporte TI Junior CRUD",
             "id_empresa": self.empresa_id,
             "salario": 460.00,
             "modalidad": "Presencial",
@@ -79,28 +87,26 @@ class CrudOfertasTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         data = res.get_json()
         self.assertIn("oferta", data)
-        self.assertEqual(data["oferta"]["titulo"], "Soporte TI Junior")
+        self.assertEqual(data["oferta"]["titulo"], "Soporte TI Junior CRUD")
 
     def test_crear_oferta_validacion_error(self):
         form_data = {
-            "titulo": "Oferta Invalida",
+            "titulo": "Oferta Invalida CRUD",
             "id_empresa": self.empresa_id,
             "salario": "no-es-un-numero",
         }
         res = self.client.post('/vacantes/nueva', data=form_data, follow_redirects=True)
         self.assertEqual(res.status_code, 200)
         with app.app_context():
-            oferta = OfertaEmpleo.query.filter_by(titulo="Oferta Invalida").first()
+            oferta = OfertaEmpleo.query.filter_by(titulo="Oferta Invalida CRUD").first()
             self.assertIsNone(oferta)
 
     def test_editar_oferta_get_y_post(self):
-        # GET debe devolver la vista de edición con status 200
         res_get = self.client.get(f'/vacantes/{self.oferta_id}/editar')
         self.assertEqual(res_get.status_code, 200)
 
-        # POST actualiza los campos
         edit_data = {
-            "titulo": "Desarrollador Full Stack Junior",
+            "titulo": "Desarrollador Full Stack Junior CRUD",
             "salario": "700.00",
             "modalidad": "Remoto Completo",
             "anos_experiencia": "1",
@@ -113,7 +119,7 @@ class CrudOfertasTestCase(unittest.TestCase):
 
         with app.app_context():
             oferta_actualizada = db.session.get(OfertaEmpleo, self.oferta_id)
-            self.assertEqual(oferta_actualizada.titulo, "Desarrollador Full Stack Junior")
+            self.assertEqual(oferta_actualizada.titulo, "Desarrollador Full Stack Junior CRUD")
             self.assertEqual(float(oferta_actualizada.salario), 700.00)
             self.assertEqual(oferta_actualizada.modalidad, "Remoto Completo")
 

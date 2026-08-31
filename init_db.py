@@ -58,7 +58,7 @@ with app.app_context():
     db.session.add_all([empresa1, empresa2, empresa3, empresa4])
     db.session.flush()
 
-    # ── 3. CANDIDATOS (JÓVENES Y ESTUDIANTES) ───────────────────
+    # ── 3. CANDIDATOS (JÓVENES Y ESTUDIANTES) & RECLUTADORES ─────
     candidato1 = Candidato(
         nombre="Mateo Morales",
         edad=21,
@@ -66,6 +66,7 @@ with app.app_context():
         cv_pdf_url="assets/cv_mateo_morales.pdf",
         perfil_linkedin="https://linkedin.com/in/mateomorales-demo",
         salario_pretendido=500.00,
+        rol="candidato",
     )
     candidato1.set_password("candidato123")
 
@@ -76,6 +77,7 @@ with app.app_context():
         cv_pdf_url="assets/cv_valeria_torres.pdf",
         perfil_linkedin="https://linkedin.com/in/valeriatorres-dev",
         salario_pretendido=650.00,
+        rol="candidato",
     )
     candidato2.set_password("candidato123")
 
@@ -86,10 +88,23 @@ with app.app_context():
         cv_pdf_url="assets/cv_andres_cevallos.pdf",
         perfil_linkedin="https://linkedin.com/in/andrescevallos-demo",
         salario_pretendido=460.00,
+        rol="candidato",
     )
     candidato3.set_password("candidato123")
 
-    db.session.add_all([candidato1, candidato2, candidato3])
+    # Usuario Reclutador de Empresa
+    reclutador1 = Candidato(
+        nombre="Sofía Reclutadora (Software Solutions EC)",
+        edad=30,
+        correo="reclutador@empresa.ec",
+        cv_pdf_url=None,
+        perfil_linkedin="https://linkedin.com/in/sofia-reclutadora",
+        salario_pretendido=None,
+        rol="reclutador",
+    )
+    reclutador1.set_password("reclutador123")
+
+    db.session.add_all([candidato1, candidato2, candidato3, reclutador1])
     db.session.flush()
 
     # ── 4. HABILIDADES Y CERTIFICACIONES ────────────────────────

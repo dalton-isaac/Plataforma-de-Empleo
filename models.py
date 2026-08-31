@@ -44,6 +44,7 @@ class Candidato(db.Model):
     cv_pdf_url = db.Column(db.String(255), nullable=True)
     perfil_linkedin = db.Column(db.String(255), nullable=True)
     salario_pretendido = db.Column(db.Numeric(precision=10, scale=2), nullable=True)
+    rol = db.Column(db.String(50), default="candidato", nullable=False)
 
     # Relaciones
     resenas = db.relationship("ResenaEmpresa", backref="candidato", lazy=True)
@@ -66,6 +67,7 @@ class Candidato(db.Model):
             "nombre": self.nombre,
             "edad": self.edad,
             "correo": self.correo,
+            "rol": self.rol,
             "cv_pdf_url": self.cv_pdf_url,
             "perfil_linkedin": self.perfil_linkedin,
             "salario_pretendido": float(self.salario_pretendido) if self.salario_pretendido else None,
@@ -73,7 +75,7 @@ class Candidato(db.Model):
         }
 
     def __repr__(self):
-        return f"<Candidato {self.nombre}>"
+        return f"<Candidato {self.nombre} (Rol: {self.rol})>"
 
 
 class OfertaEmpleo(db.Model):

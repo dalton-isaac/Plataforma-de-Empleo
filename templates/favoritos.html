@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tus vacantes guardadas y bolsa de postulación rápida en TalentoEC.">
+  <title>Mis Vacantes Guardadas | TalentoEC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Header / Barra de Navegación -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="{{ url_for('inicio') }}" id="logo-link">Talento<span>EC</span></a>
+      </div>
+      <nav class="nav-menu" id="nav-menu">
+        <ul class="nav-list">
+          <li><a href="{{ url_for('inicio') }}" class="nav-link">Inicio</a></li>
+          <li><a href="{{ url_for('postulacion') }}" class="nav-link">Buscar Empleos</a></li>
+          <li><a href="{{ url_for('desarrollo') }}" class="nav-link">Desarrollo Personal</a></li>
+          <li><a href="{{ url_for('ver_favoritos') }}" class="nav-link active">⭐ Mis Guardadas</a></li>
+          {% if session.get('usuario_rol') in ['reclutador', 'admin'] %}
+            <li><a href="{{ url_for('reclutadores') }}" class="nav-link">Portal Reclutadores</a></li>
+          {% endif %}
+        </ul>
+        <div class="nav-auth">
+          {% if session.get('usuario_id') %}
+            <div class="nav-user-logged">
+              <span class="nav-user-badge">
+                <span class="nav-user-avatar">👤</span>
+                <span>{{ session.get('usuario_nombre') }}</span>
+                <span style="font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 10px;">{{ session.get('usuario_rol') }}</span>
+              </span>
+              <a href="{{ url_for('logout') }}" class="nav-btn-logout">Cerrar sesión</a>
+            </div>
+          {% else %}
+            <a href="#" class="btn-secondary-nav" onclick="openRegisterModal()">Crear Cuenta</a>
+            <a href="#" class="btn-primary-nav" onclick="openLoginModal()">Iniciar sesión</a>
+          {% endif %}
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+    <!-- Mensajes Flash -->
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% if mensajes %}
+        <div class="flash-messages" style="margin-bottom: 24px;">
+          {% for categoria, texto in mensajes %}
+            <div class="alert alert-{{ categoria }}" style="padding: 12px 18px; border-radius: 8px; margin-bottom: 12px; font-family: var(--font-family-body); font-weight: 500; display: flex; align-items: center; justify-content: space-between; {% if categoria == 'success' %}background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0;{% elif categoria == 'warning' %}background-color: #fef9c3; color: #854d0e; border: 1px solid #fef08a;{% else %}background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca;{% endif %}">
+              <span>{{ texto }}</span>
+              <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h1 style="font-family: var(--font-family-title); font-size: 1.85rem; color: var(--color-neutral-dark); font-weight: 600;">
+          ⭐ Mis Vacantes Guardadas
+        </h1>
+        <p style="color: var(--color-neutral-muted); font-size: 0.95rem; margin-top: 4px;">
+          Tu bolsa personal de ofertas para revisar con calma o postularte en 1 clic.
+        </p>
+      </div>
+      <a href="{{ url_for('postulacion') }}" class="btn btn--outline" style="padding: 10px 18px; border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: 8px; font-weight: 500; text-decoration: none;">
+        ← Seguir Explorando Empleos
+      </a>
+    </div>
+
+    {% if items %}
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        {% for oferta in items %}
+          <div class="card" style="background: #ffffff; border: 1px solid var(--color-neutral-light); border-radius: var(--border-radius-lg); padding: 24px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div style="flex: 1; min-width: 280px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                <span class="badge" style="background-color: var(--color-primary-light); color: var(--color-primary); font-size: 0.8rem; font-weight: 600; padding: 3px 8px; border-radius: 12px;">
+                  {{ oferta.empresa.nombre_empresa if oferta.empresa else 'Empresa Afiliada' }}
+                </span>
+                {% if oferta.anos_experiencia == 0 %}
+                  <span style="font-size: 0.75rem; background-color: #ffedd5; color: #c2410c; padding: 3px 8px; border-radius: 12px; font-weight: 600;">Sin Experiencia</span>
+                {% endif %}
+              </div>
+              <h3 style="font-family: var(--font-family-title); font-size: 1.25rem; color: var(--color-neutral-dark); font-weight: 600; margin-bottom: 6px;">
+                {{ oferta.titulo }}
+              </h3>
+              <div style="display: flex; gap: 16px; color: var(--color-neutral-muted); font-size: 0.9rem; flex-wrap: wrap;">
+                <span>📍 {{ oferta.ubicacion_exacta }}</span>
+                <span>💼 {{ oferta.modalidad }}</span>
+                <span style="font-weight: 600; color: var(--color-primary);">💵 ${{ "%.2f"|format(oferta.salario) if oferta.salario else '460.00' }} USD/mes</span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <!-- Botón Postular en 1 Clic -->
+              <a href="{{ url_for('postulacion') }}#oferta-{{ oferta.id_oferta }}"
+                 style="background-color: var(--color-accent); color: #ffffff; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-block; transition: all 0.2s;">
+                ⚡ Postular en 1 Clic
+              </a>
+
+              <!-- Botón Quitar de Favoritos -->
+              <form action="{{ url_for('eliminar_favorito', oferta_id=oferta.id_oferta) }}" method="POST" style="display: inline;">
+                <button type="submit" style="background: none; border: 1px solid #ef4444; color: #ef4444; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s;" title="Quitar de guardadas">
+                  🗑️ Quitar
+                </button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="background: #ffffff; border: 1px dashed var(--color-neutral-muted); border-radius: var(--border-radius-lg); padding: 48px 24px; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 12px;">⭐</div>
+        <h3 style="font-family: var(--font-family-title); color: var(--color-neutral-dark); margin-bottom: 8px;">No tienes vacantes guardadas aún</h3>
+        <p style="color: var(--color-neutral-muted); max-width: 480px; margin: 0 auto 20px auto;">
+          Explora las ofertas disponibles en Quito y haz clic en el botón de guardar para armar tu lista de postulaciones.
+        </p>
+        <a href="{{ url_for('postulacion') }}" style="background-color: var(--color-primary); color: #ffffff; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block;">
+          Ver Bolsa de Empleo
+        </a>
+      </div>
+    {% endif %}
+  </main>
+</body>
+</html>
