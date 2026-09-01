@@ -252,19 +252,22 @@ def usuario_actual():
 
 
 @app.route("/logout", methods=["GET", "POST"])
-@app.route("/api/logout", methods=["POST", "GET"])
 def logout():
-    """Cierra la sesión del usuario actual y redirige limpiamente al inicio."""
+    """Cierra la sesión del usuario actual y redirige limpiamente a la página de Inicio."""
     session.clear()
-    if request.is_json or request.path.startswith("/api/"):
-        response = jsonify({"mensaje": "Sesión cerrada correctamente.", "autenticado": False})
-        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-        return response, 200
-
     flash("Sesión cerrada correctamente.", "success")
     response = redirect(url_for("inicio"))
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return response
+
+
+@app.route("/api/logout", methods=["POST", "GET"])
+def api_logout():
+    """Endpoint REST para cerrar sesión mediante llamadas Fetch/AJAX."""
+    session.clear()
+    response = jsonify({"mensaje": "Sesión cerrada correctamente.", "autenticado": False})
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response, 200
 
 
 # ══════════════════════════════════════════════════════════════
