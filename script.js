@@ -942,16 +942,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Toggle del menú hamburguesa móvil
-  const mobileToggle = document.getElementById('menu-toggle');
-  const navMenu = document.getElementById('nav-menu');
-  if (mobileToggle && navMenu) {
-    mobileToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('active');
-      const isExpanded = navMenu.classList.contains('active');
-      mobileToggle.setAttribute('aria-expanded', isExpanded);
-    });
-  }
+  // Alias globales de compatibilidad para apertura de modales
+  window.openLoginModal = () => window.openAuthModal('login');
+  window.openRegisterModal = () => window.openAuthModal('register');
 
 });
+
 
