@@ -678,13 +678,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalCandidateAvatar = document.getElementById('modal-candidate-avatar');
   const modalCandidateClose = document.getElementById('modal-candidate-close');
 
-  window.openCandidateCvModal = (name, uni, skills, avatarUrl) => {
-    if (candidateModal && modalCandidateName && modalCandidateUni) {
-      modalCandidateName.textContent = name;
-      modalCandidateUni.textContent = uni;
-      if (modalCandidateAvatar && avatarUrl) {
-        modalCandidateAvatar.src = avatarUrl;
-      }
+  window.openCandidateCvModal = (name, uni, email = '', salary = '500.00', phase = 'Pendiente') => {
+    if (candidateModal) {
+      if (modalCandidateName) modalCandidateName.textContent = name;
+      if (modalCandidateUni) modalCandidateUni.textContent = uni;
+      const mEmail = document.getElementById('modal-candidate-email');
+      const mSalary = document.getElementById('modal-candidate-salary');
+      const mPhase = document.getElementById('modal-candidate-phase');
+      if (mEmail && email) mEmail.textContent = email;
+      if (mSalary && salary) mSalary.textContent = salary;
+      if (mPhase && phase) mPhase.textContent = phase;
+
       candidateModal.classList.add('active');
       document.body.style.overflow = 'hidden';
     }

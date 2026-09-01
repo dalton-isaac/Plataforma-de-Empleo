@@ -181,27 +181,33 @@ with app.app_context():
     db.session.add_all([oferta1, oferta2, oferta3, oferta4])
     db.session.flush()
 
-    # ── 6. POSTULACIONES DE PRUEBA ──────────────────────────────
+    # ── 6. POSTULACIONES DE PRUEBA (4 FASES DEL KANBAN) ─────────
     post1 = Postulacion(
         id_candidato=candidato1.id_candidato,
         id_oferta=oferta1.id_oferta,
-        estado="En revisión",
+        estado="Pendiente",
         fecha_postulacion=date.today(),
     )
     post2 = Postulacion(
         id_candidato=candidato2.id_candidato,
         id_oferta=oferta2.id_oferta,
-        estado="Entrevista",
+        estado="En Evaluación",
         fecha_postulacion=date.today(),
     )
     post3 = Postulacion(
         id_candidato=candidato3.id_candidato,
         id_oferta=oferta4.id_oferta,
-        estado="Pendiente",
+        estado="Entrevista",
+        fecha_postulacion=date.today(),
+    )
+    post4 = Postulacion(
+        id_candidato=candidato1.id_candidato,
+        id_oferta=oferta2.id_oferta,
+        estado="Aceptada",
         fecha_postulacion=date.today(),
     )
 
-    db.session.add_all([post1, post2, post3])
+    db.session.add_all([post1, post2, post3, post4])
 
     # ── 7. FAVORITOS ────────────────────────────────────────────
     fav1 = Favorito(

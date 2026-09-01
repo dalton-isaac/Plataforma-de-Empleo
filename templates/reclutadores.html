@@ -341,7 +341,7 @@
 
             <div class="kanban-cards-stack">
               {% for p in postulaciones if p.estado == 'Pendiente' %}
-                <div class="kanban-candidate-card" data-candidate-id="{{ p.id_candidato }}" data-postulacion-id="{{ p.id_postulacion }}">
+                <div class="kanban-candidate-card" onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "Vacante")|e }}', '{{ p.candidato.correo|e }}', '{{ p.candidato.salario_pretendido or 500 }}', '{{ p.estado }}')">
                   <div class="candidate-card-top">
                     <div class="candidate-avatar">👤</div>
                     <div class="candidate-info">
@@ -349,10 +349,8 @@
                       <p class="candidate-uni">{{ p.oferta.titulo if p.oferta else 'Vacante' }}</p>
                     </div>
                   </div>
-                  <div class="candidate-skill-tag">
-                    {{ p.candidato.correo }}
-                  </div>
-                  <div style="margin-top: 8px;">
+                  <div class="candidate-skill-tag">{{ p.candidato.correo }}</div>
+                  <div style="margin-top: 8px;" onclick="event.stopPropagation()">
                     <label style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Mover a Fase:</label>
                     <select class="kanban-phase-select" onchange="changeCandidatePhase({{ p.id_postulacion }}, this.value)">
                       <option value="Pendiente" selected>● Nuevos (Pendiente)</option>
@@ -380,7 +378,7 @@
 
             <div class="kanban-cards-stack">
               {% for p in postulaciones if p.estado == 'En Evaluación' %}
-                <div class="kanban-candidate-card" data-candidate-id="{{ p.id_candidato }}" data-postulacion-id="{{ p.id_postulacion }}">
+                <div class="kanban-candidate-card" onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "Vacante")|e }}', '{{ p.candidato.correo|e }}', '{{ p.candidato.salario_pretendido or 500 }}', '{{ p.estado }}')">
                   <div class="candidate-card-top">
                     <div class="candidate-avatar">👤</div>
                     <div class="candidate-info">
@@ -389,7 +387,7 @@
                     </div>
                   </div>
                   <div class="candidate-skill-tag">{{ p.candidato.correo }}</div>
-                  <div style="margin-top: 8px;">
+                  <div style="margin-top: 8px;" onclick="event.stopPropagation()">
                     <label style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Mover a Fase:</label>
                     <select class="kanban-phase-select" onchange="changeCandidatePhase({{ p.id_postulacion }}, this.value)">
                       <option value="Pendiente">● Nuevos (Pendiente)</option>
@@ -417,7 +415,7 @@
 
             <div class="kanban-cards-stack">
               {% for p in postulaciones if p.estado == 'Entrevista' %}
-                <div class="kanban-candidate-card" data-candidate-id="{{ p.id_candidato }}" data-postulacion-id="{{ p.id_postulacion }}">
+                <div class="kanban-candidate-card" onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "Vacante")|e }}', '{{ p.candidato.correo|e }}', '{{ p.candidato.salario_pretendido or 500 }}', '{{ p.estado }}')">
                   <div class="candidate-card-top">
                     <div class="candidate-avatar">👤</div>
                     <div class="candidate-info">
@@ -426,7 +424,7 @@
                     </div>
                   </div>
                   <div class="candidate-skill-tag">{{ p.candidato.correo }}</div>
-                  <div style="margin-top: 8px;">
+                  <div style="margin-top: 8px;" onclick="event.stopPropagation()">
                     <label style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Mover a Fase:</label>
                     <select class="kanban-phase-select" onchange="changeCandidatePhase({{ p.id_postulacion }}, this.value)">
                       <option value="Pendiente">● Nuevos (Pendiente)</option>
@@ -454,7 +452,7 @@
 
             <div class="kanban-cards-stack">
               {% for p in postulaciones if p.estado == 'Aceptada' %}
-                <div class="kanban-candidate-card" data-candidate-id="{{ p.id_candidato }}" data-postulacion-id="{{ p.id_postulacion }}">
+                <div class="kanban-candidate-card" onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "Vacante")|e }}', '{{ p.candidato.correo|e }}', '{{ p.candidato.salario_pretendido or 500 }}', '{{ p.estado }}')">
                   <div class="candidate-card-top">
                     <div class="candidate-avatar">👤</div>
                     <div class="candidate-info">
@@ -463,7 +461,7 @@
                     </div>
                   </div>
                   <div class="candidate-skill-tag">{{ p.candidato.correo }}</div>
-                  <div style="margin-top: 8px;">
+                  <div style="margin-top: 8px;" onclick="event.stopPropagation()">
                     <label style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Mover a Fase:</label>
                     <select class="kanban-phase-select" onchange="changeCandidatePhase({{ p.id_postulacion }}, this.value)">
                       <option value="Pendiente">● Nuevos (Pendiente)</option>
@@ -578,6 +576,39 @@
           <span>Crear Cuenta Empresa</span>
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL VISOR DE DETALLE DEL CANDIDATO EN KANBAN -->
+  <div class="modal-backdrop" id="candidate-cv-modal">
+    <div class="modal-card" style="max-width: 520px;">
+      <button class="modal-close-btn" id="modal-candidate-close" aria-label="Cerrar modal">✕</button>
+      
+      <div class="modal-header" style="text-align: left; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px;">
+        <div style="font-size: 2.5rem; background: #e0e7ff; color: #1D4ED8; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          👤
+        </div>
+        <div>
+          <h3 class="modal-title" id="modal-candidate-name" style="font-size: 1.3rem; margin-bottom: 4px;">Nombre del Candidato</h3>
+          <p class="modal-subtitle" id="modal-candidate-uni" style="color: #64748b; font-size: 0.9rem;">Vacante a la que postuló</p>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 20px 0; display: flex; flex-direction: column; gap: 12px; font-size: 0.95rem;">
+        <div style="background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <p style="margin-bottom: 6px;"><strong>📧 Correo de Contacto:</strong> <span id="modal-candidate-email" style="color: var(--color-primary);">candidato@estudiantes.ec</span></p>
+          <p style="margin-bottom: 6px;"><strong>🎓 Nivel / Carrera:</strong> Estudiante Universitario en Quito</p>
+          <p style="margin-bottom: 6px;"><strong>💵 Salario Pretendido:</strong> $<span id="modal-candidate-salary">500.00</span> USD/mes</p>
+          <p style="margin: 0;"><strong>📋 Fase Actual:</strong> <span id="modal-candidate-phase" style="font-weight: 600; color: #F97316;">En Evaluación</span></p>
+        </div>
+        <p style="color: #64748b; font-size: 0.85rem;">
+          Este postulante aplicó mediante <em>Postulación Rápida en 1 Clic</em>. Puedes contactarlo directamente a su correo o moverlo de fase en el tablero.
+        </p>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-modal-close" onclick="closeCandidateCvModal()" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; font-weight: 600;">Cerrar</button>
+      </div>
     </div>
   </div>
 
