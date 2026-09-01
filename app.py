@@ -69,6 +69,7 @@ def desarrollo():
 
 @app.route("/reclutadores")
 @app.route("/reclutadores.html")
+@rol_requerido(["reclutador", "admin"])
 def reclutadores():
     """Página de portal de empresas y tablero de reclutadores con listado de vacantes y Kanban."""
     ofertas = OfertaEmpleo.query.all()
@@ -605,6 +606,7 @@ def eliminar_favorito(oferta_id):
 
 
 @app.route("/api/candidatos", methods=["GET"])
+@rol_requerido(["reclutador", "admin"])
 def get_candidatos():
     """Retorna el listado de candidatos registrados."""
     candidatos = Candidato.query.all()

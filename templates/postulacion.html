@@ -36,12 +36,12 @@
           <li><a href="{{ url_for('postulacion') }}" class="nav-link active">Bolsa de Empleo</a></li>
           {% if session.get('usuario_rol') == 'candidato' %}
             <li><a href="{{ url_for('desarrollo') }}" class="nav-link">Desarrollo Personal</a></li>
+            <li><a href="{{ url_for('ver_favoritos') }}" class="nav-link">⭐ Mis Guardadas</a></li>
             <li><a href="{{ url_for('mis_postulaciones') }}" class="nav-link">📋 Mis Postulaciones</a></li>
           {% elif session.get('usuario_rol') in ['reclutador', 'admin'] %}
             <li><a href="{{ url_for('reclutadores') }}" class="nav-link">Portal Reclutadores</a></li>
           {% else %}
             <li><a href="{{ url_for('desarrollo') }}" class="nav-link">Desarrollo Personal</a></li>
-            <li><a href="{{ url_for('reclutadores') }}" class="nav-link">Portal Reclutadores</a></li>
           {% endif %}
         </ul>
         <div class="nav-auth">

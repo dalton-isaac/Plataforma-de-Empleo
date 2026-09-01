@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,69 +8,82 @@
   <title>TalentoEC | Desarrollo profesional y empleo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <main>
     <section class="hero" aria-labelledby="hero-title">
       <img class="hero__background" src="assets/images/hero.png" alt="Profesionales frente a una interfaz tecnológica">
-      
+
       <!-- Navegación Principal con Aislamiento Estricto de Roles -->
       <nav class="site-nav" aria-label="Navegación principal" id="nav-menu">
-        <a class="brand" href="{{ url_for('inicio') }}" id="logo-link" aria-label="TalentoEC, inicio"><span>Talento</span><b>EC</b></a>
+        <a class="brand" href="{{ url_for('inicio') }}" id="logo-link"
+          aria-label="TalentoEC, inicio"><span>Talento</span><b>EC</b></a>
         <div class="site-nav__links">
           <a href="{{ url_for('inicio') }}">Inicio</a>
           <a href="{{ url_for('postulacion') }}">Bolsa de Empleo</a>
           {% if session.get('usuario_rol') == 'candidato' %}
-            <a href="{{ url_for('desarrollo') }}">Desarrollo Personal</a>
-            <a href="{{ url_for('mis_postulaciones') }}">📋 Mis Postulaciones</a>
+          <a href="{{ url_for('desarrollo') }}">Desarrollo Personal</a>
+          <a href="{{ url_for('ver_favoritos') }}">Mis Guardadas</a>
+          <a href="{{ url_for('mis_postulaciones') }}">Mis Postulaciones</a>
           {% elif session.get('usuario_rol') in ['reclutador', 'admin'] %}
-            <a href="{{ url_for('reclutadores') }}">Portal Reclutadores</a>
+          <a href="{{ url_for('reclutadores') }}">Portal Reclutadores</a>
           {% else %}
-            <a href="{{ url_for('desarrollo') }}">Desarrollo Personal</a>
-            <a href="{{ url_for('reclutadores') }}">Portal Reclutadores</a>
+          <a href="{{ url_for('desarrollo') }}">Desarrollo Personal</a>
           {% endif %}
         </div>
         <div class="site-nav__actions">
           {% if session.get('usuario_id') %}
-            <div class="nav-user-logged">
-              <div class="nav-user-badge">
-                <span class="nav-user-avatar">👤</span>
-                <span>{{ session.get('usuario_nombre') }}</span>
-                <span style="font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 10px; font-weight: 600;">{{ session.get('usuario_rol') }}</span>
-              </div>
-              <a href="{{ url_for('logout') }}" class="nav-btn-logout">Cerrar sesión</a>
+          <div class="nav-user-logged">
+            <div class="nav-user-badge">
+              <span class="nav-user-avatar">👤</span>
+              <span>{{ session.get('usuario_nombre') }}</span>
+              <span
+                style="font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 10px; font-weight: 600;">{{
+                session.get('usuario_rol') }}</span>
             </div>
+            <a href="{{ url_for('logout') }}" class="nav-btn-logout">Cerrar sesión</a>
+          </div>
           {% else %}
-            <a class="button button--outline btn-open-register" href="#" onclick="openAuthModal('register')">Crear Cuenta</a>
-            <a class="button button--orange-outline btn-open-login" href="#" onclick="openAuthModal('login')">Iniciar sesión</a>
+          <a class="button button--outline btn-open-register" href="#" onclick="openAuthModal('register')">Crear
+            Cuenta</a>
+          <a class="button button--orange-outline btn-open-login" href="#" onclick="openAuthModal('login')">Iniciar
+            sesión</a>
           {% endif %}
         </div>
       </nav>
 
       <!-- Mensajes Flash -->
       {% with mensajes = get_flashed_messages(with_categories=true) %}
-        {% if mensajes %}
-          <div style="max-width: 900px; margin: 16px auto 0 auto; padding: 0 16px; width: 100%; position: relative; z-index: 50;">
-            {% for categoria, texto in mensajes %}
-              <div style="padding: 12px 18px; border-radius: 8px; margin-bottom: 10px; font-family: var(--font-family-body); font-weight: 500; display: flex; align-items: center; justify-content: space-between; {% if categoria == 'success' %}background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0;{% elif categoria == 'warning' %}background-color: #fef9c3; color: #854d0e; border: 1px solid #fef08a;{% else %}background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca;{% endif %}">
-                <span>{{ texto }}</span>
-                <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">&times;</button>
-              </div>
-            {% endfor %}
-          </div>
-        {% endif %}
+      {% if mensajes %}
+      <div
+        style="max-width: 900px; margin: 16px auto 0 auto; padding: 0 16px; width: 100%; position: relative; z-index: 50;">
+        {% for categoria, texto in mensajes %}
+        <div
+          style="padding: 12px 18px; border-radius: 8px; margin-bottom: 10px; font-family: var(--font-family-body); font-weight: 500; display: flex; align-items: center; justify-content: space-between; {% if categoria == 'success' %}background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0;{% elif categoria == 'warning' %}background-color: #fef9c3; color: #854d0e; border: 1px solid #fef08a;{% else %}background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca;{% endif %}">
+          <span>{{ texto }}</span>
+          <button type="button" onclick="this.parentElement.remove()"
+            style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">&times;</button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
       {% endwith %}
 
       <!-- Buscador Conectado a la Bolsa de Empleo -->
-      <form class="search-bar" id="search-form" action="{{ url_for('postulacion') }}" method="GET" aria-label="Buscar ofertas de empleo">
+      <form class="search-bar" id="search-form" action="{{ url_for('postulacion') }}" method="GET"
+        aria-label="Buscar ofertas de empleo">
         <span class="search-bar__icon" aria-hidden="true">🔍</span>
         <label class="sr-only" for="search-job">Buscar empleo</label>
         <input id="search-job" name="q" type="search" placeholder="Buscar empleo o tecnología (ej. Python, UX/UI)">
         <label class="sr-only" for="search-location">Ciudad o sector</label>
         <input id="search-location" name="location" type="text" placeholder="Quito, Ecuador" value="Quito">
-        <button type="submit" style="background: var(--color-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 4px;">
+        <button type="submit"
+          style="background: var(--color-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 4px;">
           Buscar
         </button>
       </form>
@@ -77,20 +91,23 @@
       <!-- Botones de Acción según Rol -->
       <div class="hero__actions">
         {% if session.get('usuario_rol') == 'candidato' %}
-          <a class="button button--primary" href="{{ url_for('postulacion') }}">Explorar Bolsa de Empleo</a>
-          <a class="button button--orange" href="{{ url_for('mis_postulaciones') }}">📋 Mis Postulaciones</a>
+        <a class="button button--primary" href="{{ url_for('postulacion') }}">Explorar Bolsa de Empleo</a>
+        <a class="button button--orange" href="{{ url_for('mis_postulaciones') }}">📋 Mis Postulaciones</a>
         {% elif session.get('usuario_rol') in ['reclutador', 'admin'] %}
-          <a class="button button--primary" href="{{ url_for('reclutadores') }}#formulario-vacante">+ Publicar Vacante</a>
-          <a class="button button--orange" href="{{ url_for('reclutadores') }}#kanban-section">Tablero Kanban</a>
+        <a class="button button--primary" href="{{ url_for('reclutadores') }}#formulario-vacante">+ Publicar Vacante</a>
+        <a class="button button--orange" href="{{ url_for('reclutadores') }}#kanban-section">Tablero Kanban</a>
         {% else %}
-          <a class="button button--primary" href="{{ url_for('postulacion') }}">Postúlate aquí</a>
-          <a class="button button--primary" href="{{ url_for('reclutadores') }}">Recluta aquí</a>
+        <a class="button button--primary" href="{{ url_for('postulacion') }}">Postúlate a Empleos</a>
+        <a class="button button--outline" href="#"
+          onclick="openAuthModal('register'); if(document.getElementById('register-role')) { document.getElementById('register-role').value='reclutador'; } if(document.getElementById('company-field-group')) { document.getElementById('company-field-group').style.display='block'; } return false;">Portal
+          Empresas</a>
         {% endif %}
       </div>
     </section>
 
     <section class="development" id="desarrollo" aria-labelledby="development-title">
-      <div class="development__media"><img src="assets/images/development.png" alt="Persona subiendo una escalera hacia una mano de apoyo"></div>
+      <div class="development__media"><img src="assets/images/development.png"
+          alt="Persona subiendo una escalera hacia una mano de apoyo"></div>
       <div class="development__content">
         <div class="development__panel">
           <h1 id="development-title">¡Potencia Tu Desarrollo Profesional!</h1>
@@ -103,13 +120,26 @@
     <section class="opportunities" id="ofertas" aria-labelledby="opportunities-title">
       <h2 id="opportunities-title" class="sr-only">Oportunidades para tu carrera</h2>
       <div class="carousel carousel--opportunities">
-        <button class="carousel__control" id="carousel-prev" type="button" aria-label="Oportunidad anterior">&lt;</button>
+        <button class="carousel__control" id="carousel-prev" type="button"
+          aria-label="Oportunidad anterior">&lt;</button>
         <div class="carousel__track" id="carousel-container">
-          <article class="opportunity-card opportunity-card--small"><h3>Contratación IA</h3><img src="assets/images/card-ai.png" alt="Interfaz de contratación con inteligencia artificial"><p>Obtén una evolución de aspirantes automática</p></article>
-          <article class="opportunity-card opportunity-card--featured"><h3>Postulación Rápida</h3><img src="assets/images/card-fast.png" alt="Escalera de oportunidades laborales"><p>Accede a miles de oportunidades al instante</p></article>
-          <article class="opportunity-card opportunity-card--small"><h3>Certificaciones</h3><img src="assets/images/card-certifications.png" alt="Insignia y certificado de conocimientos"><p>Comprueba tus conocimientos y destaca en el mercado</p></article>
+          <article class="opportunity-card opportunity-card--small">
+            <h3>Contratación IA</h3><img src="assets/images/card-ai.png"
+              alt="Interfaz de contratación con inteligencia artificial">
+            <p>Obtén una evolución de aspirantes automática</p>
+          </article>
+          <article class="opportunity-card opportunity-card--featured">
+            <h3>Postulación Rápida</h3><img src="assets/images/card-fast.png" alt="Escalera de oportunidades laborales">
+            <p>Accede a miles de oportunidades al instante</p>
+          </article>
+          <article class="opportunity-card opportunity-card--small">
+            <h3>Certificaciones</h3><img src="assets/images/card-certifications.png"
+              alt="Insignia y certificado de conocimientos">
+            <p>Comprueba tus conocimientos y destaca en el mercado</p>
+          </article>
         </div>
-        <button class="carousel__control" id="carousel-next" type="button" aria-label="Siguiente oportunidad">&gt;</button>
+        <button class="carousel__control" id="carousel-next" type="button"
+          aria-label="Siguiente oportunidad">&gt;</button>
       </div>
     </section>
 
@@ -130,10 +160,18 @@
 
     <section class="stats" aria-labelledby="stats-title">
       <h2 id="stats-title" class="sr-only">TalentoEC en cifras</h2>
-      <article class="stat-card"><span class="stat-icon">📋</span><p><strong>25,000 +</strong><span>Vacantes</span></p></article>
-      <article class="stat-card"><span class="stat-icon">🏢</span><p><strong>5,000 +</strong><span>Empresas</span></p></article>
-      <article class="stat-card"><span class="stat-icon">👤</span><p><strong>1 M +</strong><span>Postulantes</span></p></article>
-      <article class="stat-card"><span class="stat-icon">🛡️</span><p><strong>98%</strong><span>Satisfacción</span></p></article>
+      <article class="stat-card"><span class="stat-icon">📋</span>
+        <p><strong>25,000 +</strong><span>Vacantes</span></p>
+      </article>
+      <article class="stat-card"><span class="stat-icon">🏢</span>
+        <p><strong>5,000 +</strong><span>Empresas</span></p>
+      </article>
+      <article class="stat-card"><span class="stat-icon">👤</span>
+        <p><strong>1 M +</strong><span>Postulantes</span></p>
+      </article>
+      <article class="stat-card"><span class="stat-icon">🛡️</span>
+        <p><strong>98%</strong><span>Satisfacción</span></p>
+      </article>
     </section>
   </main>
 
@@ -149,7 +187,9 @@
         <a href="{{ url_for('inicio') }}">Inicio</a>
         <a href="{{ url_for('postulacion') }}">Bolsa de Empleo</a>
         <a href="{{ url_for('desarrollo') }}">Desarrollo Personal</a>
-        <a href="{{ url_for('reclutadores') }}">Para Reclutadores</a>
+        {% if session.get('usuario_rol') in ['reclutador', 'admin'] %}
+        <a href="{{ url_for('reclutadores') }}">Portal Reclutadores</a>
+        {% endif %}
       </nav>
       <nav class="footer-links" aria-label="Soporte y Ayuda">
         <h2>Soporte & Ayuda</h2>
@@ -159,7 +199,8 @@
         <a href="#">Términos y Privacidad</a>
       </nav>
     </div>
-    <p class="site-footer__copyright">© 2026 TalentoEC. Todos los derechos reservados. Proyecto Universitario - Quito, Ecuador.</p>
+    <p class="site-footer__copyright">© 2026 TalentoEC. Todos los derechos reservados. Proyecto Universitario - Quito,
+      Ecuador.</p>
   </footer>
 
   <!-- MODAL UNIFICADO DE AUTENTICACIÓN (LOGIN & REGISTRO DUAL) -->
@@ -204,8 +245,10 @@
         <!-- Selector de Tipo de Cuenta -->
         <label style="font-size: 0.8rem; font-weight: 600; color: #334155; margin-bottom: 2px;">Tipo de Perfil:</label>
         <div class="auth-role-selector" id="auth-role-selector">
-          <button type="button" class="role-pill active" data-role="candidato" id="role-btn-candidato">🎓 Soy Candidato</button>
-          <button type="button" class="role-pill" data-role="reclutador" id="role-btn-reclutador">🏢 Soy Reclutador</button>
+          <button type="button" class="role-pill active" data-role="candidato" id="role-btn-candidato">🎓 Soy
+            Candidato</button>
+          <button type="button" class="role-pill" data-role="reclutador" id="role-btn-reclutador">🏢 Soy
+            Reclutador</button>
         </div>
         <input type="hidden" id="register-role" value="candidato">
 
@@ -251,4 +294,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>
