@@ -8,10 +8,10 @@ load_dotenv()
 class Config:
     # Datos de conexión a PostgreSQL, tomados del .env
     DB_USER = os.getenv("DB_USER", "postgres")
-    DB_PASSWORD = os.getenv("DB_PASSWORD", "231003")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "12hola34")
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_PORT = os.getenv("DB_PORT", "5432")
-    DB_NAME = os.getenv("DB_NAME", "PlataformaEmpleo")
+    DB_NAME = os.getenv("DB_NAME", "plataformaempleo")
 
     # SQLAlchemy necesita esta URI con el formato:
     # postgresql://usuario:contraseña@host:puerto/nombre_basedatos

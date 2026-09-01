@@ -41,13 +41,19 @@
           </div>
         {% endif %}
       {% endwith %}
-      <form class="search-bar" id="search-form" onsubmit="event.preventDefault();" aria-label="Buscar ofertas de empleo">
-        <span class="search-bar__icon" aria-hidden="true">🔍</span>
-        <label class="sr-only" for="search-job">Buscar empleo</label>
-        <input id="search-job" name="q" type="search" placeholder="Buscar Empleo">
-        <label class="sr-only" for="search-location">Ciudad o país</label>
-        <input id="search-location" name="location" type="text" placeholder="Ciudad o país">
-        <span class="search-bar__location" aria-hidden="true">📍</span>
+      <form class="search-bar" id="search-form" action="postulacion.html" method="GET" aria-label="Buscar ofertas de empleo">
+        <button type="submit" class="search-bar__icon" id="btn-search-icon" aria-label="Buscar ofertas" title="Buscar ofertas">🔍</button>
+        <div class="search-input-wrapper">
+          <label class="sr-only" for="search-job">Buscar empleo</label>
+          <input id="search-job" name="q" type="search" placeholder="Buscar Empleo (ej. Desarrollador, UX/UI, Marketing)" autocomplete="off">
+          <div class="search-suggestions-dropdown" id="search-suggestions-dropdown" style="display: none;"></div>
+        </div>
+        <div class="search-input-wrapper location-wrapper">
+          <label class="sr-only" for="search-location">Ciudad o país</label>
+          <input id="search-location" name="location" type="text" placeholder="Ciudad (ej. Quito, Guayaquil, Cuenca)" value="Quito, Ecuador" autocomplete="off">
+          <div class="search-suggestions-dropdown" id="location-suggestions-dropdown" style="display: none;"></div>
+        </div>
+        <button type="button" class="search-bar__location" id="btn-location-icon" aria-label="Seleccionar ciudad" title="Seleccionar ciudad">📍</button>
       </form>
       <div class="hero__actions">
         <a class="button button--primary" href="postulacion.html">Postúlate aquí</a>

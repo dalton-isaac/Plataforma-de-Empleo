@@ -39,6 +39,10 @@ app.config.from_object(Config)
 # Conectar la app con la instancia de SQLAlchemy definida en models.py
 db.init_app(app)
 
+# Asegurar que todas las tablas existan automáticamente al arrancar la aplicación
+with app.app_context():
+    db.create_all()
+
 
 # ══════════════════════════════════════════════════════════════
 # RUTAS DE VISTAS (PÁGINAS HTML)

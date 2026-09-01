@@ -221,18 +221,390 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
+  // 3.5. BUSCADOR INTELIGENTE EN EL HEADER CON AUTOCOMPLETE (TODAS LAS PÁGINAS)
+  // ==========================================================================
+  const headerSearchForm = document.getElementById('search-form');
+  const headerSearchJob = document.getElementById('search-job');
+  const headerSearchLocation = document.getElementById('search-location');
+  const headerSearchBtn = document.getElementById('btn-search-icon');
+  const suggestionsDropdown = document.getElementById('search-suggestions-dropdown');
+
+  let availableJobsList = [...jobsData];
+
+  async function loadJobsForAutocomplete() {
+    try {
+      const res = await fetch('/api/ofertas');
+      if (res.ok) {
+        const apiJobs = await res.json();
+        if (Array.isArray(apiJobs) && apiJobs.length > 0) {
+          const mappedApiJobs = apiJobs.map(job => ({
+            id: job.id_oferta || job.id,
+            title: job.titulo || job.title,
+            company: job.empresa || job.company || 'Empresa Aliada',
+            location: job.ubicacion || job.location || 'Quito, Ecuador',
+            salary: job.sueldo ? `$${job.sueldo} USD` : (job.salary || 'A convenir'),
+            badge: job.experiencia_requerida ? 'Con Experiencia' : 'Sin Experiencia',
+            category: job.categoria || job.category || 'general',
+            mode: job.modalidad || job.mode || 'presencial',
+            tags: job.tags || [job.modalidad || 'Presencial'],
+            description: job.descripcion || job.description || ''
+          }));
+          availableJobsList = mappedApiJobs;
+        }
+      }
+    } catch (e) {
+      // Usar jobsData local si no hay conexión API
+    }
+  }
+  loadJobsForAutocomplete();
+
+  const getCategoryIcon = (category) => {
+    switch ((category || '').toLowerCase()) {
+      case 'ti':
+      case 'software':
+      case 'desarrollo':
+        return '💻';
+      case 'diseno':
+      case 'ux':
+      case 'ui':
+        return '🎨';
+      case 'marketing':
+      case 'publicidad':
+        return '📱';
+      case 'soporte':
+      case 'redes':
+        return '🛠️';
+      default:
+        return '💼';
+    }
+  };
+
+  const highlightMatch = (text, query) => {
+    if (!query || !text) return text || '';
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+  };
+
+  const performHeaderSearch = (customQuery = null) => {
+    const q = customQuery !== null ? customQuery : (headerSearchJob ? headerSearchJob.value.trim() : '');
+    const location = headerSearchLocation ? headerSearchLocation.value.trim() : '';
+
+    const params = new URLSearchParams();
+    if (q) params.append('q', q);
+    if (location) params.append('location', location);
+
+    const targetUrl = `postulacion.html?${params.toString()}`;
+    window.location.href = targetUrl;
+  };
+
+  if (headerSearchForm) {
+    headerSearchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      performHeaderSearch();
+    });
+  }
+
+  if (headerSearchBtn) {
+    headerSearchBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      performHeaderSearch();
+    });
+  }
+
+  if (headerSearchJob && suggestionsDropdown) {
+    let currentFocus = -1;
+
+    const showSuggestions = (query) => {
+      const q = query.toLowerCase().trim();
+      if (!q) {
+        suggestionsDropdown.style.display = 'none';
+        suggestionsDropdown.innerHTML = '';
+        currentFocus = -1;
+        return;
+      }
+
+      const matches = availableJobsList.filter(job => {
+        const title = (job.title || '').toLowerCase();
+        const company = (job.company || '').toLowerCase();
+        const category = (job.category || '').toLowerCase();
+        const desc = (job.description || '').toLowerCase();
+        const tags = Array.isArray(job.tags) ? job.tags.join(' ').toLowerCase() : '';
+        return title.includes(q) || company.includes(q) || category.includes(q) || desc.includes(q) || tags.includes(q);
+      }).slice(0, 6);
+
+      if (matches.length === 0) {
+        suggestionsDropdown.innerHTML = `
+          <div class="suggestion-empty">
+            🔍 No se encontraron sugerencias para "<strong>${query}</strong>". <br>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Haz clic en la lupa o presiona Enter para buscar en todas las ofertas.</span>
+          </div>
+        `;
+        suggestionsDropdown.style.display = 'block';
+        currentFocus = -1;
+        return;
+      }
+
+      suggestionsDropdown.innerHTML = matches.map((job, idx) => `
+        <div class="suggestion-item" data-index="${idx}" data-title="${job.title}">
+          <div class="suggestion-icon">${getCategoryIcon(job.category)}</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">${highlightMatch(job.title, query)}</div>
+            <div class="suggestion-subtitle">
+              <span>🏢 ${highlightMatch(job.company, query)}</span>
+              <span>•</span>
+              <span>📍 ${job.location}</span>
+            </div>
+          </div>
+          <span class="suggestion-badge">${job.badge || 'Sin Experiencia'}</span>
+        </div>
+      `).join('');
+
+      suggestionsDropdown.style.display = 'block';
+      currentFocus = -1;
+
+      suggestionsDropdown.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const title = item.getAttribute('data-title');
+          headerSearchJob.value = title;
+          suggestionsDropdown.style.display = 'none';
+          performHeaderSearch(title);
+        });
+      });
+    };
+
+    headerSearchJob.addEventListener('input', (e) => {
+      showSuggestions(e.target.value);
+    });
+
+    headerSearchJob.addEventListener('focus', (e) => {
+      if (e.target.value.trim().length > 0) {
+        showSuggestions(e.target.value);
+      }
+    });
+
+    headerSearchJob.addEventListener('keydown', (e) => {
+      const items = suggestionsDropdown.querySelectorAll('.suggestion-item');
+      if (!items || items.length === 0 || suggestionsDropdown.style.display === 'none') {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          performHeaderSearch();
+        }
+        return;
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        currentFocus++;
+        if (currentFocus >= items.length) currentFocus = 0;
+        setActiveSuggestion(items, currentFocus);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        currentFocus--;
+        if (currentFocus < 0) currentFocus = items.length - 1;
+        setActiveSuggestion(items, currentFocus);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (currentFocus > -1 && items[currentFocus]) {
+          items[currentFocus].click();
+        } else {
+          performHeaderSearch();
+        }
+      } else if (e.key === 'Escape') {
+        suggestionsDropdown.style.display = 'none';
+        currentFocus = -1;
+      }
+    });
+
+    const setActiveSuggestion = (items, index) => {
+      items.forEach(i => i.classList.remove('active'));
+      if (items[index]) {
+        items[index].classList.add('active');
+        items[index].scrollIntoView({ block: 'nearest' });
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      if (headerSearchForm && !headerSearchForm.contains(e.target)) {
+        suggestionsDropdown.style.display = 'none';
+      }
+    });
+  }
+
+  // ==========================================================================
+  // 3.6. FILTRO DE CIUDADES DE ECUADOR (AUTOCOMPLETE Y SELECTOR)
+  // ==========================================================================
+  const ecuadorCities = [
+    { name: "Quito", province: "Pichincha (Capital)", icon: "🏛️", badge: "Capital" },
+    { name: "Guayaquil", province: "Guayas", icon: "⚓", badge: "Costa" },
+    { name: "Cuenca", province: "Azuay", icon: "🏰", badge: "Sierra" },
+    { name: "Santo Domingo", province: "Sto. Domingo de los Tsáchilas", icon: "🌴", badge: "Costa / Sierra" },
+    { name: "Ambato", province: "Tungurahua", icon: "🌺", badge: "Sierra" },
+    { name: "Manta", province: "Manabí", icon: "⛵", badge: "Costa" },
+    { name: "Portoviejo", province: "Manabí", icon: "🌳", badge: "Costa" },
+    { name: "Machala", province: "El Oro", icon: "🍌", badge: "Costa" },
+    { name: "Loja", province: "Loja", icon: "🎻", badge: "Sur" },
+    { name: "Ibarra", province: "Imbabura", icon: "🏔️", badge: "Norte" },
+    { name: "Riobamba", province: "Chimborazo", icon: "🌋", badge: "Sierra" },
+    { name: "Esmeraldas", province: "Esmeraldas", icon: "🏖️", badge: "Costa" },
+    { name: "Quevedo", province: "Los Ríos", icon: "🌾", badge: "Costa" },
+    { name: "Remoto (Todo Ecuador)", province: "100% Online / A Distancia", icon: "🌐", badge: "Teletrabajo" }
+  ];
+
+  function setupCityAutocomplete(inputElement, dropdownElement, onSelectCallback) {
+    if (!inputElement || !dropdownElement) return;
+
+    let currentFocus = -1;
+
+    const renderCityList = (query = '') => {
+      const rawQ = query.toLowerCase().trim();
+      const q = rawQ.replace(/,\s*ecuador/gi, '').replace(/\(todo ecuador\)/gi, '').trim();
+
+      const filtered = ecuadorCities.filter(c => {
+        if (!q) return true;
+        return c.name.toLowerCase().includes(q) || c.province.toLowerCase().includes(q);
+      });
+
+      if (filtered.length === 0) {
+        dropdownElement.innerHTML = `
+          <div class="suggestion-empty">
+            📍 No se encontró la ciudad "<strong>${query}</strong>". <br>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Puedes escribir el nombre de tu localidad manualmente.</span>
+          </div>
+        `;
+        dropdownElement.style.display = 'block';
+        currentFocus = -1;
+        return;
+      }
+
+      dropdownElement.innerHTML = `
+        <div style="padding: 6px 14px; font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9;">
+          Ciudades de Ecuador
+        </div>
+        ${filtered.map((c, idx) => `
+          <div class="suggestion-item" data-index="${idx}" data-city="${c.name}">
+            <div class="suggestion-icon">${c.icon}</div>
+            <div class="suggestion-content">
+              <div class="suggestion-title">${highlightMatch(c.name, q)}</div>
+              <div class="suggestion-subtitle">
+                <span>📍 ${highlightMatch(c.province, q)}</span>
+              </div>
+            </div>
+            <span class="suggestion-badge" style="background: #e0f2fe; color: #0369a1;">${c.badge}</span>
+          </div>
+        `).join('')}
+      `;
+
+      dropdownElement.style.display = 'block';
+      currentFocus = -1;
+
+      dropdownElement.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cityName = item.getAttribute('data-city');
+          const valueToSet = cityName.startsWith('Remoto') ? cityName : `${cityName}, Ecuador`;
+          inputElement.value = valueToSet;
+          dropdownElement.style.display = 'none';
+          if (typeof onSelectCallback === 'function') {
+            onSelectCallback(valueToSet);
+          }
+        });
+      });
+    };
+
+    inputElement.addEventListener('focus', () => {
+      renderCityList(inputElement.value);
+    });
+
+    inputElement.addEventListener('input', (e) => {
+      renderCityList(e.target.value);
+    });
+
+    inputElement.addEventListener('keydown', (e) => {
+      const items = dropdownElement.querySelectorAll('.suggestion-item');
+      if (!items || items.length === 0 || dropdownElement.style.display === 'none') {
+        return;
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        currentFocus++;
+        if (currentFocus >= items.length) currentFocus = 0;
+        items.forEach(i => i.classList.remove('active'));
+        if (items[currentFocus]) {
+          items[currentFocus].classList.add('active');
+          items[currentFocus].scrollIntoView({ block: 'nearest' });
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        currentFocus--;
+        if (currentFocus < 0) currentFocus = items.length - 1;
+        items.forEach(i => i.classList.remove('active'));
+        if (items[currentFocus]) {
+          items[currentFocus].classList.add('active');
+          items[currentFocus].scrollIntoView({ block: 'nearest' });
+        }
+      } else if (e.key === 'Enter') {
+        if (currentFocus > -1 && items[currentFocus]) {
+          e.preventDefault();
+          items[currentFocus].click();
+        }
+      } else if (e.key === 'Escape') {
+        dropdownElement.style.display = 'none';
+        currentFocus = -1;
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!inputElement.contains(e.target) && !dropdownElement.contains(e.target)) {
+        dropdownElement.style.display = 'none';
+      }
+    });
+  }
+
+  // Vincular dropdown de ciudad en el header (index.html)
+  const headerLocationInput = document.getElementById('search-location');
+  const headerLocationDropdown = document.getElementById('location-suggestions-dropdown');
+  const btnLocationIcon = document.getElementById('btn-location-icon');
+
+  if (headerLocationInput && headerLocationDropdown) {
+    setupCityAutocomplete(headerLocationInput, headerLocationDropdown);
+
+    if (btnLocationIcon) {
+      btnLocationIcon.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        headerLocationInput.focus();
+      });
+    }
+  }
+
+  // ==========================================================================
   // 4. LÓGICA DE POSTULACIÓN / FILTROS / MASTER-DETAIL (PÁGINA POSTULACIÓN)
   // ==========================================================================
   const filterPills = document.querySelectorAll('.filter-pill');
   const jobCards = document.querySelectorAll('.search-job-card');
   const searchInput = document.getElementById('job-search-input');
+  const locationSearchInput = document.getElementById('location-search-input');
   const btnSearchTrigger = document.getElementById('btn-search-trigger');
   const jobDetailColumn = document.getElementById('job-detail-column');
   const btnBackToList = document.getElementById('btn-back-to-list');
   const jobsCountBadge = document.getElementById('jobs-count-badge');
 
+  // Lectura de parámetros de búsqueda en la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryParam = urlParams.get('q');
+  const locationParam = urlParams.get('location');
+
+  if (queryParam && searchInput) {
+    searchInput.value = queryParam;
+  }
+  if (locationParam && locationSearchInput) {
+    locationSearchInput.value = locationParam;
+  }
+
   const updateJobDetailView = (jobId) => {
-    const job = jobsData.find(j => j.id === jobId);
+    const job = availableJobsList.find(j => j.id === jobId) || jobsData.find(j => j.id === jobId);
     if (!job) return;
 
     currentSelectedJobId = jobId;
@@ -251,11 +623,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (detailSalary) detailSalary.textContent = job.salary;
     if (detailDesc) detailDesc.textContent = job.description;
 
-    if (detailTags) {
+    if (detailTags && Array.isArray(job.tags)) {
       detailTags.innerHTML = job.tags.map(t => `<span class="tag-pill">${t}</span>`).join('');
     }
 
-    if (detailResp) {
+    if (detailResp && Array.isArray(job.responsibilities)) {
       detailResp.innerHTML = job.responsibilities.map(r => `
         <li>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -264,7 +636,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
     }
 
-    if (detailReq) {
+    if (detailReq && Array.isArray(job.requirements)) {
       detailReq.innerHTML = job.requirements.map(req => `
         <li>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -273,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
     }
 
-    if (detailBen) {
+    if (detailBen && Array.isArray(job.benefits)) {
       detailBen.innerHTML = job.benefits.map(b => `
         <li>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -355,18 +727,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Vincular dropdown de ciudad en página de postulación (postulacion.html)
+  const postulacionLocationDropdown = document.getElementById('postulacion-location-dropdown');
+  if (locationSearchInput && postulacionLocationDropdown) {
+    setupCityAutocomplete(locationSearchInput, postulacionLocationDropdown, () => {
+      executeSearch();
+    });
+  }
+
   const executeSearch = () => {
     const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const rawLoc = locationSearchInput ? locationSearchInput.value.toLowerCase().trim() : '';
+    const locQuery = rawLoc.replace(/,\s*ecuador/gi, '').replace(/\(todo ecuador\)/gi, '').trim();
+
     let visibleCount = 0;
+    let firstVisibleJobId = null;
 
     jobCards.forEach(card => {
-      const title = card.querySelector('.card-job-title').textContent.toLowerCase();
-      const company = card.querySelector('.card-company-name').textContent.toLowerCase();
-      const snippet = card.querySelector('.card-snippet').textContent.toLowerCase();
+      const title = (card.querySelector('.card-job-title')?.textContent || '').toLowerCase();
+      const company = (card.querySelector('.card-company-name')?.textContent || '').toLowerCase();
+      const snippet = (card.querySelector('.card-snippet')?.textContent || '').toLowerCase();
+      const metaTags = Array.from(card.querySelectorAll('.meta-tag')).map(t => t.textContent.toLowerCase()).join(' ');
+      const category = (card.getAttribute('data-category') || '').toLowerCase();
+      const exp = (card.getAttribute('data-experience') || '').toLowerCase();
+      const mode = (card.getAttribute('data-mode') || '').toLowerCase();
 
-      if (title.includes(query) || company.includes(query) || snippet.includes(query)) {
+      const matchesQuery = !query || title.includes(query) || company.includes(query) || snippet.includes(query) || category.includes(query) || exp.includes(query) || mode.includes(query);
+
+      let matchesLoc = true;
+      if (locQuery && locQuery !== 'ecuador' && locQuery !== 'todo ecuador') {
+        if (locQuery === 'remoto' || locQuery.startsWith('remoto')) {
+          matchesLoc = mode === 'remoto' || mode === 'hibrido' || metaTags.includes('remoto');
+        } else {
+          // Coincide con la ciudad indicada o la oferta es remota (disponible a nivel nacional)
+          matchesLoc = metaTags.includes(locQuery) || mode === 'remoto' || title.includes(locQuery) || snippet.includes(locQuery);
+        }
+      }
+
+      if (matchesQuery && matchesLoc) {
         card.style.display = 'flex';
         visibleCount++;
+        if (!firstVisibleJobId) {
+          firstVisibleJobId = parseInt(card.getAttribute('data-job-id'));
+        }
       } else {
         card.style.display = 'none';
       }
@@ -375,10 +778,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (jobsCountBadge) {
       jobsCountBadge.textContent = `${visibleCount} oferta${visibleCount !== 1 ? 's' : ''}`;
     }
+
+    if (firstVisibleJobId !== null) {
+      updateJobDetailView(firstVisibleJobId);
+    }
   };
 
   if (searchInput) searchInput.addEventListener('input', executeSearch);
+  if (locationSearchInput) locationSearchInput.addEventListener('input', executeSearch);
   if (btnSearchTrigger) btnSearchTrigger.addEventListener('click', executeSearch);
+
+  // Si se ingresó con parámetros en la URL (?q=... o ?location=...), ejecutar la búsqueda automáticamente
+  if (queryParam || locationParam) {
+    executeSearch();
+  }
 
   // ==========================================================================
   // 5. SIMULADOR DE "POSTULACIÓN RÁPIDA" (Modal interactivo)
