@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso Denegado (403) | TalentoEC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; background-color: var(--color-secondary);">
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="{{ url_for('inicio') }}" id="logo-link">Talento<span>EC</span></a>
+      </div>
+      <nav class="nav-menu">
+        <ul class="nav-list">
+          <li><a href="{{ url_for('inicio') }}" class="nav-link">Inicio</a></li>
+          <li><a href="{{ url_for('postulacion') }}" class="nav-link">Bolsa de Empleo</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 600px; margin: 60px auto; padding: 0 20px; text-align: center;">
+    <div style="font-size: 5rem; font-family: var(--font-family-title); font-weight: 700; color: #dc2626; margin-bottom: 0;">403</div>
+    <div style="font-size: 3rem; margin-bottom: 12px;">🛡️</div>
+    <h1 style="font-family: var(--font-family-title); font-size: 1.75rem; color: var(--color-neutral-dark); margin-bottom: 12px; font-weight: 600;">
+      Acceso Restringido por Rol
+    </h1>
+    <p style="color: var(--color-neutral-muted); font-size: 1rem; margin-bottom: 28px; line-height: 1.6;">
+      No posees los permisos o el rol adecuado para ingresar a esta sección. Esta función está reservada exclusivamente para cuentas autorizadas.
+    </p>
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a href="{{ url_for('inicio') }}" style="background-color: var(--color-primary); color: #ffffff; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none;">
+        Volver a la Página Principal
+      </a>
+      <a href="{{ url_for('logout') }}" style="background-color: transparent; border: 1.5px solid #dc2626; color: #dc2626; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none;">
+        Cambiar de Cuenta
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="soporte">
+    <div class="site-footer__content">
+      <div class="site-footer__brand">
+        <a class="brand" href="{{ url_for('inicio') }}"><span>Talento</span><b>EC</b></a>
+        <p>Proyecto Universitario - Quito, Ecuador.</p>
+      </div>
+      <nav class="footer-links">
+        <h2>Soporte</h2>
+        <a href="mailto:soporte@talentoec.edu.ec">soporte@talentoec.edu.ec</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

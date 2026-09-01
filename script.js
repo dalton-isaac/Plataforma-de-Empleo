@@ -279,6 +279,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const getLocationEmoji = (locationText) => {
+    const loc = (locationText || '').toLowerCase();
+    if (loc.includes('guayaquil') || loc.includes('samborondón') || loc.includes('durán') || loc.includes('guayas')) return '⚓';
+    if (loc.includes('cuenca') || loc.includes('azuay')) return '🏰';
+    if (loc.includes('santo domingo') || loc.includes('tsáchila')) return '🌴';
+    if (loc.includes('ambato') || loc.includes('tungurahua')) return '🌺';
+    if (loc.includes('manta')) return '⛵';
+    if (loc.includes('portoviejo') || loc.includes('manabí')) return '🌳';
+    if (loc.includes('machala') || loc.includes('el oro')) return '🍌';
+    if (loc.includes('loja')) return '🎻';
+    if (loc.includes('ibarra') || loc.includes('imbabura')) return '🏔️';
+    if (loc.includes('riobamba') || loc.includes('chimborazo')) return '🌋';
+    if (loc.includes('esmeraldas')) return '🏖️';
+    if (loc.includes('quevedo') || loc.includes('los ríos')) return '🌾';
+    if (loc.includes('remoto') || loc.includes('todo ecuador') || loc.includes('online')) return '🌐';
+    if (loc.includes('quito') || loc.includes('pichincha') || loc.includes('cumbayá')) return '🏛️';
+    return '📍';
+  };
+
   const highlightMatch = (text, query) => {
     if (!query || !text) return text || '';
     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
@@ -311,14 +330,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (headerSearchJob && suggestionsDropdown) {
+  function setupJobSuggestions(inputEl, dropdownEl, locationInputEl, onSelectCallback) {
+    if (!inputEl || !dropdownEl) return;
+
     let currentFocus = -1;
 
     const showSuggestions = (query) => {
       const q = query.toLowerCase().trim();
-      if (!q) {
-        suggestionsDropdown.style.display = 'none';
-        suggestionsDropdown.innerHTML = '';
+      const locVal = locationInputEl ? locationInputEl.value.toLowerCase().trim() : '';
+      const locQuery = locVal.replace(/,\s*ecuador/gi, '').replace(/\(todo ecuador\)/gi, '').replace(/todas las ciudades/gi, '').trim();
+
+      if (!q && !locQuery) {
+        dropdownEl.style.display = 'none';
+        dropdownEl.innerHTML = '';
         currentFocus = -1;
         return;
       }
@@ -329,66 +353,88 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = (job.category || '').toLowerCase();
         const desc = (job.description || '').toLowerCase();
         const tags = Array.isArray(job.tags) ? job.tags.join(' ').toLowerCase() : '';
-        return title.includes(q) || company.includes(q) || category.includes(q) || desc.includes(q) || tags.includes(q);
+        const jobLoc = (job.location || '').toLowerCase();
+        const mode = (job.mode || '').toLowerCase();
+
+        const matchesText = !q || title.includes(q) || company.includes(q) || category.includes(q) || desc.includes(q) || tags.includes(q);
+
+        let matchesLoc = true;
+        if (locQuery && locQuery !== 'ecuador' && locQuery !== 'todo ecuador') {
+          if (locQuery === 'remoto' || locQuery.startsWith('remoto')) {
+            matchesLoc = mode === 'remoto' || mode === 'hibrido' || jobLoc.includes('remoto');
+          } else {
+            // Estricto por ubicación elegida o modalidad 100% remota
+            matchesLoc = jobLoc.includes(locQuery) || mode === 'remoto' || jobLoc.includes('remoto');
+          }
+        }
+
+        return matchesText && matchesLoc;
       }).slice(0, 6);
 
       if (matches.length === 0) {
-        suggestionsDropdown.innerHTML = `
+        const locMsg = locQuery ? ` en <strong>${locVal}</strong>` : '';
+        dropdownEl.innerHTML = `
           <div class="suggestion-empty">
-            🔍 No se encontraron sugerencias para "<strong>${query}</strong>". <br>
-            <span style="font-size: 0.78rem; color: #94a3b8;">Haz clic en la lupa o presiona Enter para buscar en todas las ofertas.</span>
+            🔍 No se encontraron ofertas para "<strong>${query}</strong>"${locMsg}. <br>
+            <span style="font-size: 0.78rem; color: #94a3b8;">Prueba cambiando de ciudad o buscando en Todo Ecuador.</span>
           </div>
         `;
-        suggestionsDropdown.style.display = 'block';
+        dropdownEl.style.display = 'block';
         currentFocus = -1;
         return;
       }
 
-      suggestionsDropdown.innerHTML = matches.map((job, idx) => `
+      dropdownEl.innerHTML = matches.map((job, idx) => {
+        const cityEmoji = getLocationEmoji(job.location);
+        return `
         <div class="suggestion-item" data-index="${idx}" data-title="${job.title}">
-          <div class="suggestion-icon">${getCategoryIcon(job.category)}</div>
+          <div class="suggestion-icon" title="${job.location}">${cityEmoji}</div>
           <div class="suggestion-content">
             <div class="suggestion-title">${highlightMatch(job.title, query)}</div>
             <div class="suggestion-subtitle">
               <span>🏢 ${highlightMatch(job.company, query)}</span>
               <span>•</span>
-              <span>📍 ${job.location}</span>
+              <span>${cityEmoji} ${job.location}</span>
             </div>
           </div>
           <span class="suggestion-badge">${job.badge || 'Sin Experiencia'}</span>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
-      suggestionsDropdown.style.display = 'block';
+      dropdownEl.style.display = 'block';
       currentFocus = -1;
 
-      suggestionsDropdown.querySelectorAll('.suggestion-item').forEach(item => {
+      dropdownEl.querySelectorAll('.suggestion-item').forEach(item => {
         item.addEventListener('click', (e) => {
           e.stopPropagation();
           const title = item.getAttribute('data-title');
-          headerSearchJob.value = title;
-          suggestionsDropdown.style.display = 'none';
-          performHeaderSearch(title);
+          inputEl.value = title;
+          dropdownEl.style.display = 'none';
+          if (typeof onSelectCallback === 'function') {
+            onSelectCallback(title);
+          }
         });
       });
     };
 
-    headerSearchJob.addEventListener('input', (e) => {
+    inputEl.addEventListener('input', (e) => {
       showSuggestions(e.target.value);
     });
 
-    headerSearchJob.addEventListener('focus', (e) => {
+    inputEl.addEventListener('focus', (e) => {
       if (e.target.value.trim().length > 0) {
         showSuggestions(e.target.value);
       }
     });
 
-    headerSearchJob.addEventListener('keydown', (e) => {
-      const items = suggestionsDropdown.querySelectorAll('.suggestion-item');
-      if (!items || items.length === 0 || suggestionsDropdown.style.display === 'none') {
+    inputEl.addEventListener('keydown', (e) => {
+      const items = dropdownEl.querySelectorAll('.suggestion-item');
+      if (!items || items.length === 0 || dropdownEl.style.display === 'none') {
         if (e.key === 'Enter') {
-          e.preventDefault();
-          performHeaderSearch();
+          if (typeof onSelectCallback === 'function') {
+            onSelectCallback(inputEl.value.trim());
+          }
         }
         return;
       }
@@ -407,11 +453,12 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         if (currentFocus > -1 && items[currentFocus]) {
           items[currentFocus].click();
-        } else {
-          performHeaderSearch();
+        } else if (typeof onSelectCallback === 'function') {
+          dropdownEl.style.display = 'none';
+          onSelectCallback(inputEl.value.trim());
         }
       } else if (e.key === 'Escape') {
-        suggestionsDropdown.style.display = 'none';
+        dropdownEl.style.display = 'none';
         currentFocus = -1;
       }
     });
@@ -425,9 +472,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.addEventListener('click', (e) => {
-      if (headerSearchForm && !headerSearchForm.contains(e.target)) {
-        suggestionsDropdown.style.display = 'none';
+      if (!inputEl.contains(e.target) && !dropdownEl.contains(e.target)) {
+        dropdownEl.style.display = 'none';
       }
+    });
+  }
+
+  // Vincular sugerencias del buscador en header (index.html)
+  if (headerSearchJob && suggestionsDropdown) {
+    setupJobSuggestions(headerSearchJob, suggestionsDropdown, headerSearchLocation, (title) => {
+      performHeaderSearch(title);
     });
   }
 
@@ -603,55 +657,60 @@ document.addEventListener('DOMContentLoaded', () => {
     locationSearchInput.value = locationParam;
   }
 
-  const updateJobDetailView = (jobId) => {
-    const job = availableJobsList.find(j => j.id === jobId) || jobsData.find(j => j.id === jobId);
-    if (!job) return;
-
+  const updateJobDetailView = async (jobId) => {
     currentSelectedJobId = jobId;
 
-    const detailTitle = document.getElementById('detail-title');
-    const detailCompany = document.getElementById('detail-company');
-    const detailSalary = document.getElementById('detail-salary');
-    const detailTags = document.getElementById('detail-tags');
-    const detailDesc = document.getElementById('detail-description');
-    const detailResp = document.getElementById('detail-responsibilities');
-    const detailReq = document.getElementById('detail-requirements');
-    const detailBen = document.getElementById('detail-benefits');
+    try {
+      const res = await fetch(`/api/ofertas/${jobId}`);
+      if (res.ok) {
+        const data = await res.json();
+        const detailTitle = document.getElementById('detail-title');
+        const detailCompany = document.getElementById('detail-company');
+        const detailSalary = document.getElementById('detail-salary');
+        const detailDesc = document.getElementById('detail-description');
+        const detailResp = document.getElementById('detail-responsibilities');
+        const detailReq = document.getElementById('detail-requirements');
+        const detailBadge = document.getElementById('detail-badge');
 
-    if (detailTitle) detailTitle.textContent = job.title;
-    if (detailCompany) detailCompany.textContent = `${job.company} • ${job.location}`;
-    if (detailSalary) detailSalary.textContent = job.salary;
-    if (detailDesc) detailDesc.textContent = job.description;
+        if (detailTitle) detailTitle.textContent = data.titulo;
+        const locEmoji = getLocationEmoji(data.ubicacion_exacta);
+        if (detailCompany) detailCompany.innerHTML = `🏢 ${data.empresa ? data.empresa.nombre_empresa : 'Empresa'} &bull; ${locEmoji} ${data.ubicacion_exacta}`;
+        if (detailSalary) detailSalary.textContent = `$${parseFloat(data.salario).toFixed(2)} USD / mes`;
+        if (detailDesc) detailDesc.textContent = data.funciones || 'Oportunidad formativa para jóvenes en Ecuador.';
+        if (detailBadge) detailBadge.textContent = data.anos_experiencia === 0 ? 'Sin Experiencia' : `${data.anos_experiencia} año(s) exp`;
 
-    if (detailTags && Array.isArray(job.tags)) {
-      detailTags.innerHTML = job.tags.map(t => `<span class="tag-pill">${t}</span>`).join('');
-    }
-
-    if (detailResp && Array.isArray(job.responsibilities)) {
-      detailResp.innerHTML = job.responsibilities.map(r => `
-        <li>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          <span>${r}</span>
-        </li>
-      `).join('');
-    }
-
-    if (detailReq && Array.isArray(job.requirements)) {
-      detailReq.innerHTML = job.requirements.map(req => `
-        <li>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          <span>${req}</span>
-        </li>
-      `).join('');
-    }
-
-    if (detailBen && Array.isArray(job.benefits)) {
-      detailBen.innerHTML = job.benefits.map(b => `
-        <li>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-          <span>${b}</span>
-        </li>
-      `).join('');
+        if (detailResp && data.funciones) {
+          detailResp.innerHTML = `
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>${data.funciones}</span>
+            </li>
+          `;
+        }
+        if (detailReq && data.requisitos_tecnicos) {
+          detailReq.innerHTML = `
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>${data.requisitos_tecnicos}</span>
+            </li>
+          `;
+        }
+      } else {
+        const localJob = availableJobsList.find(j => j.id === jobId) || jobsData.find(j => j.id === jobId);
+        if (localJob) {
+          const detailTitle = document.getElementById('detail-title');
+          const detailCompany = document.getElementById('detail-company');
+          const detailSalary = document.getElementById('detail-salary');
+          const detailDesc = document.getElementById('detail-description');
+          const locEmoji = getLocationEmoji(localJob.location);
+          if (detailTitle) detailTitle.textContent = localJob.title;
+          if (detailCompany) detailCompany.innerHTML = `🏢 ${localJob.company} &bull; ${locEmoji} ${localJob.location}`;
+          if (detailSalary) detailSalary.textContent = localJob.salary;
+          if (detailDesc) detailDesc.textContent = localJob.description;
+        }
+      }
+    } catch (e) {
+      console.error('Error cargando detalle de oferta:', e);
     }
 
     jobCards.forEach(card => {
@@ -672,13 +731,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (jobCards.length > 0) {
     jobCards.forEach(card => {
       card.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-card-apply')) {
+        if (e.target.classList.contains('btn-card-apply') || e.target.closest('form')) {
           return;
         }
         const jobId = parseInt(card.getAttribute('data-job-id'));
-        updateJobDetailView(jobId);
+        if (jobId) updateJobDetailView(jobId);
       });
     });
+
+    // Cargar detalle de la primera vacante automáticamente
+    const firstCard = jobCards[0];
+    const firstId = parseInt(firstCard.getAttribute('data-job-id'));
+    if (firstId) updateJobDetailView(firstId);
   }
 
   if (btnBackToList && jobDetailColumn) {
@@ -727,23 +791,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Vincular autocompletado de puesto/empleo en página de postulación (postulacion.html)
+  const postulacionJobDropdown = document.getElementById('postulacion-job-dropdown');
+  if (searchInput && postulacionJobDropdown) {
+    setupJobSuggestions(searchInput, postulacionJobDropdown, locationSearchInput, () => {
+      executeSearch();
+    });
+  }
+
   // Vincular dropdown de ciudad en página de postulación (postulacion.html)
   const postulacionLocationDropdown = document.getElementById('postulacion-location-dropdown');
+  const postulacionBtnLocation = document.getElementById('postulacion-btn-location');
   if (locationSearchInput && postulacionLocationDropdown) {
     setupCityAutocomplete(locationSearchInput, postulacionLocationDropdown, () => {
       executeSearch();
     });
+
+    if (postulacionBtnLocation) {
+      postulacionBtnLocation.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        locationSearchInput.focus();
+      });
+    }
   }
 
   const executeSearch = () => {
     const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
     const rawLoc = locationSearchInput ? locationSearchInput.value.toLowerCase().trim() : '';
-    const locQuery = rawLoc.replace(/,\s*ecuador/gi, '').replace(/\(todo ecuador\)/gi, '').trim();
+    const locQuery = rawLoc.replace(/,\s*ecuador/gi, '').replace(/\(todo ecuador\)/gi, '').replace(/todas las ciudades/gi, '').trim();
 
     let visibleCount = 0;
     let firstVisibleJobId = null;
 
-    jobCards.forEach(card => {
+    const allCards = document.querySelectorAll('.search-job-card');
+    allCards.forEach(card => {
       const title = (card.querySelector('.card-job-title')?.textContent || '').toLowerCase();
       const company = (card.querySelector('.card-company-name')?.textContent || '').toLowerCase();
       const snippet = (card.querySelector('.card-snippet')?.textContent || '').toLowerCase();
@@ -779,6 +861,15 @@ document.addEventListener('DOMContentLoaded', () => {
       jobsCountBadge.textContent = `${visibleCount} oferta${visibleCount !== 1 ? 's' : ''}`;
     }
 
+    const locationTag = document.getElementById('current-location-tag');
+    if (locationTag) {
+      if (locQuery && locQuery !== 'ecuador' && locQuery !== 'todo ecuador') {
+        locationTag.textContent = locQuery.charAt(0).toUpperCase() + locQuery.slice(1);
+      } else {
+        locationTag.textContent = 'Ecuador';
+      }
+    }
+
     if (firstVisibleJobId !== null) {
       updateJobDetailView(firstVisibleJobId);
     }
@@ -794,35 +885,75 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // 5. SIMULADOR DE "POSTULACIÓN RÁPIDA" (Modal interactivo)
+  // 5. POSTULACIÓN RÁPIDA REAL (CONEXIÓN API /api/postular)
   // ==========================================================================
   const applyModal = document.getElementById('apply-modal');
   const modalCloseBtn = document.getElementById('modal-close');
   const modalConfirmBtn = document.getElementById('btn-modal-confirm');
   const modalJobTitle = document.getElementById('modal-job-title');
   const modalCompanyName = document.getElementById('modal-company-name');
+  const modalApplyMessage = document.getElementById('modal-apply-message');
+  const modalApplyStatusTitle = document.getElementById('modal-apply-status-title');
 
-  window.openApplyModal = (id, title, company) => {
+  window.openApplyModal = (id, title, company, customMessage = '') => {
     if (applyModal && modalJobTitle && modalCompanyName) {
       modalJobTitle.textContent = title;
       modalCompanyName.textContent = company;
+      if (modalApplyMessage && customMessage) {
+        modalApplyMessage.textContent = customMessage;
+      }
       applyModal.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
   };
 
-  window.handleCardApplyClick = (event, jobId) => {
-    event.stopPropagation();
-    const job = jobsData.find(j => j.id === jobId);
-    if (job) {
-      window.openApplyModal(job.id, job.title, job.company);
+  window.handleCardApplyClick = async (event, jobId, jobTitle = '', jobCompany = '') => {
+    if (event) event.stopPropagation();
+    currentSelectedJobId = jobId;
+
+    try {
+      const response = await fetch('/api/postular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_oferta: jobId })
+      });
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        // Redirigir a login modal
+        window.openAuthModal('login');
+        const lAlert = document.getElementById('login-alert');
+        if (lAlert) {
+          lAlert.className = 'auth-alert error';
+          lAlert.textContent = 'Debes iniciar sesión con tu cuenta de candidato para postularte.';
+        }
+        return;
+      }
+
+      if (response.status === 403) {
+        alert(data.error || 'Las cuentas de Empresa / Reclutador no pueden postularse. Inicia sesión como Candidato para aplicar.');
+        return;
+      }
+
+      if (response.ok) {
+        window.openApplyModal(jobId, jobTitle || 'Oferta de Empleo', jobCompany || 'Empresa', data.mensaje);
+      } else {
+        alert(data.error || 'No se pudo completar la postulación.');
+      }
+    } catch (err) {
+      console.error('Error al postular:', err);
+      alert('Error de conexión al enviar la postulación.');
     }
   };
 
   window.openApplyModalFromDetail = () => {
-    const job = jobsData.find(j => j.id === currentSelectedJobId);
-    if (job) {
-      window.openApplyModal(job.id, job.title, job.company);
+    const activeCard = document.querySelector('.search-job-card.active') || document.querySelector('.search-job-card');
+    if (activeCard) {
+      const jobId = parseInt(activeCard.getAttribute('data-job-id'));
+      const title = activeCard.querySelector('.card-job-title')?.textContent || 'Vacante';
+      const company = activeCard.querySelector('.card-company-name')?.textContent || 'Empresa';
+      window.handleCardApplyClick(null, jobId, title, company);
     }
   };
 
@@ -840,6 +971,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === applyModal) closeApplyModal();
     });
   }
+
+  // Función para mover candidatos de fase en el Kanban de Reclutadores
+  window.changeCandidatePhase = async (postulacionId, nuevoEstado) => {
+    try {
+      const response = await fetch(`/api/postulacion/${postulacionId}/estado`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert(data.error || 'Error al cambiar de fase.');
+      }
+    } catch (e) {
+      console.error('Error al actualizar fase en Kanban:', e);
+    }
+  };
 
   // ==========================================================================
   // 6. LÓGICA DE PESTAÑAS & MODALES EN PÁGINA "DESARROLLO PERSONAL"
@@ -1032,13 +1183,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalCandidateAvatar = document.getElementById('modal-candidate-avatar');
   const modalCandidateClose = document.getElementById('modal-candidate-close');
 
-  window.openCandidateCvModal = (name, uni, skills, avatarUrl) => {
-    if (candidateModal && modalCandidateName && modalCandidateUni) {
-      modalCandidateName.textContent = name;
-      modalCandidateUni.textContent = uni;
-      if (modalCandidateAvatar && avatarUrl) {
-        modalCandidateAvatar.src = avatarUrl;
-      }
+  window.openCandidateCvModal = (name, uni, email = '', salary = '500.00', phase = 'Pendiente') => {
+    if (candidateModal) {
+      if (modalCandidateName) modalCandidateName.textContent = name;
+      if (modalCandidateUni) modalCandidateUni.textContent = uni;
+      const mEmail = document.getElementById('modal-candidate-email');
+      const mSalary = document.getElementById('modal-candidate-salary');
+      const mPhase = document.getElementById('modal-candidate-phase');
+      if (mEmail && email) mEmail.textContent = email;
+      if (mSalary && salary) mSalary.textContent = salary;
+      if (mPhase && phase) mPhase.textContent = phase;
+
       candidateModal.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
@@ -1053,17 +1208,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (modalCandidateClose) modalCandidateClose.addEventListener('click', window.closeCandidateCvModal);
 
-  // E. Buscador en Tablero Kanban
+  // E. Buscador y Filtro por Vacante en Tablero Kanban
   window.filterKanbanCandidates = () => {
     const searchVal = document.getElementById('kanban-candidate-search')?.value.toLowerCase().trim() || '';
+    const selectedJobId = document.getElementById('kanban-vacancy-filter')?.value || 'all';
     const cards = document.querySelectorAll('.kanban-candidate-card');
 
     cards.forEach(card => {
-      const name = card.querySelector('.candidate-name')?.textContent.toLowerCase() || '';
-      const uni = card.querySelector('.candidate-uni')?.textContent.toLowerCase() || '';
-      const tag = card.querySelector('.candidate-skill-tag')?.textContent.toLowerCase() || '';
+      const name = card.getAttribute('data-candidate-name') || card.querySelector('.candidate-name')?.textContent.toLowerCase() || '';
+      const email = card.getAttribute('data-candidate-email') || card.querySelector('.candidate-skill-tag')?.textContent.toLowerCase() || '';
+      const jobTitle = card.getAttribute('data-job-title') || card.querySelector('.candidate-uni')?.textContent.toLowerCase() || '';
+      const cardJobId = card.getAttribute('data-job-id') || '';
 
-      if (name.includes(searchVal) || uni.includes(searchVal) || tag.includes(searchVal)) {
+      const matchesSearch = !searchVal || name.includes(searchVal) || email.includes(searchVal) || jobTitle.includes(searchVal);
+      const matchesJob = selectedJobId === 'all' || cardJobId === selectedJobId;
+
+      if (matchesSearch && matchesJob) {
         card.style.display = 'flex';
       } else {
         card.style.display = 'none';
@@ -1104,6 +1264,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Selector de roles dentro del formulario de registro
+  const roleBtnCandidato = document.getElementById('role-btn-candidato');
+  const roleBtnReclutador = document.getElementById('role-btn-reclutador');
+  const registerRoleInput = document.getElementById('register-role');
+  const groupCompanyName = document.getElementById('group-company-name');
+  const groupCandidateFields = document.getElementById('group-candidate-fields');
+  const labelRegisterName = document.getElementById('label-register-name');
+
+  if (roleBtnCandidato && roleBtnReclutador) {
+    roleBtnCandidato.addEventListener('click', () => {
+      roleBtnCandidato.classList.add('active');
+      roleBtnReclutador.classList.remove('active');
+      if (registerRoleInput) registerRoleInput.value = 'candidato';
+      if (groupCompanyName) groupCompanyName.style.display = 'none';
+      if (groupCandidateFields) groupCandidateFields.style.display = 'flex';
+      if (labelRegisterName) labelRegisterName.textContent = 'Nombre Completo *';
+    });
+
+    roleBtnReclutador.addEventListener('click', () => {
+      roleBtnReclutador.classList.add('active');
+      roleBtnCandidato.classList.remove('active');
+      if (registerRoleInput) registerRoleInput.value = 'reclutador';
+      if (groupCompanyName) groupCompanyName.style.display = 'flex';
+      if (groupCandidateFields) groupCandidateFields.style.display = 'none';
+      if (labelRegisterName) labelRegisterName.textContent = 'Nombre del Reclutador *';
+    });
+  }
+
   // Alternar entre Login y Registro
   window.switchAuthTab = (tab) => {
     if (tab === 'register') {
@@ -1130,15 +1318,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Vincular botones de Login y Registro del Navbar
-  document.querySelectorAll('.btn-open-login, .btn-primary-nav, .button--orange-outline').forEach(btn => {
+  // Vincular botones de Login y Registro del Navbar exclusivamente por clases específicas
+  document.querySelectorAll('.btn-open-login, .nav-btn-login').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       window.openAuthModal('login');
     });
   });
 
-  document.querySelectorAll('.btn-open-register, .btn-secondary-nav, .button--outline').forEach(btn => {
+  document.querySelectorAll('.btn-open-register, .nav-btn-register').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       window.openAuthModal('register');
@@ -1175,8 +1363,8 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             window.closeAuthModal();
             formLogin.reset();
-            checkAuthStatus();
-          }, 800);
+            window.location.reload();
+          }, 600);
         } else {
           if (loginAlert) {
             loginAlert.className = 'auth-alert error';
@@ -1197,13 +1385,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Envío Formulario de Registro
+  // Envío Formulario de Registro con Roles
   if (formRegister) {
     formRegister.addEventListener('submit', async (e) => {
       e.preventDefault();
       const nombre = document.getElementById('register-name')?.value.trim();
       const correo = document.getElementById('register-email')?.value.trim();
       const contrasena = document.getElementById('register-password')?.value.trim();
+      const rol = document.getElementById('register-role')?.value || 'candidato';
+      const nombre_empresa = document.getElementById('register-company')?.value.trim();
       const edad = document.getElementById('register-age')?.value;
       const salario_pretendido = document.getElementById('register-salary')?.value;
       const submitBtn = formRegister.querySelector('.auth-submit-btn');
@@ -1217,7 +1407,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const response = await fetch('/api/registro', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, correo, contrasena, edad, salario_pretendido })
+          body: JSON.stringify({ nombre, correo, contrasena, rol, nombre_empresa, edad, salario_pretendido })
         });
 
         const data = await response.json();
@@ -1230,8 +1420,12 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             window.closeAuthModal();
             formRegister.reset();
-            checkAuthStatus();
-          }, 900);
+            if (rol === 'reclutador') {
+              window.location.href = '/reclutadores';
+            } else {
+              window.location.reload();
+            }
+          }, 700);
         } else {
           if (registerAlert) {
             registerAlert.className = 'auth-alert error';
@@ -1255,67 +1449,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Cerrar Sesión
   window.logoutUser = async () => {
     try {
+      document.body.style.overflow = '';
+      document.querySelectorAll('.auth-modal-backdrop, .modal-backdrop').forEach(m => m.classList.remove('active'));
       await fetch('/api/logout', { method: 'POST' });
-      checkAuthStatus();
+      window.location.href = '/';
     } catch (err) {
       console.error('Error al cerrar sesión', err);
+      window.location.href = '/';
     }
   };
 
-  // Verificar Estado de Autenticación y actualizar Navbars
-  async function checkAuthStatus() {
-    try {
-      const response = await fetch('/api/usuario-actual');
-      const data = await response.json();
+  // Alias globales de compatibilidad para apertura de modales
+  window.openLoginModal = () => window.openAuthModal('login');
+  window.openRegisterModal = () => window.openAuthModal('register');
 
-      const authContainers = document.querySelectorAll('.site-nav__actions, .nav-auth');
-
-      authContainers.forEach(container => {
-        if (data.autenticado && data.usuario) {
-          const inicial = data.usuario.nombre ? data.usuario.nombre.charAt(0).toUpperCase() : 'U';
-          const primerNombre = data.usuario.nombre ? data.usuario.nombre.split(' ')[0] : 'Usuario';
-
-          container.innerHTML = `
-            <div class="nav-user-logged">
-              <div class="nav-user-badge">
-                <span class="nav-user-avatar">${inicial}</span>
-                <span>Hola, ${primerNombre}</span>
-              </div>
-              <button class="nav-btn-logout" onclick="window.logoutUser()">Cerrar sesión</button>
-            </div>
-          `;
-        } else {
-          // Restaurar botones según estilo del contenedor
-          if (container.classList.contains('site-nav__actions')) {
-            container.innerHTML = `
-              <a class="button button--outline btn-open-register" href="#">Crear Cuenta</a>
-              <a class="button button--orange-outline btn-open-login" href="#">Iniciar sesión</a>
-            `;
-          } else {
-            container.innerHTML = `
-              <a href="#" class="btn-secondary-nav btn-open-register">Crear Cuenta</a>
-              <a href="#" class="btn-primary-nav btn-open-login">Iniciar sesión</a>
-            `;
-          }
-
-          // Re-vincular eventos
-          container.querySelector('.btn-open-login')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.openAuthModal('login');
-          });
-          container.querySelector('.btn-open-register')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.openAuthModal('register');
-          });
-        }
-      });
-    } catch (err) {
-      console.error('Error al verificar sesión:', err);
-    }
-  }
-
-  // Ejecutar verificación de sesión al cargar
-  checkAuthStatus();
+  // Asegurar que el scroll del body esté activo al cargar cualquier página
+  document.body.style.overflow = '';
 
 });
+
 
