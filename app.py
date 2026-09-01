@@ -22,11 +22,9 @@ from config import Config
 from auth import login_requerido, rol_requerido
 from models import (
     db,
-    PlanContratacion,
     Empresa,
     Candidato,
     OfertaEmpleo,
-    ResenaEmpresa,
     HabilidadCertificacion,
     Postulacion,
     Favorito,
@@ -144,10 +142,8 @@ def registro():
         if rol == "reclutador" and nombre_empresa:
             empresa_existente = Empresa.query.filter_by(nombre_empresa=nombre_empresa).first()
             if not empresa_existente:
-                plan_default = PlanContratacion.query.first()
                 nueva_empresa = Empresa(
                     nombre_empresa=nombre_empresa,
-                    id_plan=plan_default.id_plan if plan_default else 1,
                     ranking=5.0
                 )
                 db.session.add(nueva_empresa)

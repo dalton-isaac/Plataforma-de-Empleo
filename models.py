@@ -4,30 +4,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
-class PlanContratacion(db.Model):
-    __tablename__ = "plan_contratacion"
-
-    id_plan = db.Column(db.Integer, primary_key=True)
-    nombre_plan = db.Column(db.String(100), nullable=False)
-
-    # Relaciones
-    empresas = db.relationship("Empresa", backref="plan_contratacion", lazy=True)
-
-    def __repr__(self):
-        return f"<PlanContratacion {self.nombre_plan}>"
-
-
 class Empresa(db.Model):
     __tablename__ = "empresa"
 
     id_empresa = db.Column(db.Integer, primary_key=True)
-    id_plan = db.Column(db.Integer, db.ForeignKey('plan_contratacion.id_plan'), nullable=False)
     nombre_empresa = db.Column(db.String(150), nullable=False)
     ranking = db.Column(db.Numeric(precision=5, scale=2), nullable=True)
 
     # Relaciones
     ofertas = db.relationship("OfertaEmpleo", backref="empresa", lazy=True)
-    resenas = db.relationship("ResenaEmpresa", backref="empresa", lazy=True)
 
     def __repr__(self):
         return f"<Empresa {self.nombre_empresa}>"
@@ -47,7 +32,6 @@ class Candidato(db.Model):
     rol = db.Column(db.String(50), default="candidato", nullable=False)
 
     # Relaciones
-    resenas = db.relationship("ResenaEmpresa", backref="candidato", lazy=True)
     habilidades = db.relationship("HabilidadCertificacion", backref="candidato", lazy=True)
     postulaciones = db.relationship("Postulacion", backref="candidato", lazy=True)
     favoritos = db.relationship("Favorito", backref="candidato", lazy=True)
@@ -114,19 +98,6 @@ class OfertaEmpleo(db.Model):
 
     def __repr__(self):
         return f"<OfertaEmpleo {self.titulo} (Activo: {self.activo})>"
-
-
-class ResenaEmpresa(db.Model):
-    __tablename__ = "resena_empresa"
-
-    id_resena = db.Column(db.Integer, primary_key=True)
-    id_candidato = db.Column(db.Integer, db.ForeignKey('candidato.id_candidato'), nullable=False)
-    id_empresa = db.Column(db.Integer, db.ForeignKey('empresa.id_empresa'), nullable=False)
-    comentario = db.Column(db.Text, nullable=True)
-    calificacion = db.Column(db.Integer, nullable=True)
-
-    def __repr__(self):
-        return f"<ResenaEmpresa {self.calificacion}/5>"
 
 
 class HabilidadCertificacion(db.Model):

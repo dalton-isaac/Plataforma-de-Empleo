@@ -1,7 +1,7 @@
 import unittest
 import json
 from app import app
-from models import db, Empresa, PlanContratacion, OfertaEmpleo, Candidato
+from models import db, Empresa, OfertaEmpleo, Candidato
 
 class RolesYPermisosTestCase(unittest.TestCase):
     def setUp(self):
@@ -11,11 +11,8 @@ class RolesYPermisosTestCase(unittest.TestCase):
 
         with app.app_context():
             db.create_all()
-            plan = PlanContratacion(nombre_plan="Plan Pro RBAC")
-            db.session.add(plan)
-            db.session.flush()
 
-            empresa = Empresa(id_plan=plan.id_plan, nombre_empresa="Empresa Test RBAC", ranking=4.9)
+            empresa = Empresa(nombre_empresa="Empresa Test RBAC", ranking=4.9)
             db.session.add(empresa)
             db.session.flush()
 

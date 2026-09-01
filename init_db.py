@@ -9,11 +9,9 @@ from datetime import date
 from app import app
 from models import (
     db,
-    PlanContratacion,
     Empresa,
     Candidato,
     OfertaEmpleo,
-    ResenaEmpresa,
     HabilidadCertificacion,
     Postulacion,
     Favorito,
@@ -21,36 +19,26 @@ from models import (
 
 with app.app_context():
     print("Conectando a la base de datos y creando tablas...")
-    db.drop_all()  # Borra tablas previas para reiniciar limpiamente
+    with db.engine.connect() as conn:
+        conn.execute(db.text("DROP SCHEMA public CASCADE; CREATE SCHEMA public;"))
+        conn.commit()
     db.create_all()  # Crea las tablas según los modelos en models.py
     print("[OK] Tablas creadas con exito.")
 
-    # ── 1. PLANES DE CONTRATACIÓN ────────────────────────────────
-    plan_basico = PlanContratacion(nombre_plan="Plan Básico")
-    plan_pro = PlanContratacion(nombre_plan="Plan Reclutador Pro")
-    plan_corp = PlanContratacion(nombre_plan="Plan Corporativo Universitario")
-
-    db.session.add_all([plan_basico, plan_pro, plan_corp])
-    db.session.flush()  # Obtener IDs generados
-
-    # ── 2. EMPRESAS AFILIADAS ────────────────────────────────────
+    # ── 1. EMPRESAS AFILIADAS ────────────────────────────────────
     empresa1 = Empresa(
-        id_plan=plan_pro.id_plan,
         nombre_empresa="Corporación Multimedios",
         ranking=4.80,
     )
     empresa2 = Empresa(
-        id_plan=plan_corp.id_plan,
         nombre_empresa="Software Solutions EC",
         ranking=4.90,
     )
     empresa3 = Empresa(
-        id_plan=plan_basico.id_plan,
         nombre_empresa="Agencia Click Vértice",
         ranking=4.50,
     )
     empresa4 = Empresa(
-        id_plan=plan_pro.id_plan,
         nombre_empresa="Redes y Sistemas Cía. Ltda.",
         ranking=4.60,
     )
@@ -221,32 +209,14 @@ with app.app_context():
 
     db.session.add_all([fav1, fav2])
 
-    # ── 8. RESEÑAS DE EMPRESAS ──────────────────────────────────
-    resena1 = ResenaEmpresa(
-        id_candidato=candidato1.id_candidato,
-        id_empresa=empresa1.id_empresa,
-        comentario="Excelente ambiente laboral para pasantes y gran apoyo del equipo senior.",
-        calificacion=5,
-    )
-    resena2 = ResenaEmpresa(
-        id_candidato=candidato2.id_candidato,
-        id_empresa=empresa2.id_empresa,
-        comentario="Muy buenos proyectos y flexibilidad horaria para estudiantes.",
-        calificacion=5,
-    )
-
-    db.session.add_all([resena1, resena2])
-
     # Guardar todos los cambios
     db.session.commit()
 
     print("[OK] Datos de prueba de TalentoEC insertados exitosamente.")
     print("\nResumen de registros cargados:")
-    print(f"  * {PlanContratacion.query.count()} Planes de contratacion")
     print(f"  * {Empresa.query.count()} Empresas")
     print(f"  * {Candidato.query.count()} Candidatos")
     print(f"  * {HabilidadCertificacion.query.count()} Habilidades registradas")
     print(f"  * {OfertaEmpleo.query.count()} Ofertas de empleo")
     print(f"  * {Postulacion.query.count()} Postulaciones activas")
     print(f"  * {Favorito.query.count()} Ofertas guardadas como favoritas")
-    print(f"  * {ResenaEmpresa.query.count()} Resenas de empresas")

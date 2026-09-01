@@ -10,7 +10,7 @@ Verifica:
 import unittest
 from datetime import date
 from app import app
-from models import db, Candidato, Empresa, OfertaEmpleo, Postulacion, PlanContratacion
+from models import db, Candidato, Empresa, OfertaEmpleo, Postulacion
 
 
 class TestFlujoCompleto(unittest.TestCase):
@@ -24,13 +24,8 @@ class TestFlujoCompleto(unittest.TestCase):
         with app.app_context():
             db.create_all()
 
-            # Plan inicial
-            plan = PlanContratacion(nombre_plan="Premium")
-            db.session.add(plan)
-            db.session.commit()
-
             # Empresa
-            empresa = Empresa(nombre_empresa="Tech Solutions EC", id_plan=plan.id_plan, ranking=4.9)
+            empresa = Empresa(nombre_empresa="Tech Solutions EC", ranking=4.9)
             db.session.add(empresa)
             db.session.commit()
 

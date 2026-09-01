@@ -1,7 +1,7 @@
 import unittest
 import json
 from app import app
-from models import db, Empresa, PlanContratacion, OfertaEmpleo, Candidato
+from models import db, Empresa, OfertaEmpleo, Candidato
 
 class CrudOfertasTestCase(unittest.TestCase):
     def setUp(self):
@@ -11,11 +11,8 @@ class CrudOfertasTestCase(unittest.TestCase):
 
         with app.app_context():
             db.create_all()
-            plan = PlanContratacion(nombre_plan="Plan Pro CRUD")
-            db.session.add(plan)
-            db.session.flush()
 
-            empresa = Empresa(id_plan=plan.id_plan, nombre_empresa="Tech Solutions Quito Test", ranking=4.8)
+            empresa = Empresa(nombre_empresa="Tech Solutions Quito Test", ranking=4.8)
             db.session.add(empresa)
             db.session.flush()
 
