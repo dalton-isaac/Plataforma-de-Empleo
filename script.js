@@ -431,6 +431,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (response.status === 403) {
+        alert(data.error || 'Las cuentas de Empresa / Reclutador no pueden postularse. Inicia sesión como Candidato para aplicar.');
+        return;
+      }
+
       if (response.ok) {
         window.openApplyModal(jobId, jobTitle || 'Oferta de Empleo', jobCompany || 'Empresa', data.mensaje);
       } else {
@@ -808,15 +813,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Vincular botones de Login y Registro del Navbar
-  document.querySelectorAll('.btn-open-login, .btn-primary-nav, .button--orange-outline').forEach(btn => {
+  // Vincular botones de Login y Registro del Navbar exclusivamente por clases específicas
+  document.querySelectorAll('.btn-open-login, .nav-btn-login').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       window.openAuthModal('login');
     });
   });
 
-  document.querySelectorAll('.btn-open-register, .btn-secondary-nav, .button--outline').forEach(btn => {
+  document.querySelectorAll('.btn-open-register, .nav-btn-register').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       window.openAuthModal('register');
@@ -939,16 +944,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Cerrar Sesión
   window.logoutUser = async () => {
     try {
+      document.body.style.overflow = '';
+      document.querySelectorAll('.auth-modal-backdrop, .modal-backdrop').forEach(m => m.classList.remove('active'));
       await fetch('/api/logout', { method: 'POST' });
       window.location.href = '/';
     } catch (err) {
       console.error('Error al cerrar sesión', err);
+      window.location.href = '/';
     }
   };
 
   // Alias globales de compatibilidad para apertura de modales
   window.openLoginModal = () => window.openAuthModal('login');
   window.openRegisterModal = () => window.openAuthModal('register');
+
+  // Asegurar que el scroll del body esté activo al cargar cualquier página
+  document.body.style.overflow = '';
 
 });
 

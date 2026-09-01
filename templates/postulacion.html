@@ -170,9 +170,15 @@
                 <p class="card-snippet">{{ o.funciones[:140] if o.funciones else 'Oportunidad de desarrollo profesional para jóvenes y universitarios en Quito.' }}...</p>
 
                 <div class="card-footer-action" style="display: flex; gap: 8px; justify-content: space-between; align-items: center;">
-                  <button class="btn-card-apply" onclick="handleCardApplyClick(event, {{ o.id_oferta }}, '{{ o.titulo|e }}', '{{ (o.empresa.nombre_empresa if o.empresa else "Empresa")|e }}')">
-                    ⚡ Postulación Rápida
-                  </button>
+                  {% if session.get('usuario_rol') in ['reclutador', 'admin'] %}
+                    <span style="font-size: 0.78rem; color: #64748b; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 10px; border-radius: 6px; font-weight: 600;">
+                      🏢 Vista Empresa (Solo Lectura)
+                    </span>
+                  {% else %}
+                    <button class="btn-card-apply" onclick="handleCardApplyClick(event, {{ o.id_oferta }}, '{{ o.titulo|e }}', '{{ (o.empresa.nombre_empresa if o.empresa else "Empresa")|e }}')">
+                      ⚡ Postulación Rápida
+                    </button>
+                  {% endif %}
                   <form action="{{ url_for('agregar_favorito', oferta_id=o.id_oferta) }}" method="POST" style="margin: 0;">
                     <button type="submit" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; font-size: 0.85rem; font-weight: 500; cursor: pointer;" title="Guardar vacante">
                       ⭐
@@ -215,12 +221,18 @@
             </div>
           </div>
 
-          <!-- Botón de Postulación Rápida en Cabecera -->
+          <!-- Botón de Postulación Rápida en Cabecera según Rol -->
           <div class="detail-action-sticky">
-            <button class="btn-quick-apply-large" id="btn-quick-apply-main" onclick="openApplyModalFromDetail()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              <span>Postulación Rápida (1 Clic)</span>
-            </button>
+            {% if session.get('usuario_rol') in ['reclutador', 'admin'] %}
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; color: #475569; font-size: 0.85rem; text-align: center; width: 100%;">
+                🏢 <strong>Modo Empresa:</strong> Las postulaciones están reservadas para usuarios con perfil de Candidato.
+              </div>
+            {% else %}
+              <button class="btn-quick-apply-large" id="btn-quick-apply-main" onclick="openApplyModalFromDetail()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span>Postulación Rápida (1 Clic)</span>
+              </button>
+            {% endif %}
           </div>
 
           <!-- Cuerpo con Secciones Detalladas -->

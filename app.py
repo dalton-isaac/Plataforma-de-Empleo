@@ -254,12 +254,17 @@ def usuario_actual():
 @app.route("/logout", methods=["GET", "POST"])
 @app.route("/api/logout", methods=["POST", "GET"])
 def logout():
-    """Cierra la sesión del usuario actual."""
+    """Cierra la sesión del usuario actual y redirige limpiamente al inicio."""
     session.clear()
     if request.is_json or request.path.startswith("/api/"):
-        return jsonify({"mensaje": "Sesión cerrada correctamente.", "autenticado": False}), 200
+        response = jsonify({"mensaje": "Sesión cerrada correctamente.", "autenticado": False})
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        return response, 200
+
     flash("Sesión cerrada correctamente.", "success")
-    return redirect(url_for("inicio"))
+    response = redirect(url_for("inicio"))
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
 
 
 # ══════════════════════════════════════════════════════════════
@@ -457,7 +462,16 @@ def get_oferta_detalle(oferta_id):
 @app.route("/api/postular", methods=["POST"])
 @login_requerido
 def crear_postulacion():
-    """Crea una nueva postulación para el usuario en sesión (Requiere Login)."""
+    """Crea una nueva postulación para el usuario en sesión (Requiere Login y Rol Candidato)."""
+    # Restricción estricta de rol: Empresas y Reclutadores NO pueden postularse
+    rol_actual = session.get("usuario_rol")
+    if rol_actual in ["reclutador", "admin"]:
+        return jsonify({
+            "error": "Las cuentas con perfil de Empresa / Reclutador no pueden postularse a ofertas de empleo. Inicia sesión como Candidato para aplicar.",
+            "codigo": 403,
+            "solo_candidatos": True
+        }), 403
+
     data = request.get_json() or {}
     id_candidato = session.get("usuario_id")
     id_oferta = data.get("id_oferta") or request.form.get("id_oferta")

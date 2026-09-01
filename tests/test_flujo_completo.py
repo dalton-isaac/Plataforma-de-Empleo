@@ -197,9 +197,35 @@ class TestFlujoCompleto(unittest.TestCase):
             sess["usuario_rol"] = "candidato"
 
         res = self.client.post(f"/api/postulacion/{id_post}/estado", json={"estado": "Aceptada"})
-        self.assertEqual(res.status_code, 403)
+    # 7. Restricción de Roles: Reclutador intentando postularse -> 403
+    def test_reclutador_no_puede_postular(self):
+        with self.client.session_transaction() as sess:
+            sess["usuario_id"] = self.id_reclutador
+            sess["usuario_nombre"] = "Sofía Reclutadora"
+            sess["usuario_correo"] = "sofia@techsolutions.ec"
+            sess["usuario_rol"] = "reclutador"
 
-    # 7. Manejador 404 Amigable
+        res = self.client.post("/api/postular", json={"id_oferta": self.id_oferta})
+        self.assertEqual(res.status_code, 403)
+        data = res.get_json()
+        self.assertTrue(data.get("solo_candidatos"))
+
+    # 8. Cierre de sesión limpio con redirección y headers No-Cache
+    def test_logout_redireccion_y_limpieza(self):
+        with self.client.session_transaction() as sess:
+            sess["usuario_id"] = self.id_candidato
+            sess["usuario_nombre"] = "Mateo Candidato"
+            sess["usuario_rol"] = "candidato"
+
+        res = self.client.get("/logout")
+        self.assertEqual(res.status_code, 302)
+        self.assertEqual(res.headers.get("Cache-Control"), "no-cache, no-store, must-revalidate")
+
+        # Verificar que la sesión quedó completamente vacía
+        with self.client.session_transaction() as sess:
+            self.assertIsNone(sess.get("usuario_id"))
+
+    # 9. Manejador 404 Amigable
     def test_error_404(self):
         res = self.client.get("/ruta-que-no-existe-en-talentoec")
         self.assertEqual(res.status_code, 404)
