@@ -231,55 +231,46 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnBackToList = document.getElementById('btn-back-to-list');
   const jobsCountBadge = document.getElementById('jobs-count-badge');
 
-  const updateJobDetailView = (jobId) => {
-    const job = jobsData.find(j => j.id === jobId);
-    if (!job) return;
-
+  const updateJobDetailView = async (jobId) => {
     currentSelectedJobId = jobId;
 
-    const detailTitle = document.getElementById('detail-title');
-    const detailCompany = document.getElementById('detail-company');
-    const detailSalary = document.getElementById('detail-salary');
-    const detailTags = document.getElementById('detail-tags');
-    const detailDesc = document.getElementById('detail-description');
-    const detailResp = document.getElementById('detail-responsibilities');
-    const detailReq = document.getElementById('detail-requirements');
-    const detailBen = document.getElementById('detail-benefits');
+    try {
+      const res = await fetch(`/api/ofertas/${jobId}`);
+      if (res.ok) {
+        const data = await res.json();
+        const detailTitle = document.getElementById('detail-title');
+        const detailCompany = document.getElementById('detail-company');
+        const detailSalary = document.getElementById('detail-salary');
+        const detailDesc = document.getElementById('detail-description');
+        const detailResp = document.getElementById('detail-responsibilities');
+        const detailReq = document.getElementById('detail-requirements');
+        const detailBadge = document.getElementById('detail-badge');
 
-    if (detailTitle) detailTitle.textContent = job.title;
-    if (detailCompany) detailCompany.textContent = `${job.company} • ${job.location}`;
-    if (detailSalary) detailSalary.textContent = job.salary;
-    if (detailDesc) detailDesc.textContent = job.description;
+        if (detailTitle) detailTitle.textContent = data.titulo;
+        if (detailCompany) detailCompany.textContent = `${data.empresa ? data.empresa.nombre_empresa : 'Empresa'} • ${data.ubicacion_exacta}`;
+        if (detailSalary) detailSalary.textContent = `$${parseFloat(data.salario).toFixed(2)} USD / mes`;
+        if (detailDesc) detailDesc.textContent = data.funciones || 'Oportunidad formativa para jóvenes en Quito.';
+        if (detailBadge) detailBadge.textContent = data.anos_experiencia === 0 ? 'Sin Experiencia' : `${data.anos_experiencia} año(s) exp`;
 
-    if (detailTags) {
-      detailTags.innerHTML = job.tags.map(t => `<span class="tag-pill">${t}</span>`).join('');
-    }
-
-    if (detailResp) {
-      detailResp.innerHTML = job.responsibilities.map(r => `
-        <li>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          <span>${r}</span>
-        </li>
-      `).join('');
-    }
-
-    if (detailReq) {
-      detailReq.innerHTML = job.requirements.map(req => `
-        <li>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          <span>${req}</span>
-        </li>
-      `).join('');
-    }
-
-    if (detailBen) {
-      detailBen.innerHTML = job.benefits.map(b => `
-        <li>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-          <span>${b}</span>
-        </li>
-      `).join('');
+        if (detailResp && data.funciones) {
+          detailResp.innerHTML = `
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>${data.funciones}</span>
+            </li>
+          `;
+        }
+        if (detailReq && data.requisitos_tecnicos) {
+          detailReq.innerHTML = `
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>${data.requisitos_tecnicos}</span>
+            </li>
+          `;
+        }
+      }
+    } catch (e) {
+      console.error('Error cargando detalle de oferta:', e);
     }
 
     jobCards.forEach(card => {
@@ -300,13 +291,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (jobCards.length > 0) {
     jobCards.forEach(card => {
       card.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-card-apply')) {
+        if (e.target.classList.contains('btn-card-apply') || e.target.closest('form')) {
           return;
         }
         const jobId = parseInt(card.getAttribute('data-job-id'));
-        updateJobDetailView(jobId);
+        if (jobId) updateJobDetailView(jobId);
       });
     });
+
+    // Cargar detalle de la primera vacante automáticamente
+    const firstCard = jobCards[0];
+    const firstId = parseInt(firstCard.getAttribute('data-job-id'));
+    if (firstId) updateJobDetailView(firstId);
   }
 
   if (btnBackToList && jobDetailColumn) {
@@ -360,9 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let visibleCount = 0;
 
     jobCards.forEach(card => {
-      const title = card.querySelector('.card-job-title').textContent.toLowerCase();
-      const company = card.querySelector('.card-company-name').textContent.toLowerCase();
-      const snippet = card.querySelector('.card-snippet').textContent.toLowerCase();
+      const title = card.querySelector('.card-job-title')?.textContent.toLowerCase() || '';
+      const company = card.querySelector('.card-company-name')?.textContent.toLowerCase() || '';
+      const snippet = card.querySelector('.card-snippet')?.textContent.toLowerCase() || '';
 
       if (title.includes(query) || company.includes(query) || snippet.includes(query)) {
         card.style.display = 'flex';
@@ -380,36 +376,79 @@ document.addEventListener('DOMContentLoaded', () => {
   if (searchInput) searchInput.addEventListener('input', executeSearch);
   if (btnSearchTrigger) btnSearchTrigger.addEventListener('click', executeSearch);
 
+  // Leer parámetro 'q' de la URL proveniente del Hero de inicio
+  const urlParams = new URLSearchParams(window.location.search);
+  const qParam = urlParams.get('q');
+  if (qParam && searchInput) {
+    searchInput.value = qParam;
+    executeSearch();
+  }
+
   // ==========================================================================
-  // 5. SIMULADOR DE "POSTULACIÓN RÁPIDA" (Modal interactivo)
+  // 5. POSTULACIÓN RÁPIDA REAL (CONEXIÓN API /api/postular)
   // ==========================================================================
   const applyModal = document.getElementById('apply-modal');
   const modalCloseBtn = document.getElementById('modal-close');
   const modalConfirmBtn = document.getElementById('btn-modal-confirm');
   const modalJobTitle = document.getElementById('modal-job-title');
   const modalCompanyName = document.getElementById('modal-company-name');
+  const modalApplyMessage = document.getElementById('modal-apply-message');
+  const modalApplyStatusTitle = document.getElementById('modal-apply-status-title');
 
-  window.openApplyModal = (id, title, company) => {
+  window.openApplyModal = (id, title, company, customMessage = '') => {
     if (applyModal && modalJobTitle && modalCompanyName) {
       modalJobTitle.textContent = title;
       modalCompanyName.textContent = company;
+      if (modalApplyMessage && customMessage) {
+        modalApplyMessage.textContent = customMessage;
+      }
       applyModal.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
   };
 
-  window.handleCardApplyClick = (event, jobId) => {
-    event.stopPropagation();
-    const job = jobsData.find(j => j.id === jobId);
-    if (job) {
-      window.openApplyModal(job.id, job.title, job.company);
+  window.handleCardApplyClick = async (event, jobId, jobTitle = '', jobCompany = '') => {
+    if (event) event.stopPropagation();
+    currentSelectedJobId = jobId;
+
+    try {
+      const response = await fetch('/api/postular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_oferta: jobId })
+      });
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        // Redirigir a login modal
+        window.openAuthModal('login');
+        const lAlert = document.getElementById('login-alert');
+        if (lAlert) {
+          lAlert.className = 'auth-alert error';
+          lAlert.textContent = 'Debes iniciar sesión con tu cuenta de candidato para postularte.';
+        }
+        return;
+      }
+
+      if (response.ok) {
+        window.openApplyModal(jobId, jobTitle || 'Oferta de Empleo', jobCompany || 'Empresa', data.mensaje);
+      } else {
+        alert(data.error || 'No se pudo completar la postulación.');
+      }
+    } catch (err) {
+      console.error('Error al postular:', err);
+      alert('Error de conexión al enviar la postulación.');
     }
   };
 
   window.openApplyModalFromDetail = () => {
-    const job = jobsData.find(j => j.id === currentSelectedJobId);
-    if (job) {
-      window.openApplyModal(job.id, job.title, job.company);
+    const activeCard = document.querySelector('.search-job-card.active') || document.querySelector('.search-job-card');
+    if (activeCard) {
+      const jobId = parseInt(activeCard.getAttribute('data-job-id'));
+      const title = activeCard.querySelector('.card-job-title')?.textContent || 'Vacante';
+      const company = activeCard.querySelector('.card-company-name')?.textContent || 'Empresa';
+      window.handleCardApplyClick(null, jobId, title, company);
     }
   };
 
@@ -427,6 +466,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === applyModal) closeApplyModal();
     });
   }
+
+  // Función para mover candidatos de fase en el Kanban de Reclutadores
+  window.changeCandidatePhase = async (postulacionId, nuevoEstado) => {
+    try {
+      const response = await fetch(`/api/postulacion/${postulacionId}/estado`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert(data.error || 'Error al cambiar de fase.');
+      }
+    } catch (e) {
+      console.error('Error al actualizar fase en Kanban:', e);
+    }
+  };
 
   // ==========================================================================
   // 6. LÓGICA DE PESTAÑAS & MODALES EN PÁGINA "DESARROLLO PERSONAL"
@@ -691,6 +750,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Selector de roles dentro del formulario de registro
+  const roleBtnCandidato = document.getElementById('role-btn-candidato');
+  const roleBtnReclutador = document.getElementById('role-btn-reclutador');
+  const registerRoleInput = document.getElementById('register-role');
+  const groupCompanyName = document.getElementById('group-company-name');
+  const groupCandidateFields = document.getElementById('group-candidate-fields');
+  const labelRegisterName = document.getElementById('label-register-name');
+
+  if (roleBtnCandidato && roleBtnReclutador) {
+    roleBtnCandidato.addEventListener('click', () => {
+      roleBtnCandidato.classList.add('active');
+      roleBtnReclutador.classList.remove('active');
+      if (registerRoleInput) registerRoleInput.value = 'candidato';
+      if (groupCompanyName) groupCompanyName.style.display = 'none';
+      if (groupCandidateFields) groupCandidateFields.style.display = 'flex';
+      if (labelRegisterName) labelRegisterName.textContent = 'Nombre Completo *';
+    });
+
+    roleBtnReclutador.addEventListener('click', () => {
+      roleBtnReclutador.classList.add('active');
+      roleBtnCandidato.classList.remove('active');
+      if (registerRoleInput) registerRoleInput.value = 'reclutador';
+      if (groupCompanyName) groupCompanyName.style.display = 'flex';
+      if (groupCandidateFields) groupCandidateFields.style.display = 'none';
+      if (labelRegisterName) labelRegisterName.textContent = 'Nombre del Reclutador *';
+    });
+  }
+
   // Alternar entre Login y Registro
   window.switchAuthTab = (tab) => {
     if (tab === 'register') {
@@ -762,8 +849,8 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             window.closeAuthModal();
             formLogin.reset();
-            checkAuthStatus();
-          }, 800);
+            window.location.reload();
+          }, 600);
         } else {
           if (loginAlert) {
             loginAlert.className = 'auth-alert error';
@@ -784,13 +871,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Envío Formulario de Registro
+  // Envío Formulario de Registro con Roles
   if (formRegister) {
     formRegister.addEventListener('submit', async (e) => {
       e.preventDefault();
       const nombre = document.getElementById('register-name')?.value.trim();
       const correo = document.getElementById('register-email')?.value.trim();
       const contrasena = document.getElementById('register-password')?.value.trim();
+      const rol = document.getElementById('register-role')?.value || 'candidato';
+      const nombre_empresa = document.getElementById('register-company')?.value.trim();
       const edad = document.getElementById('register-age')?.value;
       const salario_pretendido = document.getElementById('register-salary')?.value;
       const submitBtn = formRegister.querySelector('.auth-submit-btn');
@@ -804,7 +893,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const response = await fetch('/api/registro', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, correo, contrasena, edad, salario_pretendido })
+          body: JSON.stringify({ nombre, correo, contrasena, rol, nombre_empresa, edad, salario_pretendido })
         });
 
         const data = await response.json();
@@ -817,8 +906,12 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             window.closeAuthModal();
             formRegister.reset();
-            checkAuthStatus();
-          }, 900);
+            if (rol === 'reclutador') {
+              window.location.href = '/reclutadores';
+            } else {
+              window.location.reload();
+            }
+          }, 700);
         } else {
           if (registerAlert) {
             registerAlert.className = 'auth-alert error';
@@ -843,66 +936,22 @@ document.addEventListener('DOMContentLoaded', () => {
   window.logoutUser = async () => {
     try {
       await fetch('/api/logout', { method: 'POST' });
-      checkAuthStatus();
+      window.location.href = '/';
     } catch (err) {
       console.error('Error al cerrar sesión', err);
     }
   };
 
-  // Verificar Estado de Autenticación y actualizar Navbars
-  async function checkAuthStatus() {
-    try {
-      const response = await fetch('/api/usuario-actual');
-      const data = await response.json();
-
-      const authContainers = document.querySelectorAll('.site-nav__actions, .nav-auth');
-
-      authContainers.forEach(container => {
-        if (data.autenticado && data.usuario) {
-          const inicial = data.usuario.nombre ? data.usuario.nombre.charAt(0).toUpperCase() : 'U';
-          const primerNombre = data.usuario.nombre ? data.usuario.nombre.split(' ')[0] : 'Usuario';
-
-          container.innerHTML = `
-            <div class="nav-user-logged">
-              <div class="nav-user-badge">
-                <span class="nav-user-avatar">${inicial}</span>
-                <span>Hola, ${primerNombre}</span>
-              </div>
-              <button class="nav-btn-logout" onclick="window.logoutUser()">Cerrar sesión</button>
-            </div>
-          `;
-        } else {
-          // Restaurar botones según estilo del contenedor
-          if (container.classList.contains('site-nav__actions')) {
-            container.innerHTML = `
-              <a class="button button--outline btn-open-register" href="#">Crear Cuenta</a>
-              <a class="button button--orange-outline btn-open-login" href="#">Iniciar sesión</a>
-            `;
-          } else {
-            container.innerHTML = `
-              <a href="#" class="btn-secondary-nav btn-open-register">Crear Cuenta</a>
-              <a href="#" class="btn-primary-nav btn-open-login">Iniciar sesión</a>
-            `;
-          }
-
-          // Re-vincular eventos
-          container.querySelector('.btn-open-login')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.openAuthModal('login');
-          });
-          container.querySelector('.btn-open-register')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.openAuthModal('register');
-          });
-        }
-      });
-    } catch (err) {
-      console.error('Error al verificar sesión:', err);
-    }
+  // Toggle del menú hamburguesa móvil
+  const mobileToggle = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  if (mobileToggle && navMenu) {
+    mobileToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+      const isExpanded = navMenu.classList.contains('active');
+      mobileToggle.setAttribute('aria-expanded', isExpanded);
+    });
   }
-
-  // Ejecutar verificación de sesión al cargar
-  checkAuthStatus();
 
 });
 

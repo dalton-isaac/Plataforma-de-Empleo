@@ -35,15 +35,31 @@
       <!-- Enlaces de navegación desktop (colapsables en móvil) -->
       <nav class="nav-menu" id="nav-menu">
         <ul class="nav-list">
-          <li><a href="index.html" class="nav-link">Inicio</a></li>
-          <li><a href="postulacion.html" class="nav-link">Buscar Empleos</a></li>
-          <li><a href="desarrollo.html" class="nav-link active">Desarrollo Personal</a></li>
-          <li><a href="reclutadores.html" class="nav-link">Reclutadores</a></li>
-          <li><a href="index.html#soporte" class="nav-link">Soporte Técnico</a></li>
+          <li><a href="{{ url_for('inicio') }}" class="nav-link">Inicio</a></li>
+          <li><a href="{{ url_for('postulacion') }}" class="nav-link">Bolsa de Empleo</a></li>
+          <li><a href="{{ url_for('desarrollo') }}" class="nav-link active">Desarrollo Personal</a></li>
+          {% if session.get('usuario_rol') == 'candidato' %}
+            <li><a href="{{ url_for('mis_postulaciones') }}" class="nav-link">📋 Mis Postulaciones</a></li>
+          {% elif session.get('usuario_rol') in ['reclutador', 'admin'] %}
+            <li><a href="{{ url_for('reclutadores') }}" class="nav-link">Portal Reclutadores</a></li>
+          {% else %}
+            <li><a href="{{ url_for('reclutadores') }}" class="nav-link">Portal Reclutadores</a></li>
+          {% endif %}
         </ul>
         <div class="nav-auth">
-          <a href="#" class="btn-secondary-nav">Crear Cuenta</a>
-          <a href="#" class="btn-primary-nav">Iniciar sesión</a>
+          {% if session.get('usuario_id') %}
+            <div class="nav-user-logged">
+              <span class="nav-user-badge">
+                <span class="nav-user-avatar">👤</span>
+                <span>{{ session.get('usuario_nombre') }}</span>
+                <span style="font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 10px; font-weight: 600;">{{ session.get('usuario_rol') }}</span>
+              </span>
+              <a href="{{ url_for('logout') }}" class="nav-btn-logout">Cerrar sesión</a>
+            </div>
+          {% else %}
+            <a href="#" class="btn-secondary-nav" onclick="openAuthModal('register')">Crear Cuenta</a>
+            <a href="#" class="btn-primary-nav" onclick="openAuthModal('login')">Iniciar sesión</a>
+          {% endif %}
         </div>
       </nav>
     </div>
@@ -544,7 +560,31 @@
     </div>
   </div>
 
-  <!-- MODAL DE AUTENTICACIÓN (LOGIN / REGISTRO) -->
+  <!-- Footer Institucional -->
+  <footer class="site-footer" id="soporte">
+    <div class="site-footer__content">
+      <div class="site-footer__brand">
+        <a class="brand" href="{{ url_for('inicio') }}"><span>Talento</span><b>EC</b></a>
+        <p>La plataforma universitaria líder en Quito para encontrar tu primera experiencia laboral con confianza.</p>
+      </div>
+      <nav class="footer-links" aria-label="Navegación del pie de página">
+        <h2>Navegación</h2>
+        <a href="{{ url_for('inicio') }}">Inicio</a>
+        <a href="{{ url_for('postulacion') }}">Bolsa de Empleo</a>
+        <a href="{{ url_for('desarrollo') }}">Desarrollo Personal</a>
+      </nav>
+      <nav class="footer-links" aria-label="Soporte y Ayuda">
+        <h2>Soporte & Ayuda</h2>
+        <a href="#soporte">Soporte Técnico</a>
+        <a href="mailto:soporte@talentoec.edu.ec">soporte@talentoec.edu.ec</a>
+        <a href="#">Preguntas Frecuentes</a>
+        <a href="#">Términos y Privacidad</a>
+      </nav>
+    </div>
+    <p class="site-footer__copyright">© 2026 TalentoEC. Todos los derechos reservados. Proyecto Universitario - Quito, Ecuador.</p>
+  </footer>
+
+  <!-- MODAL UNIFICADO DE AUTENTICACIÓN -->
   <div class="auth-modal-backdrop" id="auth-modal">
     <div class="auth-modal-card">
       <button class="auth-modal-close" id="auth-modal-close" aria-label="Cerrar modal">✕</button>
@@ -554,13 +594,12 @@
         <p class="auth-subtitle">Accede a tu cuenta o regístrate en segundos</p>
       </div>
 
-      <!-- Pestañas para cambiar entre Login y Registro -->
       <div class="auth-tabs">
         <button class="auth-tab-btn active" id="tab-login-btn" type="button">Iniciar Sesión</button>
         <button class="auth-tab-btn" id="tab-register-btn" type="button">Crear Cuenta</button>
       </div>
 
-      <!-- FORMULARIO DE INICIO DE SESIÓN -->
+      <!-- FORMULARIO DE LOGIN -->
       <form class="auth-form active" id="auth-form-login">
         <div class="auth-alert" id="login-alert"></div>
 
@@ -583,22 +622,34 @@
       <form class="auth-form" id="auth-form-register">
         <div class="auth-alert" id="register-alert"></div>
 
+        <label style="font-size: 0.8rem; font-weight: 600; color: #334155; margin-bottom: 2px;">Tipo de Perfil:</label>
+        <div class="auth-role-selector" id="auth-role-selector">
+          <button type="button" class="role-pill active" data-role="candidato" id="role-btn-candidato">🎓 Soy Candidato</button>
+          <button type="button" class="role-pill" data-role="reclutador" id="role-btn-reclutador">🏢 Soy Reclutador</button>
+        </div>
+        <input type="hidden" id="register-role" value="candidato">
+
         <div class="auth-input-group">
-          <label for="register-name">Nombre Completo</label>
+          <label for="register-name" id="label-register-name">Nombre Completo *</label>
           <input type="text" id="register-name" placeholder="Ej. Mateo Morales" required>
         </div>
 
+        <div class="auth-input-group" id="group-company-name" style="display: none;">
+          <label for="register-company">Nombre de la Empresa *</label>
+          <input type="text" id="register-company" placeholder="Ej. Software Solutions EC">
+        </div>
+
         <div class="auth-input-group">
-          <label for="register-email">Correo Electrónico</label>
+          <label for="register-email">Correo Electrónico *</label>
           <input type="email" id="register-email" placeholder="ejemplo@estudiantes.ec" required>
         </div>
 
         <div class="auth-input-group">
-          <label for="register-password">Contraseña (Mín. 6 caracteres)</label>
+          <label for="register-password">Contraseña (Mín. 6 caracteres) *</label>
           <input type="password" id="register-password" placeholder="••••••••" minlength="6" required>
         </div>
 
-        <div class="auth-row-2">
+        <div class="auth-row-2" id="group-candidate-fields">
           <div class="auth-input-group">
             <label for="register-age">Edad</label>
             <input type="number" id="register-age" placeholder="21" min="16" max="99">

@@ -11,21 +11,22 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <!-- Header / Barra de Navegación -->
-  <header class="header">
-    <div class="header__container">
-      <a class="header__logo" href="{{ url_for('inicio') }}" aria-label="TalentoEC, inicio">
-        <span>Talento</span><b>EC</b>
-      </a>
-      <nav class="nav" aria-label="Navegación principal">
-        <a class="nav__link" href="{{ url_for('inicio') }}">Inicio</a>
-        <a class="nav__link" href="{{ url_for('postulacion') }}">Bolsa de Empleo</a>
-        <a class="nav__link" href="{{ url_for('desarrollo') }}">Desarrollo Personal</a>
-        <a class="nav__link nav__link--active" href="{{ url_for('reclutadores') }}">Reclutadores</a>
-      </nav>
-      <div class="header__actions">
-        <a class="btn btn--outline" href="{{ url_for('reclutadores') }}">← Volver al Portal</a>
+  <!-- Header / Barra de Navegación Principal -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="{{ url_for('inicio') }}" id="logo-link">Talento<span>EC</span></a>
       </div>
+      <nav class="nav-menu" id="nav-menu">
+        <ul class="nav-list">
+          <li><a href="{{ url_for('inicio') }}" class="nav-link">Inicio</a></li>
+          <li><a href="{{ url_for('reclutadores') }}" class="nav-link active">Portal Reclutadores</a></li>
+          <li><a href="{{ url_for('postulacion') }}" class="nav-link">Bolsa de Empleo</a></li>
+        </ul>
+        <div class="nav-auth">
+          <a class="btn-secondary-nav" href="{{ url_for('reclutadores') }}">← Volver al Portal</a>
+        </div>
+      </nav>
     </div>
   </header>
 

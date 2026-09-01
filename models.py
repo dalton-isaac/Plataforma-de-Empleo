@@ -150,8 +150,19 @@ class Postulacion(db.Model):
     estado = db.Column(db.String(50), default='Pendiente')
     fecha_postulacion = db.Column(db.Date, default=date.today)
 
+    def to_dict(self):
+        return {
+            "id_postulacion": self.id_postulacion,
+            "id_candidato": self.id_candidato,
+            "id_oferta": self.id_oferta,
+            "estado": self.estado,
+            "fecha_postulacion": self.fecha_postulacion.strftime("%Y-%m-%d") if self.fecha_postulacion else None,
+            "candidato": self.candidato.to_dict() if self.candidato else None,
+            "oferta": self.oferta.to_dict() if self.oferta else None,
+        }
+
     def __repr__(self):
-        return f"<Postulacion {self.estado}>"
+        return f"<Postulacion #{self.id_postulacion} - {self.estado}>"
 
 
 class Favorito(db.Model):
