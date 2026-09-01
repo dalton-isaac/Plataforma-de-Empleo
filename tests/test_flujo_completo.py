@@ -16,7 +16,6 @@ from models import db, Candidato, Empresa, OfertaEmpleo, Postulacion
 class TestFlujoCompleto(unittest.TestCase):
     def setUp(self):
         app.config["TESTING"] = True
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
         app.config["SECRET_KEY"] = "clave-test-flujo"
         app.config["WTF_CSRF_ENABLED"] = False
         self.client = app.test_client()

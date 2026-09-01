@@ -6,10 +6,14 @@ db = SQLAlchemy()
 
 class Empresa(db.Model):
     __tablename__ = "empresa"
+    __table_args__ = (
+        db.CheckConstraint("ranking >= 0.00 AND ranking <= 5.00", name="chk_empresa_ranking"),
+        db.CheckConstraint("length(trim(nombre_empresa)) >= 2", name="chk_empresa_nombre"),
+    )
 
     id_empresa = db.Column(db.Integer, primary_key=True)
-    nombre_empresa = db.Column(db.String(150), nullable=False)
-    ranking = db.Column(db.Numeric(precision=5, scale=2), nullable=True)
+    nombre_empresa = db.Column(db.String(150), unique=True, nullable=False)
+    ranking = db.Column(db.Numeric(precision=5, scale=2), nullable=True, default=5.00)
 
     # Relaciones
     ofertas = db.relationship("OfertaEmpleo", backref="empresa", lazy=True)
@@ -20,6 +24,13 @@ class Empresa(db.Model):
 
 class Candidato(db.Model):
     __tablename__ = "candidato"
+    __table_args__ = (
+        db.CheckConstraint("edad IS NULL OR (edad >= 16 AND edad <= 99)", name="chk_candidato_edad"),
+        db.CheckConstraint("rol IN ('candidato', 'reclutador', 'admin')", name="chk_candidato_rol"),
+        db.CheckConstraint("salario_pretendido IS NULL OR salario_pretendido >= 0", name="chk_candidato_salario"),
+        db.CheckConstraint("length(trim(nombre)) >= 2", name="chk_candidato_nombre"),
+        db.CheckConstraint("correo ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'", name="chk_candidato_correo_formato"),
+    )
 
     id_candidato = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(150), nullable=False)
@@ -64,13 +75,18 @@ class Candidato(db.Model):
 
 class OfertaEmpleo(db.Model):
     __tablename__ = "oferta_empleo"
+    __table_args__ = (
+        db.CheckConstraint("salario IS NULL OR salario >= 460.00", name="chk_oferta_salario_minimo"),
+        db.CheckConstraint("anos_experiencia IS NULL OR (anos_experiencia >= 0 AND anos_experiencia <= 20)", name="chk_oferta_experiencia"),
+        db.CheckConstraint("length(trim(titulo)) >= 3", name="chk_oferta_titulo"),
+    )
 
     id_oferta = db.Column(db.Integer, primary_key=True)
     id_empresa = db.Column(db.Integer, db.ForeignKey('empresa.id_empresa'), nullable=False)
     titulo = db.Column(db.String(150), nullable=False)
     salario = db.Column(db.Numeric(precision=10, scale=2), nullable=True)
     modalidad = db.Column(db.String(50), nullable=True)
-    anos_experiencia = db.Column(db.Integer, nullable=True)
+    anos_experiencia = db.Column(db.Integer, nullable=True, default=0)
     ubicacion_exacta = db.Column(db.String(255), nullable=True)
     funciones = db.Column(db.Text, nullable=True)
     requisitos_tecnicos = db.Column(db.Text, nullable=True)
@@ -102,6 +118,9 @@ class OfertaEmpleo(db.Model):
 
 class HabilidadCertificacion(db.Model):
     __tablename__ = "habilidad_certificacion"
+    __table_args__ = (
+        db.CheckConstraint("length(trim(descripcion)) >= 2", name="chk_habilidad_descripcion"),
+    )
 
     id_habilidad = db.Column(db.Integer, primary_key=True)
     id_candidato = db.Column(db.Integer, db.ForeignKey('candidato.id_candidato'), nullable=False)
@@ -114,12 +133,16 @@ class HabilidadCertificacion(db.Model):
 
 class Postulacion(db.Model):
     __tablename__ = "postulacion"
+    __table_args__ = (
+        db.CheckConstraint("estado IN ('Pendiente', 'En Evaluación', 'Entrevista', 'Aceptada', 'Rechazada')", name="chk_postulacion_estado"),
+        db.UniqueConstraint("id_candidato", "id_oferta", name="uq_postulacion_candidato_oferta"),
+    )
 
     id_postulacion = db.Column(db.Integer, primary_key=True)
     id_candidato = db.Column(db.Integer, db.ForeignKey('candidato.id_candidato'), nullable=False)
     id_oferta = db.Column(db.Integer, db.ForeignKey('oferta_empleo.id_oferta'), nullable=False)
-    estado = db.Column(db.String(50), default='Pendiente')
-    fecha_postulacion = db.Column(db.Date, default=date.today)
+    estado = db.Column(db.String(50), default='Pendiente', nullable=False)
+    fecha_postulacion = db.Column(db.Date, default=date.today, nullable=False)
 
     def to_dict(self):
         return {
@@ -138,6 +161,9 @@ class Postulacion(db.Model):
 
 class Favorito(db.Model):
     __tablename__ = "favorito"
+    __table_args__ = (
+        db.UniqueConstraint("id_candidato", "id_oferta", name="uq_favorito_candidato_oferta"),
+    )
 
     id_favorito = db.Column(db.Integer, primary_key=True)
     id_candidato = db.Column(db.Integer, db.ForeignKey('candidato.id_candidato'), nullable=False)

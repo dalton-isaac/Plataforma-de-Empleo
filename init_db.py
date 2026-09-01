@@ -23,7 +23,18 @@ with app.app_context():
         conn.execute(db.text("DROP SCHEMA public CASCADE; CREATE SCHEMA public;"))
         conn.commit()
     db.create_all()  # Crea las tablas según los modelos en models.py
-    print("[OK] Tablas creadas con exito.")
+    print("[OK] Tablas creadas con éxito.")
+
+    # Cargar y ejecutar Triggers y Procedimientos Almacenados (PL/pgSQL)
+    try:
+        with open("schema_plpgsql.sql", "r", encoding="utf-8") as f:
+            plpgsql_sql = f.read()
+        with db.engine.connect() as conn:
+            conn.execute(db.text(plpgsql_sql))
+            conn.commit()
+        print("[OK] Triggers, Auditoría y Stored Procedures (PL/pgSQL) instalados exitosamente.")
+    except Exception as e:
+        print(f"[!] Nota: No se pudo cargar schema_plpgsql.sql ({e}). Continuando...")
 
     # ── 1. EMPRESAS AFILIADAS ────────────────────────────────────
     empresa1 = Empresa(

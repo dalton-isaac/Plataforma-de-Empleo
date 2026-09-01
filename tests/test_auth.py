@@ -5,13 +5,15 @@ from models import db, Candidato
 
 class AuthTestCase(unittest.TestCase):
     def setUp(self):
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         app.config['TESTING'] = True
         app.config['SECRET_KEY'] = 'test-secret-key'
         self.client = app.test_client()
 
         with app.app_context():
             db.create_all()
+            Candidato.query.filter_by(correo="demo@estudiante.ec").delete()
+            Candidato.query.filter_by(correo="nuevo@estudiante.ec").delete()
+            db.session.commit()
             # Crear un candidato de prueba
             c = Candidato(nombre="Estudiante Demo", correo="demo@estudiante.ec")
             c.set_password("segura123")
@@ -20,8 +22,7 @@ class AuthTestCase(unittest.TestCase):
 
     def tearDown(self):
         with app.app_context():
-            db.session.remove()
-            db.drop_all()
+            db.session.rollback()
 
     def test_registro_exitoso(self):
         payload = {
