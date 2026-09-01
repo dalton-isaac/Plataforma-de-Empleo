@@ -124,9 +124,14 @@ class RolesYPermisosTestCase(unittest.TestCase):
             "contrasena": "clave123"
         }), content_type='application/json')
 
-        # 1. Agregar a favoritos / carrito
+        # 1. Agregar a favoritos
         res_add = self.client.post(f'/favoritos/agregar/{self.oferta_id}', follow_redirects=True)
         self.assertEqual(res_add.status_code, 200)
+
+        from models import Favorito
+        with app.app_context():
+            fav = Favorito.query.filter_by(id_oferta=self.oferta_id).first()
+            self.assertIsNotNone(fav)
 
         # 2. Ver lista de favoritos
         res_list = self.client.get('/favoritos')
@@ -136,6 +141,30 @@ class RolesYPermisosTestCase(unittest.TestCase):
         # 3. Eliminar de favoritos
         res_del = self.client.post(f'/favoritos/eliminar/{self.oferta_id}', follow_redirects=True)
         self.assertEqual(res_del.status_code, 200)
+
+        with app.app_context():
+            fav_deleted = Favorito.query.filter_by(id_oferta=self.oferta_id).first()
+            self.assertIsNone(fav_deleted)
+
+    def test_favoritos_bloqueado_para_reclutador(self):
+        # Login como reclutador
+        self.client.post('/api/login', data=json.dumps({
+            "correo": "reclutador_rbac@empresa.ec",
+            "contrasena": "reclutador123"
+        }), content_type='application/json')
+
+        # Reclutador intentando ver favoritos por navegador web -> 302 Redirect con flash
+        res_get = self.client.get('/favoritos', follow_redirects=False)
+        self.assertEqual(res_get.status_code, 302)
+
+        # Reclutador intentando acceder a favoritos vía JSON -> 403 Forbidden
+        res_json = self.client.get('/favoritos', environ_base={'HTTP_ACCEPT': 'application/json'}, headers={'Content-Type': 'application/json'})
+        self.assertEqual(res_json.status_code, 403)
+
+        # Reclutador intentando agregar a favoritos vía JSON -> 403 Forbidden
+        res_add = self.client.post(f'/favoritos/agregar/{self.oferta_id}', headers={'Content-Type': 'application/json'}, data=json.dumps({}))
+        self.assertEqual(res_add.status_code, 403)
+
 
 if __name__ == '__main__':
     unittest.main()

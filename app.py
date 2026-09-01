@@ -551,13 +551,22 @@ def actualizar_estado_postulacion(postulacion_id):
 # ══════════════════════════════════════════════════════════════
 
 @app.route("/favoritos/agregar/<int:oferta_id>", methods=["POST"])
-@login_requerido
+@rol_requerido(["candidato"])
 def agregar_favorito(oferta_id):
-    """Agrega una vacante a la bolsa de favoritos del usuario en sesión."""
+    """Agrega una vacante a la bolsa de favoritos en PostgreSQL y en sesión (Solo Candidatos)."""
     oferta = db.get_or_404(OfertaEmpleo, oferta_id)
+    usuario_id = session.get("usuario_id")
+
+    # Persistencia en base de datos PostgreSQL
+    existente = Favorito.query.filter_by(id_candidato=usuario_id, id_oferta=oferta_id).first()
+    if not existente:
+        nuevo_fav = Favorito(id_candidato=usuario_id, id_oferta=oferta_id)
+        db.session.add(nuevo_fav)
+        db.session.commit()
+
+    # Sincronización en sesión
     favoritos = session.get("favoritos", {})
-    clave = str(oferta_id)
-    favoritos[clave] = True
+    favoritos[str(oferta_id)] = True
     session["favoritos"] = favoritos
 
     if request.is_json or request.path.startswith("/api/"):
@@ -571,18 +580,21 @@ def agregar_favorito(oferta_id):
 
 
 @app.route("/favoritos", methods=["GET"])
-@login_requerido
+@rol_requerido(["candidato"])
 def ver_favoritos():
-    """Visualiza la lista de vacantes guardadas por el usuario."""
-    favoritos = session.get("favoritos", {})
+    """Visualiza la lista de vacantes guardadas por el candidato desde PostgreSQL."""
+    usuario_id = session.get("usuario_id")
+    fav_records = Favorito.query.filter_by(id_candidato=usuario_id).all()
+
     items = []
-    for clave in favoritos.keys():
-        try:
-            oferta = db.session.get(OfertaEmpleo, int(clave))
-            if oferta and oferta.activo:
-                items.append(oferta)
-        except (ValueError, TypeError):
-            continue
+    favoritos_session = {}
+    for fav in fav_records:
+        if fav.oferta and fav.oferta.activo:
+            items.append(fav.oferta)
+            favoritos_session[str(fav.id_oferta)] = True
+
+    # Sincronizar sesión
+    session["favoritos"] = favoritos_session
 
     if request.is_json:
         return jsonify([o.to_dict() for o in items])
@@ -591,17 +603,25 @@ def ver_favoritos():
 
 
 @app.route("/favoritos/eliminar/<int:oferta_id>", methods=["POST"])
-@login_requerido
+@rol_requerido(["candidato"])
 def eliminar_favorito(oferta_id):
-    """Elimina una vacante de la bolsa de favoritos del usuario."""
+    """Elimina una vacante de la bolsa de favoritos en PostgreSQL y en sesión."""
+    usuario_id = session.get("usuario_id")
+    existente = Favorito.query.filter_by(id_candidato=usuario_id, id_oferta=oferta_id).first()
+    if existente:
+        db.session.delete(existente)
+        db.session.commit()
+
     favoritos = session.get("favoritos", {})
     clave = str(oferta_id)
     if clave in favoritos:
         del favoritos[clave]
         session["favoritos"] = favoritos
-        if request.is_json or request.path.startswith("/api/"):
-            return jsonify({"mensaje": "Vacante quitada de favoritos."}), 200
-        flash("Vacante quitada de tus favoritos.", "success")
+
+    if request.is_json or request.path.startswith("/api/"):
+        return jsonify({"mensaje": "Vacante quitada de favoritos."}), 200
+
+    flash("Vacante quitada de tus favoritos.", "success")
     return redirect(url_for("ver_favoritos"))
 
 

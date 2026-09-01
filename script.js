@@ -708,17 +708,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (modalCandidateClose) modalCandidateClose.addEventListener('click', window.closeCandidateCvModal);
 
-  // E. Buscador en Tablero Kanban
+  // E. Buscador y Filtro por Vacante en Tablero Kanban
   window.filterKanbanCandidates = () => {
     const searchVal = document.getElementById('kanban-candidate-search')?.value.toLowerCase().trim() || '';
+    const selectedJobId = document.getElementById('kanban-vacancy-filter')?.value || 'all';
     const cards = document.querySelectorAll('.kanban-candidate-card');
 
     cards.forEach(card => {
-      const name = card.querySelector('.candidate-name')?.textContent.toLowerCase() || '';
-      const uni = card.querySelector('.candidate-uni')?.textContent.toLowerCase() || '';
-      const tag = card.querySelector('.candidate-skill-tag')?.textContent.toLowerCase() || '';
+      const name = card.getAttribute('data-candidate-name') || card.querySelector('.candidate-name')?.textContent.toLowerCase() || '';
+      const email = card.getAttribute('data-candidate-email') || card.querySelector('.candidate-skill-tag')?.textContent.toLowerCase() || '';
+      const jobTitle = card.getAttribute('data-job-title') || card.querySelector('.candidate-uni')?.textContent.toLowerCase() || '';
+      const cardJobId = card.getAttribute('data-job-id') || '';
 
-      if (name.includes(searchVal) || uni.includes(searchVal) || tag.includes(searchVal)) {
+      const matchesSearch = !searchVal || name.includes(searchVal) || email.includes(searchVal) || jobTitle.includes(searchVal);
+      const matchesJob = selectedJobId === 'all' || cardJobId === selectedJobId;
+
+      if (matchesSearch && matchesJob) {
         card.style.display = 'flex';
       } else {
         card.style.display = 'none';

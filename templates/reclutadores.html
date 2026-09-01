@@ -380,10 +380,18 @@
               tus vacantes.</p>
           </div>
 
-          <div class="kanban-controls-flex">
+          <div class="kanban-controls-flex" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
             <div class="kanban-search-box">
               <input type="text" id="kanban-candidate-search" placeholder="Buscar por nombre o habilidad..."
                 oninput="filterKanbanCandidates()">
+            </div>
+            <div class="kanban-filter-box">
+              <select id="kanban-vacancy-filter" onchange="filterKanbanCandidates()" style="padding: 10px 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: #ffffff; color: #334155; font-weight: 500; cursor: pointer;">
+                <option value="all">🔍 Todas las vacantes</option>
+                {% for o in ofertas %}
+                  <option value="{{ o.id_oferta }}">{{ o.titulo }} ({{ o.empresa.nombre_empresa if o.empresa else 'Empresa' }})</option>
+                {% endfor %}
+              </select>
             </div>
           </div>
         </div>
@@ -398,16 +406,17 @@
                 <span class="column-indicator blue"></span>
                 <h3 class="column-name">Nuevos</h3>
               </div>
-              <span class="column-count-badge" id="count-nuevos">{{ postulaciones|selectattr('estado', 'equalto',
-                'Pendiente')|list|length }}</span>
+              <span class="column-count-badge" id="count-nuevos">{{ postulaciones|selectattr('estado', 'equalto', 'Pendiente')|list|length }}</span>
             </div>
 
             <div class="kanban-cards-stack">
               {% for p in postulaciones if p.estado == 'Pendiente' %}
               <div class="kanban-candidate-card"
-                onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "
-                Vacante")|e }}', '{{ p.candidato.correo|e }}' , '{{ p.candidato.salario_pretendido or 500 }}'
-                , '{{ p.estado }}' )">
+                data-job-id="{{ p.id_oferta }}"
+                data-candidate-name="{{ p.candidato.nombre|lower }}"
+                data-candidate-email="{{ p.candidato.correo|lower }}"
+                data-job-title="{{ (p.oferta.titulo if p.oferta else '')|lower }}"
+                onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "Vacante")|e }}', '{{ p.candidato.correo|e }}', '{{ p.candidato.salario_pretendido or 500 }}', '{{ p.estado }}')">
                 <div class="candidate-card-top">
                   <div class="candidate-avatar">👤</div>
                   <div class="candidate-info">
@@ -428,8 +437,7 @@
                 </div>
               </div>
               {% else %}
-              <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 20px;">Sin candidatos
-                nuevos.</p>
+              <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 20px;">Sin candidatos nuevos.</p>
               {% endfor %}
             </div>
           </div>
@@ -441,16 +449,17 @@
                 <span class="column-indicator orange"></span>
                 <h3 class="column-name">En Evaluación</h3>
               </div>
-              <span class="column-count-badge" id="count-evaluacion">{{ postulaciones|selectattr('estado', 'equalto',
-                'En Evaluación')|list|length }}</span>
+              <span class="column-count-badge" id="count-evaluacion">{{ postulaciones|selectattr('estado', 'equalto', 'En Evaluación')|list|length }}</span>
             </div>
 
             <div class="kanban-cards-stack">
               {% for p in postulaciones if p.estado == 'En Evaluación' %}
               <div class="kanban-candidate-card"
-                onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "
-                Vacante")|e }}', '{{ p.candidato.correo|e }}' , '{{ p.candidato.salario_pretendido or 500 }}'
-                , '{{ p.estado }}' )">
+                data-job-id="{{ p.id_oferta }}"
+                data-candidate-name="{{ p.candidato.nombre|lower }}"
+                data-candidate-email="{{ p.candidato.correo|lower }}"
+                data-job-title="{{ (p.oferta.titulo if p.oferta else '')|lower }}"
+                onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "Vacante")|e }}', '{{ p.candidato.correo|e }}', '{{ p.candidato.salario_pretendido or 500 }}', '{{ p.estado }}')">
                 <div class="candidate-card-top">
                   <div class="candidate-avatar">👤</div>
                   <div class="candidate-info">
@@ -471,8 +480,7 @@
                 </div>
               </div>
               {% else %}
-              <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 20px;">Sin candidatos en
-                evaluación.</p>
+              <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 20px;">Sin candidatos en evaluación.</p>
               {% endfor %}
             </div>
           </div>
@@ -484,16 +492,17 @@
                 <span class="column-indicator purple"></span>
                 <h3 class="column-name">Entrevista</h3>
               </div>
-              <span class="column-count-badge" id="count-entrevista">{{ postulaciones|selectattr('estado', 'equalto',
-                'Entrevista')|list|length }}</span>
+              <span class="column-count-badge" id="count-entrevista">{{ postulaciones|selectattr('estado', 'equalto', 'Entrevista')|list|length }}</span>
             </div>
 
             <div class="kanban-cards-stack">
               {% for p in postulaciones if p.estado == 'Entrevista' %}
               <div class="kanban-candidate-card"
-                onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "
-                Vacante")|e }}', '{{ p.candidato.correo|e }}' , '{{ p.candidato.salario_pretendido or 500 }}'
-                , '{{ p.estado }}' )">
+                data-job-id="{{ p.id_oferta }}"
+                data-candidate-name="{{ p.candidato.nombre|lower }}"
+                data-candidate-email="{{ p.candidato.correo|lower }}"
+                data-job-title="{{ (p.oferta.titulo if p.oferta else '')|lower }}"
+                onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "Vacante")|e }}', '{{ p.candidato.correo|e }}', '{{ p.candidato.salario_pretendido or 500 }}', '{{ p.estado }}')">
                 <div class="candidate-card-top">
                   <div class="candidate-avatar">👤</div>
                   <div class="candidate-info">
@@ -514,8 +523,7 @@
                 </div>
               </div>
               {% else %}
-              <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 20px;">Sin entrevistas
-                agendadas.</p>
+              <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 20px;">Sin entrevistas agendadas.</p>
               {% endfor %}
             </div>
           </div>
@@ -527,16 +535,17 @@
                 <span class="column-indicator green"></span>
                 <h3 class="column-name">Aceptados</h3>
               </div>
-              <span class="column-count-badge" id="count-aceptados">{{ postulaciones|selectattr('estado', 'equalto',
-                'Aceptada')|list|length }}</span>
+              <span class="column-count-badge" id="count-aceptados">{{ postulaciones|selectattr('estado', 'equalto', 'Aceptada')|list|length }}</span>
             </div>
 
             <div class="kanban-cards-stack">
               {% for p in postulaciones if p.estado == 'Aceptada' %}
               <div class="kanban-candidate-card"
-                onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "
-                Vacante")|e }}', '{{ p.candidato.correo|e }}' , '{{ p.candidato.salario_pretendido or 500 }}'
-                , '{{ p.estado }}' )">
+                data-job-id="{{ p.id_oferta }}"
+                data-candidate-name="{{ p.candidato.nombre|lower }}"
+                data-candidate-email="{{ p.candidato.correo|lower }}"
+                data-job-title="{{ (p.oferta.titulo if p.oferta else '')|lower }}"
+                onclick="openCandidateCvModal('{{ p.candidato.nombre|e }}', '{{ (p.oferta.titulo if p.oferta else "Vacante")|e }}', '{{ p.candidato.correo|e }}', '{{ p.candidato.salario_pretendido or 500 }}', '{{ p.estado }}')">
                 <div class="candidate-card-top">
                   <div class="candidate-avatar">👤</div>
                   <div class="candidate-info">
@@ -557,8 +566,7 @@
                 </div>
               </div>
               {% else %}
-              <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 20px;">Sin contrataciones
-                confirmadas.</p>
+              <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 20px;">Sin contrataciones confirmadas.</p>
               {% endfor %}
             </div>
           </div>
