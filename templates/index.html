@@ -11,13 +11,13 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
   <main>
     <section class="hero" aria-labelledby="hero-title">
-      <img class="hero__background" src="assets/images/hero.png" alt="Profesionales frente a una interfaz tecnológica">
+      <img class="hero__background" src="{{ url_for('static', filename='images/hero.png') }}" alt="Profesionales frente a una interfaz tecnológica">
 
       <!-- Navegación Principal con Aislamiento Estricto de Roles -->
       <nav class="site-nav" aria-label="Navegación principal" id="nav-menu">
@@ -106,7 +106,7 @@
     </section>
 
     <section class="development" id="desarrollo" aria-labelledby="development-title">
-      <div class="development__media"><img src="assets/images/development.png"
+      <div class="development__media"><img src="{{ url_for('static', filename='images/development.png') }}"
           alt="Persona subiendo una escalera hacia una mano de apoyo"></div>
       <div class="development__content">
         <div class="development__panel">
@@ -124,16 +124,16 @@
           aria-label="Oportunidad anterior">&lt;</button>
         <div class="carousel__track" id="carousel-container">
           <article class="opportunity-card opportunity-card--small">
-            <h3>Contratación IA</h3><img src="assets/images/card-ai.png"
+            <h3>Contratación IA</h3><img src="{{ url_for('static', filename='images/card-ai.png') }}"
               alt="Interfaz de contratación con inteligencia artificial">
             <p>Obtén una evolución de aspirantes automática</p>
           </article>
           <article class="opportunity-card opportunity-card--featured">
-            <h3>Postulación Rápida</h3><img src="assets/images/card-fast.png" alt="Escalera de oportunidades laborales">
+            <h3>Postulación Rápida</h3><img src="{{ url_for('static', filename='images/card-fast.png') }}" alt="Escalera de oportunidades laborales">
             <p>Accede a miles de oportunidades al instante</p>
           </article>
           <article class="opportunity-card opportunity-card--small">
-            <h3>Certificaciones</h3><img src="assets/images/card-certifications.png"
+            <h3>Certificaciones</h3><img src="{{ url_for('static', filename='images/card-certifications.png') }}"
               alt="Insignia y certificado de conocimientos">
             <p>Comprueba tus conocimientos y destaca en el mercado</p>
           </article>
@@ -148,11 +148,11 @@
       <div class="carousel carousel--companies">
         <button class="carousel__control" id="brands-prev" type="button" aria-label="Empresa anterior">&lt;</button>
         <div class="companies__track" id="brands-track">
-          <div class="company-logo"><img src="assets/images/company-intel.png" alt="Intel"></div>
-          <div class="company-logo"><img src="assets/images/company-cisco.png" alt="Cisco"></div>
-          <div class="company-logo"><img src="assets/images/company-nvidia.png" alt="NVIDIA"></div>
-          <div class="company-logo"><img src="assets/images/company-amazon.png" alt="Amazon"></div>
-          <div class="company-logo"><img src="assets/images/company-nvidia.png" alt="NVIDIA"></div>
+          <div class="company-logo"><img src="{{ url_for('static', filename='images/company-intel.png') }}" alt="Intel"></div>
+          <div class="company-logo"><img src="{{ url_for('static', filename='images/company-cisco.png') }}" alt="Cisco"></div>
+          <div class="company-logo"><img src="{{ url_for('static', filename='images/company-nvidia.png') }}" alt="NVIDIA"></div>
+          <div class="company-logo"><img src="{{ url_for('static', filename='images/company-amazon.png') }}" alt="Amazon"></div>
+          <div class="company-logo"><img src="{{ url_for('static', filename='images/company-nvidia.png') }}" alt="NVIDIA"></div>
         </div>
         <button class="carousel__control" id="brands-next" type="button" aria-label="Siguiente empresa">&gt;</button>
       </div>
@@ -292,7 +292,7 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>

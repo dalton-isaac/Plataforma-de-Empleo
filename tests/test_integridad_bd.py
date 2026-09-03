@@ -7,6 +7,7 @@ Pruebas exhaustivas para verificar el cumplimiento del Requisito 2:
 3. Procedimientos Almacenados (Stored Procedures) con reglas de negocio.
 """
 
+import os
 import unittest
 from datetime import date
 from sqlalchemy.exc import IntegrityError, InternalError
@@ -38,7 +39,10 @@ class TestIntegridadBaseDatos(unittest.TestCase):
         db.create_all()
 
         try:
-            with open("schema_plpgsql.sql", "r", encoding="utf-8") as f:
+            sql_path = os.path.join(os.path.dirname(__file__), "..", "database", "schema_plpgsql.sql")
+            if not os.path.exists(sql_path):
+                sql_path = "schema_plpgsql.sql"
+            with open(sql_path, "r", encoding="utf-8") as f:
                 plpgsql_sql = f.read()
             with db.engine.connect() as conn:
                 conn.execute(db.text(plpgsql_sql))

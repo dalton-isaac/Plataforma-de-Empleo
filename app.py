@@ -6,6 +6,7 @@ Configura la aplicación Flask, conecta la base de datos PostgreSQL con SQLAlche
 y define las rutas para las vistas HTML y las APIs REST.
 """
 
+import os
 from datetime import date
 from flask import (
     Flask,
@@ -30,9 +31,24 @@ from models import (
     Favorito,
 )
 
-# Inicializar Flask configurando la carpeta templates y sirviendo estáticos desde la raíz
-app = Flask(__name__, template_folder="templates", static_folder=".", static_url_path="")
+# Inicializar Flask configurando la carpeta templates y estáticos centralizados en static/
+app = Flask(__name__, template_folder="templates", static_folder="static")
 app.config.from_object(Config)
+
+# Rutas de soporte de retrocompatibilidad para URLs legacy
+@app.route("/style.css")
+def ruta_legacy_style():
+    return send_from_directory(os.path.join(app.root_path, "static", "css"), "style.css")
+
+@app.route("/script.js")
+def ruta_legacy_script():
+    return send_from_directory(os.path.join(app.root_path, "static", "js"), "script.js")
+
+@app.route("/assets/<path:filename>")
+def ruta_legacy_assets(filename):
+    if filename.startswith("images/") or filename.startswith("svg/"):
+        return send_from_directory(os.path.join(app.root_path, "static"), filename)
+    return send_from_directory(os.path.join(app.root_path, "static", "images"), filename)
 
 # Conectar la app con la instancia de SQLAlchemy definida en models.py
 db.init_app(app)

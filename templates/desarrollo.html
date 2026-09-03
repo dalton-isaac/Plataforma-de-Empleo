@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   
   <!-- Estilos personalizados -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="page-desarrollo">
 
@@ -105,13 +105,13 @@
           <!-- Plantilla 1 -->
           <article class="template-card">
             <div class="template-preview-wrapper">
-              <img src="assets/svg/template_1.svg" alt="Plantilla Moderna Estudiantil" class="template-svg-img" loading="lazy">
+              <img src="static/svg/template_1.svg" alt="Plantilla Moderna Estudiantil" class="template-svg-img" loading="lazy">
               <span class="template-popular-badge">Recomendada Estudiantes</span>
             </div>
             <div class="template-info">
               <h3 class="template-name">Moderna Estudiantil</h3>
               <p class="template-tagline">Ideal para carreras de Sistemas, Software y Computación.</p>
-              <button class="btn-template-edit" onclick="openTemplateEditor('Moderna Estudiantil', 'assets/svg/template_1.svg')">
+              <button class="btn-template-edit" onclick="openTemplateEditor('Moderna Estudiantil', 'static/svg/template_1.svg')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 <span>Editar Plantilla</span>
               </button>
@@ -121,12 +121,12 @@
           <!-- Plantilla 2 -->
           <article class="template-card">
             <div class="template-preview-wrapper">
-              <img src="assets/svg/template_2.svg" alt="Plantilla Minimalista Tech" class="template-svg-img" loading="lazy">
+              <img src="static/svg/template_2.svg" alt="Plantilla Minimalista Tech" class="template-svg-img" loading="lazy">
             </div>
             <div class="template-info">
               <h3 class="template-name">Minimalista Tech</h3>
               <p class="template-tagline">Enfoque limpio en repositorio de GitHub, stack técnico y lógica.</p>
-              <button class="btn-template-edit" onclick="openTemplateEditor('Minimalista Tech', 'assets/svg/template_2.svg')">
+              <button class="btn-template-edit" onclick="openTemplateEditor('Minimalista Tech', 'static/svg/template_2.svg')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 <span>Editar Plantilla</span>
               </button>
@@ -136,13 +136,13 @@
           <!-- Plantilla 3 -->
           <article class="template-card">
             <div class="template-preview-wrapper">
-              <img src="assets/svg/template_3.svg" alt="Plantilla Creativa UX/UI" class="template-svg-img" loading="lazy">
+              <img src="static/svg/template_3.svg" alt="Plantilla Creativa UX/UI" class="template-svg-img" loading="lazy">
               <span class="template-popular-badge">Diseño & Multimedia</span>
             </div>
             <div class="template-info">
               <h3 class="template-name">Creativa UX/UI</h3>
               <p class="template-tagline">Resalta enlaces a prototipos de Figma, Behance y procesos visuales.</p>
-              <button class="btn-template-edit" onclick="openTemplateEditor('Creativa UX/UI', 'assets/svg/template_3.svg')">
+              <button class="btn-template-edit" onclick="openTemplateEditor('Creativa UX/UI', 'static/svg/template_3.svg')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 <span>Editar Plantilla</span>
               </button>
@@ -152,12 +152,12 @@
           <!-- Plantilla 4 -->
           <article class="template-card">
             <div class="template-preview-wrapper">
-              <img src="assets/svg/template_4.svg" alt="Plantilla Ejecutiva Junior" class="template-svg-img" loading="lazy">
+              <img src="static/svg/template_4.svg" alt="Plantilla Ejecutiva Junior" class="template-svg-img" loading="lazy">
             </div>
             <div class="template-info">
               <h3 class="template-name">Ejecutiva Junior</h3>
               <p class="template-tagline">Excelente para áreas de Administración, Finanzas y Ventas.</p>
-              <button class="btn-template-edit" onclick="openTemplateEditor('Ejecutiva Junior', 'assets/svg/template_4.svg')">
+              <button class="btn-template-edit" onclick="openTemplateEditor('Ejecutiva Junior', 'static/svg/template_4.svg')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 <span>Editar Plantilla</span>
               </button>
@@ -167,13 +167,13 @@
           <!-- Plantilla 5 -->
           <article class="template-card">
             <div class="template-preview-wrapper">
-              <img src="assets/svg/template_5.svg" alt="Plantilla Pasantías & Prácticas" class="template-svg-img" loading="lazy">
+              <img src="static/svg/template_5.svg" alt="Plantilla Pasantías & Prácticas" class="template-svg-img" loading="lazy">
               <span class="template-popular-badge">Pasantías Oficiales</span>
             </div>
             <div class="template-info">
               <h3 class="template-name">Pasantías & Prácticas</h3>
               <p class="template-tagline">Estructurada para validar horas de prácticas preprofesionales.</p>
-              <button class="btn-template-edit" onclick="openTemplateEditor('Pasantías & Prácticas', 'assets/svg/template_5.svg')">
+              <button class="btn-template-edit" onclick="openTemplateEditor('Pasantías & Prácticas', 'static/svg/template_5.svg')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 <span>Editar Plantilla</span>
               </button>
@@ -183,12 +183,12 @@
           <!-- Plantilla 6 -->
           <article class="template-card">
             <div class="template-preview-wrapper">
-              <img src="assets/svg/template_6.svg" alt="Plantilla Académica Universitaria" class="template-svg-img" loading="lazy">
+              <img src="static/svg/template_6.svg" alt="Plantilla Académica Universitaria" class="template-svg-img" loading="lazy">
             </div>
             <div class="template-info">
               <h3 class="template-name">Académica Universitaria</h3>
               <p class="template-tagline">Destaca menciones de honor, cursos extracurriculares e idiomas.</p>
-              <button class="btn-template-edit" onclick="openTemplateEditor('Académica Universitaria', 'assets/svg/template_6.svg')">
+              <button class="btn-template-edit" onclick="openTemplateEditor('Académica Universitaria', 'static/svg/template_6.svg')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 <span>Editar Plantilla</span>
               </button>
@@ -220,7 +220,7 @@
                 <span class="cv-status-tag">Actualizado hace 2 días</span>
               </div>
               <div class="cv-svg-frame">
-                <img src="assets/svg/cv_preview.svg" alt="Previsualización de CV Actual" class="cv-document-img">
+                <img src="static/svg/cv_preview.svg" alt="Previsualización de CV Actual" class="cv-document-img">
               </div>
               <div class="cv-actions">
                 <button class="btn-upload-new-cv" onclick="openCvUploadModal()">
@@ -334,7 +334,7 @@
           <div class="profile-card-column">
             <div class="student-profile-card">
               <div class="profile-avatar-wrapper">
-                <img src="assets/svg/profile_avatar.svg" alt="Avatar de Mateo Morales" class="profile-avatar-img">
+                <img src="static/svg/profile_avatar.svg" alt="Avatar de Mateo Morales" class="profile-avatar-img">
               </div>
               <h3 class="student-name">Mateo Alejandro Morales</h3>
               <p class="student-role">Estudiante de Ingeniería en Software</p>
@@ -370,7 +370,7 @@
               <!-- Insignia 1: Frontend -->
               <div class="badge-item-card verified">
                 <div class="badge-svg-container">
-                  <img src="assets/svg/badge_frontend.svg" alt="Insignia Frontend" class="badge-img">
+                  <img src="static/svg/badge_frontend.svg" alt="Insignia Frontend" class="badge-img">
                 </div>
                 <h4 class="badge-name">Desarrollo Web Frontend</h4>
                 <p class="badge-desc">HTML5 semántico, CSS3 responsivo y fundamentos de JS.</p>
@@ -380,7 +380,7 @@
               <!-- Insignia 2: UX/UI -->
               <div class="badge-item-card verified">
                 <div class="badge-svg-container">
-                  <img src="assets/svg/badge_uxui.svg" alt="Insignia UX/UI" class="badge-img">
+                  <img src="static/svg/badge_uxui.svg" alt="Insignia UX/UI" class="badge-img">
                 </div>
                 <h4 class="badge-name">Diseño UI/UX con Figma</h4>
                 <p class="badge-desc">Auto Layout, sistemas de diseño y prototipado interactivo.</p>
@@ -390,7 +390,7 @@
               <!-- Insignia 3: Marketing -->
               <div class="badge-item-card verified">
                 <div class="badge-svg-container">
-                  <img src="assets/svg/badge_marketing.svg" alt="Insignia Marketing" class="badge-img">
+                  <img src="static/svg/badge_marketing.svg" alt="Insignia Marketing" class="badge-img">
                 </div>
                 <h4 class="badge-name">Marketing Digital &amp; RRSS</h4>
                 <p class="badge-desc">Gestión de contenidos, métricas y copywriting persuasivo.</p>
@@ -400,7 +400,7 @@
               <!-- Insignia 4: Python (Por Validar) -->
               <div class="badge-item-card available">
                 <div class="badge-svg-container">
-                  <img src="assets/svg/badge_python.svg" alt="Insignia Python" class="badge-img grayscale">
+                  <img src="static/svg/badge_python.svg" alt="Insignia Python" class="badge-img grayscale">
                 </div>
                 <h4 class="badge-name">Python &amp; Análisis de Datos</h4>
                 <p class="badge-desc">Lógica algorítmica, estructuras y librerías básicas.</p>
@@ -410,7 +410,7 @@
               <!-- Insignia 5: Inglés -->
               <div class="badge-item-card verified">
                 <div class="badge-svg-container">
-                  <img src="assets/svg/badge_english.svg" alt="Insignia Inglés" class="badge-img">
+                  <img src="static/svg/badge_english.svg" alt="Insignia Inglés" class="badge-img">
                 </div>
                 <h4 class="badge-name">Inglés Profesional B2</h4>
                 <p class="badge-desc">Comprensión lectora y comunicación técnica en inglés.</p>
@@ -420,7 +420,7 @@
               <!-- Insignia 6: Soporte TI (Por Validar) -->
               <div class="badge-item-card available">
                 <div class="badge-svg-container">
-                  <img src="assets/svg/badge_support.svg" alt="Insignia Soporte TI" class="badge-img grayscale">
+                  <img src="static/svg/badge_support.svg" alt="Insignia Soporte TI" class="badge-img grayscale">
                 </div>
                 <h4 class="badge-name">Soporte Técnico &amp; Redes</h4>
                 <p class="badge-desc">Diagnóstico de hardware, sistemas operativos y redes LAN.</p>
@@ -505,7 +505,7 @@
 
       <div class="modal-body template-modal-layout">
         <div class="template-preview-frame">
-          <img id="modal-template-preview-img" src="assets/svg/template_1.svg" alt="Previsualización de plantilla" class="modal-svg-preview">
+          <img id="modal-template-preview-img" src="static/svg/template_1.svg" alt="Previsualización de plantilla" class="modal-svg-preview">
         </div>
         <div class="template-edit-form">
           <label class="form-field-label">Nombre Completo
@@ -666,6 +666,6 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

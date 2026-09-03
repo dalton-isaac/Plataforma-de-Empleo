@@ -121,15 +121,20 @@ Plataforma_UI/
 ├── models.py                   # Modelos de datos SQLAlchemy, CheckConstraints y serializadores to_dict().
 ├── auth.py                     # Módulo de seguridad RBAC: decoradores @login_requerido y @rol_requerido.
 ├── config.py                   # Carga de variables de entorno y configuración de conexión a PostgreSQL.
-├── init_db.py                  # Script de creación del esquema y carga masiva de datos iniciales (seed).
-├── schema_plpgsql.sql          # Triggers de negocio, procedimientos almacenados y tabla de auditoría.
+├── init_db.py                  # Shim de retrocompatibilidad que invoca database/init_db.py.
 ├── requirements.txt            # Especificación estricta de dependencias Python para pip.
-├── script.js                   # Módulo JavaScript frontend: fetch REST, Kanban, Live Preview, autocompletado.
-├── style.css                   # Hoja de estilos central: tokens :root, layout responsive, temas y componentes.
 │
-├── assets/                     # Recursos multimedia estáticos
+├── database/                   # Gestión y esquemas de base de datos PostgreSQL
+│   ├── init_db.py              # Script canónico de creación de esquema y seed de datos iniciales.
+│   └── schema_plpgsql.sql      # Triggers de negocio, stored procedures y tabla de auditoría.
+│
+├── static/                     # Recursos multimedia y frontend centralizados (Convención Flask)
+│   ├── css/
+│   │   └── style.css           # Hoja de estilos central: tokens :root, layout responsive y componentes.
+│   ├── js/
+│   │   └── script.js           # Módulo JavaScript: fetch REST, Kanban, Live Preview, autocompletado.
 │   ├── images/                 # Fotografías y logotipos de empresas asociadas (PNG).
-│   └── svg/                    # Iconografía vectorial, badges y avatares por rol.
+│   └── svg/                    # Iconografía vectorial, badges y plantillas CV.
 │
 ├── templates/                  # Vistas HTML renderizadas por Jinja2
 │   ├── index.html              # Landing page principal y catálogo público de ofertas.
@@ -1128,7 +1133,7 @@ En entornos de producción, el servidor de desarrollo integrado de Flask (`app.r
 
 La arquitectura recomendada para TalentoEC se compone de:
 1. **Cliente Web:** HTTPS en puerto estándar 443.
-2. **Nginx:** Servidor proxy inverso que termina SSL, aplica compresión gzip y despacha directamente los archivos de `assets/`, `style.css` y `script.js`.
+2. **Nginx:** Servidor proxy inverso que termina SSL, aplica compresión gzip y despacha directamente los archivos de `static/` (`css/`, `js/`, `images/`, `svg/`).
 3. **Servidor WSGI (Gunicorn en Linux / Waitress en Windows):** Procesa peticiones dinámicas en workers concurrentes.
 4. **PostgreSQL:** Base de datos con conexiones protegidas por TLS (`sslmode=require`).
 
@@ -1211,21 +1216,11 @@ server {
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
 
-    # Optimización de Estáticos
-    location /assets/ {
-        alias /var/www/talentoec/assets/;
+    # Optimización de Estáticos Centralizados (Convención Flask)
+    location /static/ {
+        alias /var/www/talentoec/static/;
         expires 30d;
         add_header Cache-Control "public, no-transform";
-    }
-
-    location /style.css {
-        alias /var/www/talentoec/style.css;
-        expires 7d;
-    }
-
-    location /script.js {
-        alias /var/www/talentoec/script.js;
-        expires 7d;
     }
 
     # Despacho de Peticiones Dinámicas a Flask / WSGI
