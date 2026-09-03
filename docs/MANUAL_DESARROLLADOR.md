@@ -191,7 +191,7 @@ flowchart TD
     end
 
     subgraph DATABASE["🗄️ Capa de Persistencia (PostgreSQL 14+)"]
-        PG[(Base de Datos: plataformaempleo)]
+        PG[("Base de Datos: plataformaempleo")]
         TABLES["Tablas Relacionales (6 entidades principales)"]
         CONSTRAINTS["Reglas de Integridad (CheckConstraints & Unicidad)"]
         TRIGGERS["Triggers & Auditoría (schema_plpgsql.sql)"]
@@ -227,7 +227,7 @@ erDiagram
 
     EMPRESA {
         int id_empresa PK
-        string nombre_empresa UK "NOT NULL"
+        string nombre_empresa "UNIQUE, NOT NULL"
         numeric ranking "CHECK (0.00..5.00)"
     }
 
@@ -235,7 +235,7 @@ erDiagram
         int id_candidato PK
         string nombre "NOT NULL"
         int edad "CHECK (16..99)"
-        string correo UK "NOT NULL"
+        string correo "UNIQUE, NOT NULL"
         string contrasena "HASH PBKDF2"
         string cv_pdf_url "NULLABLE"
         string perfil_linkedin "NULLABLE"

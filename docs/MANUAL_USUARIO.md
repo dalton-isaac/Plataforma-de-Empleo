@@ -635,7 +635,7 @@ flowchart TD
     CatCand --> Aplica1Clic[Postulación Rápida en 1 Clic]
     ModCandidato --> Historial[Mis Postulaciones /postulaciones]
     ModCandidato --> Favoritos[Mis Guardadas /favoritos]
-    ModCandidato --> CVPersonal[CV Builder & Insignias /desarrollo]
+    ModCandidato --> CVPersonal["CV Builder & Insignias /desarrollo"]
     CatCand -. Intenta ingresar a /reclutadores .-> Err403C[403 Acceso Denegado]
     
     %% Reclutador
