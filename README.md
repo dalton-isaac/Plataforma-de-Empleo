@@ -32,7 +32,7 @@ El proyecto dispone de manuales técnicos y funcionales completos, actualizados 
 
 #### [🛠️ Manual de Desarrollador (`docs/MANUAL_DESARROLLADOR.md`)](docs/MANUAL_DESARROLLADOR.md)
 * **1. Arquitectura del Sistema:** Patrón arquitectónico MVC modular, stack tecnológico (Python 3.10+, Flask 3.1+, PostgreSQL 14+, SQLAlchemy 3.x), responsabilidades por directorio y diagrama de arquitectura en capas (Mermaid).
-* **2. Modelo de Base de Datos y Diagrama ERD:** Diagrama relacional completo con 8 entidades, diccionario de datos con tipos, nulos y llaves foráneas, restricciones de integridad (*CheckConstraints*), borrado suave y código fuente de triggers y procedimientos almacenados PL/pgSQL.
+* **2. Modelo de Base de Datos y Diagrama ERD:** Diagrama relacional completo con 6 entidades principales y 1 tabla de auditoría (7 tablas relacionales), diccionario de datos con tipos, nulos y llaves foráneas, restricciones de integridad (*CheckConstraints*), borrado suave y código fuente de triggers y procedimientos almacenados PL/pgSQL.
 * **3. Configuración e Instalación Local:** Prerrequisitos, entorno virtual `venv`, variables de entorno (`.env`), inicialización y siembra de base de datos con `init_db.py`, y ejecución del servidor en modo desarrollo.
 * **4. Catálogo de Rutas y API REST:** Mapeo detallado de todas las vistas Jinja2 y endpoints REST (Auth, Ofertas, Postulaciones, Favoritos, Estadísticas) acompañados de payloads JSON de solicitud y respuesta.
 * **5. Seguridad y RBAC:** Implementación de decoradores `@login_requerido` y `@rol_requerido`, hashing PBKDF2:SHA256 y controladores de error HTTP 403 y 404.

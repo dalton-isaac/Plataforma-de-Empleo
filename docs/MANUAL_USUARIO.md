@@ -91,17 +91,21 @@ El sistema está diseñado para atender a dos grandes comunidades dentro del Dis
 
 ### 1.3. Credenciales de Prueba Preconfiguradas
 
-Para facilitar la evaluación académica, testing funcional y demostraciones en vivo, la base de datos cuenta con cuentas de demostración listas para usar:
+Para facilitar la evaluación académica, testing funcional y demostraciones en vivo, la base de datos sembrada con `init_db.py` incluye cuentas de demostración listas para usar:
 
 | Perfil de Usuario | Rol del Sistema | Correo Electrónico | Contraseña | Propósito de Prueba |
 | :--- | :--- | :--- | :--- | :--- |
-| **Candidato Estudiante** | `candidato` | `estudiante@ejemplo.com` | `password123` | Explorar vacantes, aplicar en 1 clic, revisar semáforo de postulaciones, guardar favoritos y editar CV. |
-| **Reclutador Corporativo** | `reclutador` | `empresa@ejemplo.com` | `password123` | Publicar ofertas con Live Preview, editar, pausar ofertas y gestionar candidatos en el tablero Kanban. |
-| **Administrador General** | `admin` | `admin@ejemplo.com` | `password123` | Auditoría global, gestión técnica de ofertas y control integral del pipeline. |
+| **Candidato Estudiante (Principal)** | `candidato` | `mateo.morales@estudiantes.ec` | `candidato123` | Explorar vacantes, aplicar en 1 clic, revisar semáforo de postulaciones, guardar favoritos y editar CV. |
+| **Candidata Estudiante (Alternativa)** | `candidato` | `valeria.torres@estudiantes.ec` | `candidato123` | Pruebas de postulación concurrente, gestión de favoritos y perfil diferenciado. |
+| **Reclutador Corporativo** | `reclutador` | `reclutador@empresa.ec` | `reclutador123` | Publicar ofertas con Live Preview, editar, pausar ofertas y gestionar candidatos en el tablero Kanban. |
+
+> [!NOTE]
+> **Registro Abierto de Cuentas:**  
+> Además de las cuentas preconfiguradas, es posible registrar cualquier cuenta nueva con rol **Candidato** o **Reclutador** directamente desde la interfaz web (botón de registro en el encabezado).
 
 > [!TIP]
 > **Consejo de Inicio Rápido:**  
-> Puedes abrir dos ventanas del navegador (una normal y otra en modo incógnito) para simular simultáneamente la postulación de un estudiante y la recepción inmediata del candidato en el Kanban del reclutador.
+> Puedes abrir dos ventanas del navegador (una normal y otra en modo incógnito) para simular simultáneamente la postulación de un estudiante (`mateo.morales@estudiantes.ec`) y la recepción inmediata del candidato en el Kanban del reclutador (`reclutador@empresa.ec`).
 
 ---
 
@@ -735,7 +739,7 @@ stateDiagram-v2
 ## 6. Preguntas Frecuentes (FAQ) y Soporte Técnico
 
 ### P1: ¿Por qué recibo un mensaje de error al intentar postularme con mi cuenta corporativa?
-> **Respuesta:** En TalentoEC existe un aislamiento estricto de roles (RBAC). Las cuentas con rol `reclutador` están destinadas exclusivamente a publicar ofertas y seleccionar personal; no pueden aplicar a vacantes de empleo. Para postularte como estudiante, debes cerrar sesión e iniciar sesión con una cuenta de rol `candidato` (por ejemplo, `estudiante@ejemplo.com`).
+> **Respuesta:** En TalentoEC existe un aislamiento estricto de roles (RBAC). Las cuentas con rol `reclutador` están destinadas exclusivamente a publicar ofertas y seleccionar personal; no pueden aplicar a vacantes de empleo. Para postularte como estudiante, debes cerrar sesión e iniciar sesión con una cuenta de rol `candidato` (por ejemplo, `mateo.morales@estudiantes.ec` / `candidato123` o `valeria.torres@estudiantes.ec` / `candidato123`, o registrando una nueva cuenta con rol Candidato).
 
 ---
 

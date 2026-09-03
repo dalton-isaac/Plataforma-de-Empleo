@@ -406,7 +406,7 @@ TalentoEC implementa **Soft Delete** mediante el campo `activo` (`BOOLEAN`):
 
 ### 2.5. Triggers y Procedimientos Almacenados (PL/pgSQL)
 
-El archivo [`schema_plpgsql.sql`](file:///c:/Users/ISAAC/Desktop/Plataforma_UI/schema_plpgsql.sql) define la lógica relacional avanzada ejecutada en el motor de base de datos:
+El archivo [`schema_plpgsql.sql`](../schema_plpgsql.sql) define la lógica relacional avanzada ejecutada en el motor de base de datos:
 
 1. **Trigger `trg_validar_postulacion` (BEFORE INSERT ON `postulacion`):**
    - Ejecuta `fn_validar_postulacion()`.
@@ -476,7 +476,7 @@ pip install -r requirements.txt
 
 ### 3.4. Configuración de Variables de Entorno (`.env`)
 
-Cree un archivo llamado `.env` en la raíz del proyecto. Este archivo contiene los parámetros que [`config.py`](file:///c:/Users/ISAAC/Desktop/Plataforma_UI/config.py) leerá automáticamente:
+Cree un archivo llamado `.env` en la raíz del proyecto. Este archivo contiene los parámetros que [`config.py`](../config.py) leerá automáticamente:
 
 ```env
 # Configuración del Motor PostgreSQL
@@ -742,7 +742,7 @@ Variables almacenadas en la sesión al autenticarse:
 
 ### 5.2. Decorador `@login_requerido`
 
-Ubicado en [`auth.py`](file:///c:/Users/ISAAC/Desktop/Plataforma_UI/auth.py), intercepta las solicitudes para asegurar que exista una sesión activa antes de acceder al controlador:
+Ubicado en [`auth.py`](../auth.py), intercepta las solicitudes para asegurar que exista una sesión activa antes de acceder al controlador:
 
 ```python
 def login_requerido(f):
@@ -814,7 +814,7 @@ def agregar_favorito(oferta_id):
 
 ### 5.4. Cifrado Criptográfico de Contraseñas (PBKDF2:SHA256)
 
-Ninguna contraseña se almacena en texto plano. En [`models.py`](file:///c:/Users/ISAAC/Desktop/Plataforma_UI/models.py), la clase `Candidato` implementa métodos seguros utilizando Werkzeug:
+Ninguna contraseña se almacena en texto plano. En [`models.py`](../models.py), la clase `Candidato` implementa métodos seguros utilizando Werkzeug:
 
 ```python
 def set_password(self, password_plano):
@@ -830,7 +830,7 @@ def check_password(self, password_plano):
 
 ### 5.5. Controladores de Error Personalizados (HTTP 403 y 404)
 
-TalentoEC implementa manejadores de error con detección dual (JSON vs HTML) en [`app.py`](file:///c:/Users/ISAAC/Desktop/Plataforma_UI/app.py):
+TalentoEC implementa manejadores de error con detección dual (JSON vs HTML) en [`app.py`](../app.py):
 
 ```python
 @app.errorhandler(404)
@@ -864,7 +864,7 @@ El frontend de TalentoEC opera mediante un único script estructurado modularmen
 
 ### 6.2. Postulación en 1 Clic con Fetch Asíncrono
 
-En [`script.js`](file:///c:/Users/ISAAC/Desktop/Plataforma_UI/script.js#L910-L950), el botón de postulación ejecuta:
+En [`script.js`](../script.js), el botón de postulación ejecuta:
 
 ```javascript
 const response = await fetch('/api/postular', {
